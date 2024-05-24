@@ -25,12 +25,13 @@
                 </div>
             </div>
         </div>
+        <Test></Test>
     </div>
 </template>
 
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
-
+import Test from '../Components/Test.vue'
 </script>
 
 <style scoped>
