@@ -5,6 +5,12 @@ import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
+import PrimeVue from 'primevue/config';
+import Button from 'primevue/button';
+
+// import 'primevue/resources/themes/lara-dark-amber/theme.css'
+import 'primevue/resources/themes/aura-light-amber/theme.css';
+import 'primeicons/primeicons.css';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -14,7 +20,10 @@ createInertiaApp({
     setup({ el, App, props, plugin }) {
         return createApp({ render: () => h(App, props) })
             .use(plugin)
+            // .use(PrimeVue, { unstyled: true })
+            .use(PrimeVue)
             .use(ZiggyVue)
+            .component('Button', Button)
             .mount(el);
     },
     progress: {
