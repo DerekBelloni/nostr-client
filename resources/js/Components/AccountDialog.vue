@@ -7,7 +7,7 @@
             </div>
             <div class="inline-flex">
                 <span class="text-sm">Already have an account?</span>
-                <a @click="openLoginDialog" class="text-sm pl-2 text-amber-500 hover:text-amber-600">Login now</a>
+                <a @click="openLoginDialog" class="text-sm pl-2 text-amber-500 hover:text-amber-600 cursor-pointer">Login now</a>
             </div>
         </div>
     </Dialog>
