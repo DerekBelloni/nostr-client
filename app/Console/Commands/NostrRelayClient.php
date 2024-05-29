@@ -4,6 +4,10 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
+use Ratchet\Client\WebSocket;
+use Ratchet\Client\connect;
+
+use function Ratchet\Client\connect;
 
 class NostrRelayClient extends Command
 {
@@ -16,6 +20,7 @@ class NostrRelayClient extends Command
 
         connect($url)->then(function($conn) {
             $conn->on('message', function($msg) {
+                dd($msg);
                 Log::info("Received: {$msg}");
                 // Process the message here, possibly broadcasting an event
             });
