@@ -42,6 +42,16 @@
 </template>
 
 <script setup>
+import { ref, defineEmits } from "vue";
+
+// const activeView = ref(null);
+
+// const emit = defineEmits(['setActiveView']);
+
+// function setActiveView() {
+//     activeView.value = 'account';
+//     emit('setActiveView', activeView.value);
+// }
 
 </script>
 

@@ -3,7 +3,7 @@
         <div class="flex flex-col space-y-4">
             <span>New to Nostr? Create your account to get started!</span>
             <div>
-                <Button label="Create Account" class="rounded-full px-4 py-1 text-white font-semibold"/>
+                <Button @click="setActiveView()" label="Create Account" class="rounded-full px-4 py-1 text-white font-semibold"/>
             </div>
             <div class="inline-flex">
                 <span class="text-sm">Already have an account?</span>
@@ -15,12 +15,20 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, defineEmits } from "vue";
 import Dialog from 'primevue/dialog';
 import LoginDialog from '../Components/LoginDialog.vue';
 
 const accountDialog = ref(false);
 const loginDialog = ref(null);
+const activeView = ref(null);
+
+const emit = defineEmits(['setActiveView']);
+
+function setActiveView() {
+    activeView.value = 'account';
+    emit('setActiveView', activeView.value);
+}
 
 const open = () => {
     accountDialog.value = true;
