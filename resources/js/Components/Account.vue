@@ -60,7 +60,7 @@ import { ref, defineEmits } from "vue";
         width: 100%
     }
     .center-feature {
-        width: 55%;
+        width: 50%;
     }
     .account-inputs {
         width: 65%

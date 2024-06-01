@@ -38,7 +38,6 @@ const openAccountDialog = () => {
 }
 
 function setActiveView(item) {
-    console.log('item from account dialog: ', item);
     activeView.value = item;
     emit('setActiveView', activeView.value);
 }

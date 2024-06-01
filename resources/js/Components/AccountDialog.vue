@@ -28,6 +28,11 @@ const emit = defineEmits(['setActiveView']);
 function setActiveView() {
     activeView.value = 'account';
     emit('setActiveView', activeView.value);
+    close();
+}
+
+const close = () => {
+    accountDialog.value = false;
 }
 
 const open = () => {
@@ -38,6 +43,7 @@ const openLoginDialog = () => {
     loginDialog.value.open();
     accountDialog.value = false;
 }
+
 
 defineExpose({ open });
 </script>

@@ -24,7 +24,7 @@ const setActiveView = (input) => {
 
 <style scoped>
     .sidebar {
-        width: 22%;
+        width: 25%;
     }
     .center-feature {
         width: 50%;
