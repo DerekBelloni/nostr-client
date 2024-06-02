@@ -7,7 +7,7 @@
                 </div>
                 <FloatLabel class="w-full">
                     <label for="feed">Say something on nostr...</label>
-                    <InputText id="feed" variant="filled" class="rounded-full"></InputText>
+                    <InputText id="feed" variant="filled" class="rounded-full w-full"></InputText>
                 </FloatLabel>
             </div>
         </div>
@@ -15,7 +15,17 @@
 </template>
 
 <script setup>
+import { onMounted } from 'vue';
 import InputText from 'primevue/inputtext';
+import Echo from 'laravel-echo';
+
+onMounted(() => {
+    console.log("mounted", window);
+    window.Echo.channel('relay-notifications')
+        .listen('RelayNotesReceived', (event) => {
+            console.log('fucking bananas!');
+        });
+})
 
 </script>
 

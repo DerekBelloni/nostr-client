@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Events\RelayNotesReceived;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use Mdanter\Ecc\Crypto\Key\PrivateKey;
@@ -39,21 +40,23 @@ class NostrRelayClient extends Command
         ]);
 
 
-        connect($url)->then(function($conn) use ($subscriptionMessage) {
-            $conn->on('message', function($msg) {
+        connect($url)->then(function($conn) use ($subscriptionMessage, &$notes) {
+            $conn->on('message', function($msg) use (&$notes) {
                 $message = json_decode($msg, true);
 
                 if (is_array($message) && isset($message[0])) {
                     if ($message[0] === 'EOSE') {
                         Log::info("End of Stored Events received for subscription: {$message[1]}");
-                    } elseif ($message[0] === 'EVENT') {
+                        Log::info("Collected notes: " . json_encode($notes));
+                        event(new RelayNotesReceived($notes));
+                        $notes = [];
+                    } else if ($message[0] === 'EVENT') {
                         $eventData = $message[2];
                         // Log::info("Event received: " . json_encode($eventData));
-                        Log::info("Event received: " . json_encode($eventData));
-                        // Process the event data here
-                        // For example, you can extract the 'content' field:
+                    
                         if (isset($eventData['content'])) {
-                            Log::info("Event content: " . $eventData['content']);
+                            Log::info("Event content: " . json_encode($eventData));
+                            $notes[] = $eventData['content'];
                         } else {
                             Log::info("Event content: No content found");
                         }

@@ -12,3 +12,10 @@ window.Echo = new Echo({
     forceTLS: (import.meta.env.VITE_REVERB_SCHEME ?? 'https') === 'https',
     enabledTransports: ['ws', 'wss'],
 });
+
+console.log('turtle', window.Echo);
+
+window.Echo.channel('relay-notifications')
+.listen('RelayNotesReceived', (event) => {
+    console.log('fucking bananas!');
+});

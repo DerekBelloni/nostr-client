@@ -10,9 +10,6 @@ import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import FloatLabel from 'primevue/floatlabel';
 
-
-
-// import 'primevue/resources/themes/lara-dark-amber/theme.css'
 import 'primevue/resources/themes/aura-light-amber/theme.css';
 import 'primeicons/primeicons.css';
 
@@ -24,7 +21,6 @@ createInertiaApp({
     setup({ el, App, props, plugin }) {
         return createApp({ render: () => h(App, props) })
             .use(plugin)
-            // .use(PrimeVue, { unstyled: true })
             .use(PrimeVue)
             .use(ZiggyVue)
             .component('Button', Button)
