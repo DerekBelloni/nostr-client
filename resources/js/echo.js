@@ -13,9 +13,9 @@ window.Echo = new Echo({
     enabledTransports: ['ws', 'wss'],
 });
 
-console.log('turtle', window.Echo);
+// console.log('turtle', window.Echo);
 
-window.Echo.channel('relay-notifications')
-.listen('RelayNotesReceived', (event) => {
-    console.log('fucking bananas!');
-});
+// window.Echo.channel('relay-notifications')
+// .listen('RelayNotesReceived', (event) => {
+//     console.log('fucking bananas!');
+// });

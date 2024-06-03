@@ -11,19 +11,28 @@
                 </FloatLabel>
             </div>
         </div>
+        <div>
+            <ul v-for="note in notes">
+                <li>{{note.content}}</li>
+            </ul>
+        </div>
     </div>
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
+import { onMounted, reactive } from 'vue';
 import InputText from 'primevue/inputtext';
 import Echo from 'laravel-echo';
+
+let notes = reactive([]);
+
 
 onMounted(() => {
     console.log("mounted", window);
     window.Echo.channel('relay-notifications')
         .listen('RelayNotesReceived', (event) => {
-            console.log('fucking bananas!');
+            console.log('fucking bananas!', event);
+            notes.push(event.notes);
         });
 })
 

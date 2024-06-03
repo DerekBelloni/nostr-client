@@ -56,7 +56,8 @@ class NostrRelayClient extends Command
                     
                         if (isset($eventData['content'])) {
                             Log::info("Event content: " . json_encode($eventData));
-                            $notes[] = $eventData['content'];
+                            // $notes[] = $eventData['content'];
+                            $notes[] = $eventData;
                         } else {
                             Log::info("Event content: No content found");
                         }
