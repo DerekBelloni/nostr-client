@@ -7,6 +7,7 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Support\Facades\Redis;
 
 class RelayNotesReceived implements ShouldBroadcast
 {
@@ -21,6 +22,10 @@ class RelayNotesReceived implements ShouldBroadcast
 
     public function broadcastOn(): Channel
     {
+        $encoded_notes = json_encode($this->notes);
+        Redis::set('damus-notes', $encoded_notes);
+        
+        $stored_value = Redis::get('damus-notes');
         return new Channel('relay-notifications');
     }
 }

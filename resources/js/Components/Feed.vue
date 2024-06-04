@@ -28,10 +28,8 @@ let notes = reactive([]);
 
 
 onMounted(() => {
-    console.log("mounted", window);
     window.Echo.channel('relay-notifications')
         .listen('RelayNotesReceived', (event) => {
-            console.log('fucking bananas!', event);
             notes.push(event.notes);
         });
 })
