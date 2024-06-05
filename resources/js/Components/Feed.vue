@@ -12,27 +12,21 @@
             </div>
         </div>
         <div>
-            <ul v-for="note in notes">
-                <li>{{note.content}}</li>
+            <ul v-for="note in props.notes">
+                <div class="border-b border-gray-300 py-2 text-wrap truncate">
+                    <li>{{note.content}}</li>
+                </div>
             </ul>
         </div>
     </div>
 </template>
 
 <script setup>
-import { onMounted, reactive } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 import InputText from 'primevue/inputtext';
-import Echo from 'laravel-echo';
 
-let notes = reactive([]);
-
-
-onMounted(() => {
-    window.Echo.channel('relay-notifications')
-        .listen('RelayNotesReceived', (event) => {
-            notes.push(event.notes);
-        });
-})
+const props = defineProps(['notes']);
+const notes = ref(props.notes);
 
 </script>
 

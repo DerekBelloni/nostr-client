@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import vue from '@vitejs/plugin-vue';
+import { resolve } from 'path';
 
 export default defineConfig({
     plugins: [
@@ -17,6 +18,13 @@ export default defineConfig({
             },
         }),
     ],
+    resolve: {
+        alias: {
+            '@': resolve(__dirname, './resources/js'),
+            '@inertiajs/inertia': resolve(__dirname, './node_modules/@inertiajs/inertia'),
+            '@inertiajs/inertia-vue3': resolve(__dirname, './node_modules/@inertiajs/inertia-vue3')
+        }
+    },
     server: {
         port: 7891,
     }

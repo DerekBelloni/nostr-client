@@ -1,19 +1,48 @@
 <template>
     <div class="flex h-screen">
         <Sidebar class="sidebar border border-r border-gray-200" @setActiveView="setActiveView"></Sidebar>
-        <Feed v-if="activeView == 'Home'"></Feed>
+        <Feed v-if="activeView == 'Home'" :notes="notes"></Feed>
         <Account v-if="activeView == 'account'"></Account>
     </div>
 </template>
 
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
-import { ref } from "vue";
+import { onMounted, ref, reactive } from "vue";
+import { router } from '@inertiajs/vue3'
+import Echo from 'laravel-echo';
 import Sidebar from '../Components/Sidebar.vue'
 import Account from '../Components/Account.vue'
 import Feed from '../Components/Feed.vue'
 
 const activeView = ref(null);
+const notes = ref([]);
+const isSet = ref(false);
+
+onMounted(() => {
+    window.Echo.channel('relay-notifications')
+        .listen('RelayNotesReceived', (event) => {
+            console.log('is set: ', isSet.value);
+            isSet.value = event.isSet;
+            if (isSet.value) {
+                retrieveNotes();
+            }
+        });
+})
+
+const retrieveNotes = () => {
+    router.visit('/notes', {
+        method: 'get',
+        preserveState: true, // Prevent full page reload
+        only: ['notes'], // Ensure only 'notes' is updated
+        onSuccess: page => {
+            notes.value = page.props.notes;
+        },
+        onError: errors => {
+            console.error('Error fetching notes:', errors);
+        }
+    });
+}
 
 const setActiveView = (input) => {
     console.log("input from set view, home: ", input);
