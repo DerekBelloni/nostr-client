@@ -1,23 +1,22 @@
 <template>
-    <div class="center-feature border-r border-gray-200">
-        <div class="border-b border-gray-200">
-            <div class="flex ml-6 mt-12 mr-6 items-center pb-12">
-                <div class="icon-border  mr-2">
-                    <i class="pi pi-user icon-color text-xl"></i>
-                </div>
-                <FloatLabel class="w-full">
-                    <label for="feed">Say something on nostr...</label>
-                    <InputText id="feed" variant="filled" class="rounded-full w-full"></InputText>
-                </FloatLabel>
+    <div class="border-b border-gray-200">
+        <div class="flex ml-6 mt-12 mr-6 items-center pb-12">
+            <div class="icon-border  mr-2">
+                <i class="pi pi-user icon-color text-xl"></i>
             </div>
+            <FloatLabel class="w-full">
+                <label for="feed">Say something on nostr...</label>
+                <InputText id="feed" variant="filled" class="rounded-full w-full"></InputText>
+            </FloatLabel>
         </div>
-        <div>
-            <ul v-for="note in props.notes">
-                <div class="border-b border-gray-300 py-2 text-wrap truncate">
-                    <li>{{note.content}}</li>
-                </div>
-            </ul>
-        </div>
+    </div>
+    <div class="notes-container">
+        <ul v-for="note in props.notes" >
+            <li class="flex flex-col border-b border-gray-300 py-2 px-2 my-2">
+                <span>{{note.pubkey}}</span>
+                <span class="font-medium">{{note.content}}</span>
+            </li>
+        </ul>
     </div>
 </template>
 
@@ -51,5 +50,8 @@ const notes = ref(props.notes);
     }
     .icon-color {
         color: rgba(55, 65, 81, 0.8);
+    }
+    .notes-container {
+        overflow-y: auto;
     }
 </style>

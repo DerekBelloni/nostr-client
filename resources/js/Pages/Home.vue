@@ -1,8 +1,12 @@
 <template>
     <div class="flex h-screen">
         <Sidebar class="sidebar border border-r border-gray-200" @setActiveView="setActiveView"></Sidebar>
-        <Feed v-if="activeView == 'Home'" :notes="notes"></Feed>
-        <Account v-if="activeView == 'account'"></Account>
+        <div class="center-feature border-r">
+            <Feed v-if="activeView == 'Home'" :notes="notes"></Feed>
+            <Account v-if="activeView == 'account'"></Account>
+        </div>
+        <div class="right-sidebar">
+        </div>
     </div>
 </template>
 
@@ -22,7 +26,6 @@ const isSet = ref(false);
 onMounted(() => {
     window.Echo.channel('relay-notifications')
         .listen('RelayNotesReceived', (event) => {
-            console.log('is set: ', isSet.value);
             isSet.value = event.isSet;
             if (isSet.value) {
                 retrieveNotes();
@@ -57,5 +60,8 @@ const setActiveView = (input) => {
     }
     .center-feature {
         width: 50%;
+    }
+    .right-sidebar {
+        width: 25%;
     }
 </style>
