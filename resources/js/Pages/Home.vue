@@ -1,5 +1,5 @@
 <template>
-    <div class="flex h-screen">
+    <div class="flex h-screen overflow-hidden">
         <Sidebar class="sidebar border border-r border-gray-200" @setActiveView="setActiveView"></Sidebar>
         <div class="center-feature border-r">
             <Feed v-if="activeView == 'Home'" :notes="notes"></Feed>

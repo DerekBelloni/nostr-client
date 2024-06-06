@@ -1,15 +1,5 @@
 <template>
-    <div class="border-b border-gray-200">
-        <div class="flex ml-6 mt-12 mr-6 items-center pb-12">
-            <div class="icon-border  mr-2">
-                <i class="pi pi-user icon-color text-xl"></i>
-            </div>
-            <FloatLabel class="w-full">
-                <label for="feed">Say something on nostr...</label>
-                <InputText id="feed" variant="filled" class="rounded-full w-full"></InputText>
-            </FloatLabel>
-        </div>
-    </div>
+    <FeedSearch></FeedSearch>
     <div class="notes-container">
         <ul v-for="note in props.notes" >
             <li class="flex flex-col border-b border-gray-300 py-2 px-2 my-2">
@@ -23,6 +13,7 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue';
 import InputText from 'primevue/inputtext';
+import FeedSearch from './FeedSearch.vue';
 
 const props = defineProps(['notes']);
 const notes = ref(props.notes);
@@ -39,19 +30,10 @@ const notes = ref(props.notes);
     .center-feature {
         width: 50%;
     }
-    .icon-border {
-        width: 2.5rem; /* Set the width of the container */
-        height: 2.5rem; /* Set the height of the container */
-        border-radius: 50%; /* Make the container circular */
-        border: 2px solid rgba(55, 65, 81, 0.8); /* Set the border properties */
-        display: flex; /* Use flexbox for centering the icon */
-        justify-content: center; /* Center the icon horizontally */
-        align-items: center; 
-    }
-    .icon-color {
-        color: rgba(55, 65, 81, 0.8);
-    }
+
     .notes-container {
+        height: 100%;
         overflow-y: auto;
+        padding: 10px;
     }
 </style>
