@@ -5,15 +5,6 @@ namespace App\Console\Commands;
 use App\Events\RelayNotesReceived;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
-use Mdanter\Ecc\Crypto\Key\PrivateKey;
-use Mdanter\Ecc\Crypto\Key\PublicKey;
-use Mdanter\Ecc\EccFactory;
-use Mdanter\Ecc\Serializer\PrivateKey\DerPrivateKeySerializer;
-use Mdanter\Ecc\Serializer\PrivateKey\PemPrivateKeySerializer;
-use Mdanter\Ecc\Serializer\PublicKey\DerPublicKeySerializer;
-use Mdanter\Ecc\Serializer\PublicKey\PemPublicKeySerializer;
-use Mdanter\Ecc\Serializer\Signature\DerSignatureSerializer;
-use Mdanter\Ecc\Random\RandomGeneratorFactory;
 use function Ratchet\Client\connect;
 use Ramsey\Uuid\Uuid;
 
