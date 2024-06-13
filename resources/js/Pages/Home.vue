@@ -36,6 +36,7 @@ onMounted(() => {
 })
 
 const retrieveNotes = () => {
+    console.log('in retrieve notes');
     router.visit('/notes', {
         method: 'get',
         preserveState: true, // Prevent full page reload

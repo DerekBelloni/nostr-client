@@ -9,7 +9,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Support\Facades\Redis;
 
-class RelayNotesReceived implements ShouldBroadcast
+class RelayNotes implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets;
 
@@ -24,10 +24,11 @@ class RelayNotesReceived implements ShouldBroadcast
 
     public function broadcastOn(): Channel
     {
-        $encoded_notes = json_encode($this->notes);
-        Redis::set('damus-notes', $encoded_notes);
+        // $encoded_notes = json_encode($this->notes);
+        // // dd($encoded_notes);
+        // Redis::set('damus-notes', $encoded_notes);
         $this->isSet = true;
-        
+        // dd($this->notes);
         return new Channel('relay-notifications');
     }
 }

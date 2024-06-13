@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Events\RelayNotesReceived;
+use App\Events\RelayNotes;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use function Ratchet\Client\connect;
@@ -39,7 +39,7 @@ class NostrRelay extends Command
                     if ($message[0] === 'EOSE') {
                         Log::info("End of Stored Events received for subscription: {$message[1]}");
                         Log::info("Collected notes: " . json_encode($notes));
-                        event(new RelayNotesReceived($notes));
+                        event(new RelayNotes($notes));
                         $notes = [];
                     } else if ($message[0] === 'EVENT') {
                         $eventData = $message[2];
