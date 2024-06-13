@@ -24,14 +24,15 @@ const notes = ref([]);
 const isSet = ref(false);
 
 onMounted(() => {
-    // window.Echo.channel('relay-notifications')
-    //     .listen('RelayNotesReceived', (event) => {
-    //         isSet.value = event.isSet;
-    //         if (isSet.value) {
-    //             retrieveNotes();
-    //         }
-    //     });
-    retrieveNotes();
+    window.Echo.channel('relay-notifications')
+        .listen('RelayNotesReceived', (event) => {
+            console.log('event: ', event);
+            isSet.value = event.isSet;
+            if (isSet.value) {
+                retrieveNotes();
+            }
+        });
+    // retrieveNotes();
 })
 
 const retrieveNotes = () => {
