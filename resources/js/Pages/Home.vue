@@ -28,11 +28,10 @@ onMounted(() => {
 })
 
 const retrieveNotes = () => {
-    console.log('in retrieve notes');
     router.visit('/notes', {
         method: 'get',
-        preserveState: true, // Prevent full page reload
-        only: ['notes'], // Ensure only 'notes' is updated
+        preserveState: true,
+        only: ['notes'],
         onSuccess: page => {
             notes.value = page.props.notes;
         },
@@ -43,7 +42,6 @@ const retrieveNotes = () => {
 }
 
 const setActiveView = (input) => {
-    console.log("input from set view, home: ", input);
     activeView.value = input;
 }
 

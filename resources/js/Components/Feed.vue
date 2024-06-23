@@ -3,6 +3,17 @@
     <div class="notes-container">
         <ul v-for="note in props.notes" >
             <li class="flex flex-col border-b border-gray-300 py-2 px-2 my-2">
+                <template v-if="Object.values(note.metadata_content).length > 1">
+                    <template v-if="note.metadata_content.picture">
+                        <div class="rounded-full h-14 w-14 p-2 border border-amber-500">
+                            <img :src="note.metadata_content.picture" alt="">
+                        </div>
+                    </template>
+                    <div class="inline-flex">
+                        <span class="text-gray-700 font-semibold">{{note.metadata_content.name}}</span>
+                        <span class="text-gray-400 pl-2">{{note.metadata_content.nip05}}</span>
+                    </div>
+                </template>
                 <span>{{note.pubkey}}</span>
                 <div class="text-wrap truncate">
                     <span class="font-medium">{{note.content}}</span>

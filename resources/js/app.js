@@ -9,6 +9,7 @@ import PrimeVue from 'primevue/config';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import FloatLabel from 'primevue/floatlabel';
+import Lodash from 'lodash';
 
 import 'primevue/resources/themes/aura-light-amber/theme.css';
 import 'primeicons/primeicons.css';
@@ -23,6 +24,7 @@ createInertiaApp({
             .use(plugin)
             .use(PrimeVue)
             .use(ZiggyVue)
+            .use(Lodash)
             .component('Button', Button)
             .component('InputText', InputText)
             .component('FloatLabel', FloatLabel)
