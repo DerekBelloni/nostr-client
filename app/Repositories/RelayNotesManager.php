@@ -46,8 +46,11 @@ class RelayNotesManager
             if (!in_array($event_detail_id, $event_detail_ids)) {
                 $utc_time = Carbon::createFromTimestampUTC($note[2]["created_at"])->format('Y-m-d H:i:s');
                 $note[2]["utc_time"] = $utc_time;
-                $processed_notes[] = $note[2];
+                // $processed_notes[] = $note[2];
                 $event_detail_ids[] = $event_detail_id;
+                if ($note[2]["kind"] == 1) {
+                    $processed_notes[] = $note[2];
+                }
             }
         }
         self::_storeMetadata();
@@ -65,7 +68,6 @@ class RelayNotesManager
             $note["metadata_content"] = [];
             if (array_key_exists($note["pubkey"], self::$metadata_notes)) {
                 $note["metadata_content"] = json_decode(self::$metadata_notes[$note["pubkey"]][0]["content"], true);
-                // dd($note["metadata_content"]);
             }
         }
         return $notes;
