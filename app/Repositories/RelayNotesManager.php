@@ -48,6 +48,7 @@ class RelayNotesManager
                 $note[2]["utc_time"] = $utc_time;
                 // $processed_notes[] = $note[2];
                 $event_detail_ids[] = $event_detail_id;
+                
                 if ($note[2]["kind"] == 1) {
                     $processed_notes[] = $note[2];
                 }

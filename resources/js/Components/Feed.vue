@@ -19,7 +19,9 @@
                 </div>
                 <div class="grid grid-cols-12">
                     <div class="col-span-11 col-start-2">
-                        <span>{{note.pubkey}}</span>
+                        <template v-if="!note.metadata_content.name && !note.metadata_content.nip05">
+                            <span class="text-amber-400 font-semibold">{{note.pubkey}}</span>
+                        </template>
                         <div class="text-wrap truncate">
                             <span class="font-medium">{{note.content}}</span>
                         </div>
