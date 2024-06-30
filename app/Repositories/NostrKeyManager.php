@@ -39,6 +39,12 @@ class NostrKeyManager
 
     }
 
+    public static function genNPubKey($publicKeyHex)
+    {
+        $key = new Key();
+        return $key->convertPublicKeyToBech32($publicKeyHex);
+    }
+
     public static function validateKeys($nsec)
     {
 

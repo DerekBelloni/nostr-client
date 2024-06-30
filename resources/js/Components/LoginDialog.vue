@@ -11,11 +11,11 @@
 </template>
 
 <script setup>
-    import { ref } from 'vue';
+    import { ref, defineEmits } from 'vue';
     import { router } from '@inertiajs/vue3';
     import { useNostrStore } from '@/stores/useNostrStore';
     import Dialog from 'primevue/dialog';
-
+    
     const loginDialog = ref(false);
     const npub = ref('');
     const nsec = ref('');
@@ -28,12 +28,11 @@
 
     const retrieveNpub = () => {
         router.post('/npub', { nsec: nsec.value }, {
-            // preserveState: true,
+            preserveState: true,
             onSuccess: page => {
-                npub.value = page.props.npub;
-                nostrStore.npub = npub.value;
-                router.replace('/notes'); 
-                loginDialog.value = false;  // Close dialog after successful login
+                nostrStore.npub = page.props.npub;
+                router.replace('/'); 
+                loginDialog.value = false; 
             },
             onError: errors => {
                 console.error('Error: ', errors);

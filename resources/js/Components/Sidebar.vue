@@ -18,20 +18,26 @@
             </div>
             <Button label="Get Started" @click="openAccountDialog" class="rounded-full px-4 py-1 text-white font-semibold"/>
         </div>
+        <div class="truncate px-8 bg-gray-100 border border-gray-200 rounded-full mx-12" v-if="npub">
+            <span>{{nostrStore.npub}}</span>
+        </div>
         <AccountDialog ref="accountDialog" @setActiveView="setActiveView"></AccountDialog>
     </div>
 </template>
 
 <script setup>
-import { ref, defineEmits } from "vue";
+import {  computed, defineEmits, ref, watch, } from "vue";
+import { useNostrStore } from '@/stores/useNostrStore';
 import AccountDialog from '../Components/AccountDialog.vue';
 import Logo from '../Components/Logo.vue'
 import sidebarItems from "@/Data/SidebarData";
 
 const activeView = ref(null);
 const accountDialog = ref(null);
+const nostrStore = useNostrStore();
+const npub = computed(() => nostrStore.npub);
 
-const emit = defineEmits(['setActiveView'])
+const emit = defineEmits(['setActiveView']);
 
 const openAccountDialog = () => {
     accountDialog.value.open();

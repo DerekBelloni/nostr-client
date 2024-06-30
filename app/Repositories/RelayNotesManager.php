@@ -16,8 +16,10 @@ class RelayNotesManager
     public static function getDefaultNotes(Request $request)
     {
         $default_relays = [
-            'wss://nos.lol',
-            'wss://relay.damus.io'
+            "wss://relay.damus.io",
+            "wss://nos.lol",
+            "wss://purplerelay.com",
+            "wss://relay.primal.net"
         ];
 
         $merged_notes = [];
@@ -47,7 +49,10 @@ class RelayNotesManager
             if (!in_array($event_detail_id, $event_detail_ids)) {
                 $utc_time = Carbon::createFromTimestampUTC($note[2]["created_at"])->format('Y-m-d H:i:s');
                 $note[2]["utc_time"] = $utc_time;
-                // $processed_notes[] = $note[2];
+
+                $npub_id = NostrKeyManager::genNPubKey($note[2]["pubkey"]);
+                $note[2]["npub"] = $npub_id;
+      
                 $event_detail_ids[] = $event_detail_id;
                 
                 if ($note[2]["kind"] == 1) {
