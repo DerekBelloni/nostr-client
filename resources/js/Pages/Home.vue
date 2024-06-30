@@ -19,7 +19,7 @@ import Sidebar from '../Components/Sidebar.vue'
 import Account from '../Components/Account.vue'
 import Feed from '../Components/Feed.vue'
 
-const activeView = ref(null);
+const activeView = ref('');
 const notes = ref([]);
 const isSet = ref(false);
 
@@ -34,6 +34,7 @@ const retrieveNotes = () => {
         only: ['notes'],
         onSuccess: page => {
             notes.value = page.props.notes;
+            router.replace('/'); 
         },
         onError: errors => {
             console.error('Error fetching notes:', errors);

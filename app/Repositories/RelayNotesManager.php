@@ -5,7 +5,8 @@ namespace App\Repositories;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 use Carbon\Carbon;
-
+use Illuminate\Support\Facades\Log;
+use swentel\nostr\Key\Key;
 
 class RelayNotesManager 
 {
@@ -27,7 +28,7 @@ class RelayNotesManager
                 $merged_notes = array_merge($merged_notes, $notes);
            }
         }
-        
+    
         return self::_processNotes($merged_notes);
     }
 
