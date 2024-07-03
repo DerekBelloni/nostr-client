@@ -20,8 +20,9 @@ import Account from '../Components/Account.vue'
 import Feed from '../Components/Feed.vue'
 
 const activeView = ref('');
-const notes = ref([]);
 const isSet = ref(false);
+const notes = ref([]);
+const reactions = ref([]);
 
 onMounted(() => {
     retrieveNotes();
@@ -31,9 +32,10 @@ const retrieveNotes = () => {
     router.visit('/notes', {
         method: 'get',
         preserveState: true,
-        only: ['notes'],
+        only: ['notes', 'reactions'],
         onSuccess: page => {
             notes.value = page.props.notes;
+            reactions.value = page.props.reactions;
             router.replace('/'); 
         },
         onError: errors => {

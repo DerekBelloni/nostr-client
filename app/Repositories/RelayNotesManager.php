@@ -37,11 +37,17 @@ class RelayNotesManager
     private static function _processNotes($merged_notes)
     {
         $event_detail_ids = [];
+        $metadata_notes = [];
         $processed_notes = [];
+        $reaction_notes = [];
 
         foreach ($merged_notes as $note) {
             if ($note[2]["kind"] == 0) {
                 $metadata_notes[] = self::_processMetadata($note[2]);
+            }
+
+            if ($note[2]["kind"] == 7) {
+                $reaction_notes[] = $note[2];
             }
 
             $event_detail_id = $note[2]["id"];
@@ -61,12 +67,12 @@ class RelayNotesManager
             }
         }
         self::_storeMetadata();
-
+        
         $processed_notes = collect($processed_notes)->sortByDesc("utc_time")->values()->all();
 
         $metadata_formatted_notes = collect(self::_mergeNotesWithMetadata($processed_notes))->values()->all();
     
-        return $metadata_formatted_notes;
+        return [$metadata_formatted_notes, $metadata_formatted_reactions];
     }
 
     private static function _mergeNotesWithMetadata(&$notes)
