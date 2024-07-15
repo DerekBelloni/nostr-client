@@ -2,7 +2,7 @@
     <div class="flex h-screen overflow-hidden">
         <Sidebar class="sidebar border border-r border-gray-200" @setActiveView="setActiveView"></Sidebar>
         <div class="center-feature border-r">
-            <Feed v-if="activeView == 'Home'" :notes="notes"></Feed>
+            <Feed v-if="activeView == 'Home'" :trendingNotes="trendingNotes"></Feed>
             <Account v-if="activeView == 'account'"></Account>
         </div>
         <div class="right-sidebar">
@@ -21,7 +21,7 @@ import Feed from '../Components/Feed.vue'
 
 const activeView = ref('');
 const isSet = ref(false);
-const notes = ref([]);
+const trendingNotes = ref([]);
 const reactions = ref([]);
 
 onMounted(() => {
@@ -29,13 +29,13 @@ onMounted(() => {
 })
 
 const retrieveNotes = () => {
-    router.visit('/notes', {
+    router.visit('/trending-events', {
         method: 'get',
         preserveState: true,
-        only: ['notes', 'reactions'],
+        only: ['trendingNotes'],
         onSuccess: page => {
-            notes.value = page.props.notes;
-            reactions.value = page.props.reactions;
+            console.log("trending events: ", page.props)
+            trendingNotes.value = page.props.trendingNotes;
             router.replace('/'); 
         },
         onError: errors => {

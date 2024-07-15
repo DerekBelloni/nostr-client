@@ -15,21 +15,33 @@ class RelayNotesManager
 
     public static function getDefaultNotes(Request $request)
     {
-        $default_relays = [
-            "wss://relay.damus.io",
-            "wss://nos.lol",
-            "wss://purplerelay.com",
-            "wss://relay.primal.net"
+        $trending_relays = [
+            "wss://relay.damus.io-trending",
+            "wss://nos.lol-trending",
+            "wss://purplerelay.com-trending",
+            "wss://relay.primal.net-trending"
         ];
+        // $default_relays = [
+        //     "wss://relay.damus.io",
+        //     "wss://nos.lol",
+        //     "wss://purplerelay.com",
+        //     "wss://relay.primal.net"
+        // ];
 
         $merged_notes = [];
 
-        foreach ($default_relays as $relay) {
+        foreach ($trending_relays as $relay) {
            $notes = json_decode(Redis::get($relay), true);
            if (is_array($notes)) {
                 $merged_notes = array_merge($merged_notes, $notes);
            }
         }
+        // foreach ($default_relays as $relay) {
+        //    $notes = json_decode(Redis::get($relay), true);
+        //    if (is_array($notes)) {
+        //         $merged_notes = array_merge($merged_notes, $notes);
+        //    }
+        // }
     
         return self::_processNotes($merged_notes);
     }
@@ -69,7 +81,7 @@ class RelayNotesManager
         self::_storeMetadata();
         
         $processed_notes = collect($processed_notes)->sortByDesc("utc_time")->values()->all();
-
+        // dd($processed_notes);
         $metadata_formatted_notes = collect(self::_mergeNotesWithMetadata($processed_notes))->values()->all();
     
         return [$metadata_formatted_notes, $metadata_formatted_reactions];

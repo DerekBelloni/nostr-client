@@ -2,33 +2,34 @@
     <FeedSearch></FeedSearch>
     <div class="notes-container">
         <ul>
-            <li v-for="note in props.notes" :key="note.pubkey" class="flex flex-col border-b border-gray-300 py-2 px-2 my-2">
-                <div class="grid grid-cols-12" v-if="Object.values(note.metadata_content).length > 1">
+            <li v-for="note in props.trendingNotes" :key="note.pubkey" class="flex flex-col border-b border-gray-300 py-2 px-2 my-2">
+                <div class="grid grid-cols-12">
                     <div class="col-span-1">
-                        <template v-if="note.metadata_content.picture">
-                            <div>
-                                <img class="rounded-full h-10 w-10 border border-amber-500" :src="note.metadata_content.picture" alt="">
-                            </div>
-                        </template>
+                        <div v-if="note.author?.content.picture">
+                            <img class="rounded-full h-10 w-10 border border-amber-500" :src="note.author?.content.picture" alt="">
+                        </div>
                     </div>
                     <div class="col-span-11 col-start-2">
-                        <span class="text-gray-700 font-semibold">{{note.metadata_content.name}}</span>
+                        <span class="text-gray-700 font-semibold">{{note.author?.content.name}}</span>
                         <i class="pi pi-verified pl-1"></i>
-                        <span class="text-gray-400 pl-1">{{note.metadata_content.nip05}}</span>
+                        <span class="text-amber-600 pl-1">{{note.author?.content.nip05}}</span>
                     </div>
                 </div>
                 <div class="grid grid-cols-12">
                     <div class="col-span-11 col-start-2">
-                        <template v-if="!note.metadata_content.name && !note.metadata_content.nip05">
+                        <!-- <template v-if="!note.metadata_content.name && !note.metadata_content.nip05">
                             <span class="text-amber-600 font-semibold">{{note.npub}}</span>
-                        </template>
+                        </template> -->
                         <div class="text-wrap truncate">
-                            <span class="font-medium">{{note.content}}</span>
+                            <span class="font-medium">{{note.event.content}}</span>
                         </div>
                     </div>
                 </div>
             </li>
         </ul>
+    </div>
+    <div>
+        <span>test</span>
     </div>
 </template>
 
@@ -37,7 +38,7 @@ import { onMounted, reactive, ref } from 'vue';
 import InputText from 'primevue/inputtext';
 import FeedSearch from './FeedSearch.vue';
 
-const props = defineProps(['notes']);
+const props = defineProps(['trendingNotes']);
 const notes = ref(props.notes);
 
 </script>
