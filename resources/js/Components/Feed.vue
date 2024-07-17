@@ -2,7 +2,7 @@
     <FeedSearch></FeedSearch>
     <div class="notes-container">
         <ul>
-            <li v-for="note in props.trendingNotes" :key="note.pubkey" class="flex flex-col border-b border-gray-300 py-2 px-2 my-2">
+            <li v-for="note in props.trendingContent" :key="note.pubkey" class="flex flex-col border-b border-gray-300 py-2 px-2 my-2">
                 <div class="grid grid-cols-12">
                     <div class="col-span-1">
                         <div v-if="note.author?.content.picture">
@@ -38,7 +38,7 @@ import { onMounted, reactive, ref } from 'vue';
 import InputText from 'primevue/inputtext';
 import FeedSearch from './FeedSearch.vue';
 
-const props = defineProps(['trendingNotes']);
+const props = defineProps(['trendingContent']);
 const notes = ref(props.notes);
 
 </script>

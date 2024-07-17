@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 
@@ -14,8 +15,8 @@ class TrendingEventsManager
         $trending_notes = self::_getTrendingNotes($client);
         $trending_videos = self::_getTrendingVideos($client);
         $trending_images = self::_getTrendingImages($client);
-        
-        return $trending_notes;
+
+        return self::_mergeTrendingContent($trending_notes, $trending_images, $trending_videos);
     }
 
     private static function _getTrendingNotes($client)
@@ -49,7 +50,7 @@ class TrendingEventsManager
         $trending_videos = collect($trending_videos["videos"]);
 
         $processed_videos = self::_processContent($trending_videos);
-        return $trending_videos;
+        return $processed_videos;
     }
 
     private static function _getTrendingImages($client) 
@@ -69,12 +70,21 @@ class TrendingEventsManager
         return $processed_images;
     }
 
+    private static function _mergeTrendingContent($trending_notes, $trending_images, $trending_videos)
+    {
+        $trending_content = $trending_notes->merge($trending_images)->merge($trending_videos);
+        
+        $sorted_trending_content = $trending_content->sortByDesc('event.created_at');
+        return $sorted_trending_content->values();
+    }
+
     private static function _processContent(&$trending_content)
     {
         return $trending_content->transform(function ($note) {
             if (isset($note["author"])) {
                 $note["author"]["content"] = json_decode($note["author"]["content"], true);
             }
+            $note["event"]["utc_timestamp"] = Carbon::createFromTimestampUTC($note["event"]["created_at"])->format('Y-m-d H:i:s');
             return $note;
         });
     }

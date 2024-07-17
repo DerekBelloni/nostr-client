@@ -11,12 +11,8 @@ class TrendingEventsController extends Controller
 {
     public function index(Request $request)
     {
-        $trending_notes;
-        $trending_video;
-        $trending_images;
-
-        $trending_notes = TrendingEventsManager::index($request);
-
-        return Inertia::render('Home', ['trendingNotes' => $trending_notes]);
+        $trending_content = TrendingEventsManager::index($request);
+        // dd("in controller: ", $trending_content);
+        return Inertia::render('Home', ['trendingContent' => $trending_content]);
     }
 }
