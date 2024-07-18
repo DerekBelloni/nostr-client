@@ -21,7 +21,8 @@
                             <span class="text-amber-600 font-semibold">{{note.npub}}</span>
                         </template> -->
                         <div class="text-wrap truncate">
-                            <span class="font-medium">{{note.event.content}}</span>
+                            <!-- <span class="font-medium" v-html="note.event.content">{{note.event.content}}</span> -->
+                            <span class="font-medium" v-html="note.event.content"></span>
                         </div>
                     </div>
                 </div>
