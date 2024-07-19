@@ -97,14 +97,14 @@ class TrendingEventsManager
 
     private static function _processVideos(&$trending_videos)
     {
-        $pattern = '/https:\/\/[^s]+\.(mp4|webm|ogg)/i';
+        $pattern = '/https:\/\/[^s]+\.(mp4|webm|ogg|mov)/i';
         $trending_videos->transform(function ($item) use ($pattern) {
             if (isset($item["event"]["content"])) {
                 $item["event"]["content"] = preg_replace_callback($pattern, function ($matches) {
                     $url = $matches[0];
                     $extension = pathinfo($url, PATHINFO_EXTENSION);
-                    if (in_array($extension, ['mp4', 'webm', 'ogg'])) {
-                        return '<video controls><source src="' . $url . '" type="video/' . $extension . '">Your browser does not support the video tag.</video>';
+                    if (in_array($extension, ['mp4', 'webm', 'ogg', 'mov'])) {
+                        return '<video width="420" height="340" controls><source src="' . $url . '" type="video/' . $extension . '">Your browser does not support the video tag.</video>';
                     }
                 }, $item["event"]["content"]);
             }
@@ -117,12 +117,15 @@ class TrendingEventsManager
         switch ($type) {
             case "images":
                 self::_processImages($trending_content);
+                self::_processVideos($trending_content);
                 break;
             case "notes":
                 self::_processImages($trending_content);
+                self::_processVideos($trending_content);
                 break;
             case "videos":
                 self::_processVideos($trending_content);
+                break;
         }
 
         return $trending_content->transform(function ($note) {

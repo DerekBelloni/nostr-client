@@ -6,7 +6,7 @@
                 <div class="grid grid-cols-12">
                     <div class="col-span-1">
                         <div v-if="note.author?.content.picture">
-                            <img class="rounded-full h-10 w-10 border border-amber-500" :src="note.author?.content.picture" alt="">
+                            <img class="rounded-full h-14 w-14 border border-amber-500" :src="note.author?.content.picture" alt="">
                         </div>
                     </div>
                     <div class="col-span-11 col-start-2">
@@ -20,7 +20,7 @@
                         <!-- <template v-if="!note.metadata_content.name && !note.metadata_content.nip05">
                             <span class="text-amber-600 font-semibold">{{note.npub}}</span>
                         </template> -->
-                        <div class="text-wrap truncate">
+                        <div class="text-wrap">
                             <!-- <span class="font-medium" v-html="note.event.content">{{note.event.content}}</span> -->
                             <span class="font-medium" v-html="note.event.content"></span>
                         </div>
