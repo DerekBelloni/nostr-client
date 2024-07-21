@@ -24,10 +24,10 @@ class NostrKeyManager
                 $publicKeyBech32 = $key->convertPublicKeyToBech32($publicKeyHex);
 
                 $cachedMetadata = self::_checkCachedMetadata($publicKeyHex);
-                dd($cachedMetadata);
+                // dd($cachedMetadata);
                 if (isset($cachedMetadata)) {
                     list($name, $domain) = self::_processUserMetadata($cachedMetadata);
-                    $verified = self::_getNip05Verification($name, $domain);
+                    $verified = self::_getNip05Verification($name, $domain, $publicKeyHex);
                 } else {
                     self::_setRedisStream($publicKeyHex);
                 }
@@ -40,11 +40,12 @@ class NostrKeyManager
         }
     }
 
-    private static function _getNip05Verification($name, $domain)
+    private static function _getNip05Verification($name, $domain, $publicKeyHex)
     {
+        dd($domain);
         $client = new Client();
         $url = sprintf("https://%s/.well-known/nostr.json?name=%s", $domain, $name);
-        dd($url, $domain, $name);
+        // dd($url, $domain, $name);
         $response = $client->request('GET', $url, [
             'headrs' => [
                 'Accept' => 'application/json'
@@ -53,7 +54,21 @@ class NostrKeyManager
 
         $body = $response->getBody();
 
-        dd(json_decode($body->getContents(), true));
+        $data = json_decode($body->getContents(), true);
+        // dd($data);
+
+        foreach ($data as $d) {
+            // dd($d);
+            foreach($d as $key => $value) {
+                if ($key == $name) {
+                    dd($key, $value);
+                }
+            }
+        }
+        // if (isset($data['names'][$name])) {
+        //     dd($data['names'][$name]);
+        //     return $data['names'][$name]; 
+        // } 
     }
 
     private static function _checkCachedMetadata($publicKeyHex)
