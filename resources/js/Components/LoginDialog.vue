@@ -17,6 +17,7 @@
     import Dialog from 'primevue/dialog';
     
     const loginDialog = ref(false);
+    const hexPub = ref('');
     const npub = ref('');
     const nsec = ref('');
     
@@ -31,6 +32,7 @@
             preserveState: true,
             onSuccess: page => {
                 nostrStore.npub = page.props.npub;
+                nostrStore.hexPub = page.props.hexPub;
                 router.replace('/'); 
                 loginDialog.value = false; 
             },
