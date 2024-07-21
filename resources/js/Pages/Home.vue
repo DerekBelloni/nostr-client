@@ -26,7 +26,7 @@ const reactions = ref([]);
 
 onMounted(() => {
     retrieveNotes();
-})
+});
 
 const retrieveNotes = () => {
     router.visit('/trending-events', {
