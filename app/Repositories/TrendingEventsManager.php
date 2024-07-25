@@ -82,12 +82,16 @@ class TrendingEventsManager
 
     private static function _processImages(&$trending_images)
     {
-        $pattern = '/https:\/\/[^\s]+\.(jpg|jpeg|png|gif)/i';
+        $pattern = '/https:\/\/[^\s]+/i';
         $trending_images->transform(function ($item) use ($pattern) {
             if (isset($item["event"]["content"])) {
                 $item["event"]["content"] = preg_replace_callback($pattern, function ($matches) {
                     $url = $matches[0];
-                    return '<img src="' . $url . '">';
+                    if (preg_match('/\.(jpg|jpeg|png|gif)$/i', $url)) {
+                        return '<img src="' . $url . '">';
+                    } else {
+                        return '<a href="' . $url . '" target="_blank">' . $url . '</a>';
+                    }
                 }, $item["event"]["content"]);
             }
             return $item;

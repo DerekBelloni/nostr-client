@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 use swentel\nostr\Key\Key;
 
@@ -24,15 +25,16 @@ class NostrKeyManager
                 $publicKeyBech32 = $key->convertPublicKeyToBech32($publicKeyHex);
 
                 $cachedMetadata = self::_checkCachedMetadata($publicKeyHex);
-                // dd($cachedMetadata);
+             
                 if (isset($cachedMetadata)) {
                     list($name, $domain) = self::_processUserMetadata($cachedMetadata);
                     $verified = self::_getNip05Verification($name, $domain, $publicKeyHex);
+                    
                 } else {
                     self::_setRedisStream($publicKeyHex);
                 }
 
-                return [$publicKeyHex, $publicKeyBech32];
+                return [$publicKeyHex, $publicKeyBech32, $verified];
             } catch (\Exception $e) {
                 Log::error('Error processing Nostr key: ' . $e->getMessage());
                 dd('Error: ' . $e->getMessage());
@@ -42,12 +44,12 @@ class NostrKeyManager
 
     private static function _getNip05Verification($name, $domain, $publicKeyHex)
     {
-        dd($domain);
         $client = new Client();
-        $url = sprintf("https://%s/.well-known/nostr.json?name=%s", $domain, $name);
-        // dd($url, $domain, $name);
+
+        $url = "https://{$domain}/.well-known/nostr.json?name={$name}";
+
         $response = $client->request('GET', $url, [
-            'headrs' => [
+            'headers' => [
                 'Accept' => 'application/json'
             ]
         ]);
@@ -55,30 +57,21 @@ class NostrKeyManager
         $body = $response->getBody();
 
         $data = json_decode($body->getContents(), true);
-        // dd($data);
 
-        foreach ($data as $d) {
-            // dd($d);
-            foreach($d as $key => $value) {
-                if ($key == $name) {
-                    dd($key, $value);
-                }
-            }
-        }
-        // if (isset($data['names'][$name])) {
-        //     dd($data['names'][$name]);
-        //     return $data['names'][$name]; 
-        // } 
+        if (isset($data['names'][$name])) {
+            return $data['names'][$name] == $publicKeyHex; 
+        } 
     }
 
     private static function _checkCachedMetadata($publicKeyHex)
     {
         $cachedMetadata = json_decode(Redis::get($publicKeyHex), true);
+      
         if (isset($cachedMetadata)) {
             $cachedMetadata[2]["content"] = json_decode($cachedMetadata[2]["content"], true);
 
         }
-        // dd($cachedMetadata);
+      
         return $cachedMetadata;
     }
 

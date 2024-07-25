@@ -20,6 +20,7 @@
     const hexPub = ref('');
     const npub = ref('');
     const nsec = ref('');
+    const verified = ref(false);
     
     const nostrStore = useNostrStore();
 
@@ -33,6 +34,7 @@
             onSuccess: page => {
                 nostrStore.npub = page.props.npub;
                 nostrStore.hexPub = page.props.hexPub;
+                console.log('verified: ', page.props.verified);
                 router.replace('/'); 
                 loginDialog.value = false; 
             },

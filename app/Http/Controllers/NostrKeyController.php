@@ -11,8 +11,8 @@ class NostrKeyController extends Controller
     public static function login(Request $request)
     {
 
-        list($hexPub, $npub) = NostrKeyManager::login($request);
+        list($hexPub, $npub, $verified) = NostrKeyManager::login($request);
 
-        return Inertia::render('Home', ['npub' => $npub, 'hexPub' => $hexPub]);
+        return Inertia::render('Home', ['npub' => $npub, 'hexPub' => $hexPub, 'verified' => $verified]);
     }
 }
