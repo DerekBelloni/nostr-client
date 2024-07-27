@@ -57,7 +57,7 @@ class TrendingEventsManager
     {
         $response = $client->request('GET', 'https://api.nostr.band/v0/trending/images', [
             'header' => [
-                'Accept' => 'applicatopm/json'
+                'Accept' => 'application/json'
             ]
         ]);
 
@@ -96,7 +96,6 @@ class TrendingEventsManager
             }
             return $item;
         });
-        // dd($trending_images);
     }
 
     private static function _processVideos(&$trending_videos)

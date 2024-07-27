@@ -19,7 +19,9 @@
             <Button label="Get Started" @click="openAccountDialog" class="rounded-full px-4 py-1 text-white font-semibold"/>
         </div>
         <div class="truncate px-8 bg-gray-100 border border-gray-200 rounded-full mx-12" v-if="npub">
-            <span>{{nostrStore.npub}}</span>
+            <a @click="setActiveView('profile')">
+                <span>{{nostrStore.npub}}</span>
+            </a>
         </div>
         <AccountDialog ref="accountDialog" @setActiveView="setActiveView"></AccountDialog>
     </div>
@@ -45,6 +47,7 @@ const openAccountDialog = () => {
 
 function setActiveView(item) {
     activeView.value = item;
+    console.log("activeView: ", activeView.value);
     emit('setActiveView', activeView.value);
 }
 

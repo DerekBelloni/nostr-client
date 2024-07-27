@@ -24,17 +24,19 @@ class NostrKeyManager
                 // Convert hex public key to npub
                 $publicKeyBech32 = $key->convertPublicKeyToBech32($publicKeyHex);
 
-                $cachedMetadata = self::_checkCachedMetadata($publicKeyHex);
-             
-                if (isset($cachedMetadata)) {
-                    list($name, $domain) = self::_processUserMetadata($cachedMetadata);
+                $cached_metadata = self::_checkCachedMetadata($publicKeyHex);
+            
+                if (isset($cached_metadata)) {
+                    list($name, $domain) = self::_processUserMetadata($cached_metadata);
                     $verified = self::_getNip05Verification($name, $domain, $publicKeyHex);
                     
                 } else {
                     self::_setRedisStream($publicKeyHex);
                 }
 
-                return [$publicKeyHex, $publicKeyBech32, $verified];
+                $metadata_content = $cached_metadata[2];
+
+                return [$metadata_content, $publicKeyHex, $publicKeyBech32, $verified];
             } catch (\Exception $e) {
                 Log::error('Error processing Nostr key: ' . $e->getMessage());
                 dd('Error: ' . $e->getMessage());
@@ -65,22 +67,22 @@ class NostrKeyManager
 
     private static function _checkCachedMetadata($publicKeyHex)
     {
-        $cachedMetadata = json_decode(Redis::get($publicKeyHex), true);
+        $cached_metadata = json_decode(Redis::get($publicKeyHex), true);
       
-        if (isset($cachedMetadata)) {
-            $cachedMetadata[2]["content"] = json_decode($cachedMetadata[2]["content"], true);
+        if (isset($cached_metadata)) {
+            $cached_metadata[2]["content"] = json_decode($cached_metadata[2]["content"], true);
 
         }
       
-        return $cachedMetadata;
+        return $cached_metadata;
     }
 
-    private static function _processUserMetadata($cachedMetadata)
+    private static function _processUserMetadata($cached_metadata)
     {
         $nip05 = null;
         $name = null;
         $domain = null;
-        foreach ($cachedMetadata as $data) {
+        foreach ($cached_metadata as $data) {
             if (is_array($data) && isset($data["content"]["nip05"])) {
                 $nip05 = $data["content"]["nip05"];
             }

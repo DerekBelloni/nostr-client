@@ -18,6 +18,7 @@
     
     const loginDialog = ref(false);
     const hexPub = ref('');
+    const metadataContent = ref([]);
     const npub = ref('');
     const nsec = ref('');
     const verified = ref(false);
@@ -32,9 +33,11 @@
         router.post('/npub', { nsec: nsec.value }, {
             preserveState: true,
             onSuccess: page => {
+                nostrStore.metadataContent = page.props.metadataContent;
+                console.log("nostr store metadata content: ", nostrStore.metadataContent);
                 nostrStore.npub = page.props.npub;
                 nostrStore.hexPub = page.props.hexPub;
-                console.log('verified: ', page.props.verified);
+                nostrStore.verified = page.props.verified;
                 router.replace('/'); 
                 loginDialog.value = false; 
             },

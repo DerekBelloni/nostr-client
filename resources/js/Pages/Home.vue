@@ -4,6 +4,7 @@
         <div class="center-feature border-r">
             <Feed v-if="activeView == 'Home'" :trendingContent="trendingContent"></Feed>
             <Account v-if="activeView == 'account'"></Account>
+            <Profile v-if="activeView == 'profile'"></Profile>
         </div>
         <div class="right-sidebar">
         </div>
@@ -14,10 +15,10 @@
 import { Head, Link } from '@inertiajs/vue3';
 import { onMounted, ref, reactive } from "vue";
 import { router } from '@inertiajs/vue3'
-import Echo from 'laravel-echo';
-import Sidebar from '../Components/Sidebar.vue'
 import Account from '../Components/Account.vue'
 import Feed from '../Components/Feed.vue'
+import Profile from '../Components/Profile.vue'
+import Sidebar from '../Components/Sidebar.vue'
 
 const activeView = ref('');
 const isSet = ref(false);
