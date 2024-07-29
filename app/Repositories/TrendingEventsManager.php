@@ -5,6 +5,7 @@ namespace App\Repositories;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
+use Symfony\Component\DomCrawler\Crawler;
 
 class TrendingEventsManager
 {
@@ -82,20 +83,62 @@ class TrendingEventsManager
 
     private static function _processImages(&$trending_images)
     {
-        $pattern = '/https:\/\/[^\s]+/i';
+        // $pattern = '/https:\/\/[^\s]+/i';
+        // $trending_images->transform(function ($item) use ($pattern) {
+        //     if (isset($item["event"]["content"])) {
+        //         $item["event"]["content"] = preg_replace_callback($pattern, function ($matches) {
+        //             $url = $matches[0];
+        //             if (preg_match('/\.(jpg|jpeg|png|gif)$/i', $url)) {
+        //                 return '<img src="' . $url . '">';
+        //             } else {
+        //                 return '<a href="' . $url . '" target="_blank">' . $url . '</a>';
+        //             }
+        //         }, $item["event"]["content"]);
+        //     }
+        //     return $item;
+        // });
+        $pattern = '/https:\/\/[^\s]+(\.(mp4|webm|ogg|mov|jpg|jpeg|png|gif))?/i';
+        $url_meta = [];
         $trending_images->transform(function ($item) use ($pattern) {
             if (isset($item["event"]["content"])) {
                 $item["event"]["content"] = preg_replace_callback($pattern, function ($matches) {
                     $url = $matches[0];
+                    $extension = pathinfo($url, PATHINFO_EXTENSION);
                     if (preg_match('/\.(jpg|jpeg|png|gif)$/i', $url)) {
                         return '<img src="' . $url . '">';
+                    } else if (in_array($extension, ['mp4', 'webm', 'ogg', 'mov'])) {
+                        return '<video width="600" height="405" controls><source src="' . $url . '" type="video/' . $extension . '">Your browser does not support the video tag.</video>';
                     } else {
+                        $url_meta[] = $url;
+                        self::_getUrlMetadata($url);
+                        // TODO: Create what is known as a rich preview
                         return '<a href="' . $url . '" target="_blank">' . $url . '</a>';
                     }
                 }, $item["event"]["content"]);
             }
             return $item;
         });
+    }
+
+    private static function _getUrlMetadata($url) {
+        $client = new Client();
+    
+        $response = $client->request('GET', $url, [
+            'headers' => [
+                'Accept' => 'application/json'
+            ]
+            ]);
+
+        $html = $response->getBody()->getContents();
+ 
+        $crawler = new Crawler($html);
+        
+        $metadata = [];
+        $metadata["title"] = $crawler->filterXPath('//meta[@property="og:title"]')->attr('content') ?? '';
+        $metadata["description"] = $crawler->filterXPath('//meta[@property="og:description"]')->attr('content') ?? '';
+        $metadata["url"] = $crawler->filterXPath('//meta[@property="og:url"]')->attr('content') ?? '';
+        $metadata["image"] = $crawler->filterXPath('//meta[@property="og:image"]')->attr('content') ?? '';
+        dd($metadata);
     }
 
     private static function _processVideos(&$trending_videos)
@@ -127,6 +170,7 @@ class TrendingEventsManager
                 self::_processVideos($trending_content);
                 break;
             case "videos":
+                self::_processImages($trending_content);
                 self::_processVideos($trending_content);
                 break;
         }

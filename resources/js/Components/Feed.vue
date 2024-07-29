@@ -59,6 +59,6 @@ const notes = ref(props.notes);
         height: 100%;
         overflow-y: auto;
         padding: 10px;
-        overflow-x: hidden;
+       
     }
 </style>

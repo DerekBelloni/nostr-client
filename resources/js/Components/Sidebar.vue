@@ -4,7 +4,7 @@
             <Logo></Logo>
         </div>
         <div>
-            <ul class="ml-16 space-y-10">
+            <ul class="ml-20 space-y-5">
                 <div v-for="item in sidebarItems">
                     <div class="hover:border-b-2 hover:border-amber-500 border-b-2 border-transparent hover:inline-flex">
                         <li @click="setActiveView(item.text)" class="cursor-pointer font-semibold text-lg"><i :class="item.icon" class="mr-2"></i>{{item.text}}</li>
@@ -18,9 +18,15 @@
             </div>
             <Button label="Get Started" @click="openAccountDialog" class="rounded-full px-4 py-1 text-white font-semibold"/>
         </div>
-        <div class="truncate px-8 bg-gray-100 border border-gray-200 rounded-full mx-12" v-if="npub">
+        <div class="truncate px-8 bg-gray-100 border border-gray-200 rounded-full mx-12 cursor-pointer" v-if="npub && !nip05Verified">
             <a @click="setActiveView('profile')">
                 <span>{{nostrStore.npub}}</span>
+            </a>
+        </div>
+        <div class="mx-16" v-else-if="npub && nip05Verified">
+            <a @click="setActiveView('profile')" class="items-center space-x-2 cursor-pointer profile-container hover:bg-gray-200 hover:rounded-full hover:mr-16">
+                <img :src="nostrStore.metadataContent.content.picture" class="profile-picture">
+                <span class="font-semibold">{{nostrStore.metadataContent.content.name}}</span>
             </a>
         </div>
         <AccountDialog ref="accountDialog" @setActiveView="setActiveView"></AccountDialog>
@@ -37,7 +43,9 @@ import sidebarItems from "@/Data/SidebarData";
 const activeView = ref(null);
 const accountDialog = ref(null);
 const nostrStore = useNostrStore();
+
 const npub = computed(() => nostrStore.npub);
+const nip05Verified = computed(() => nostrStore.verified);
 
 const emit = defineEmits(['setActiveView']);
 
@@ -55,4 +63,14 @@ function setActiveView(item) {
 </script>
 
 <style scoped>
+    .profile-container {
+        display: flex;
+        align-items: center;
+    }
+    .profile-picture {
+        width: 50px;
+        height: 50px;
+        border: 2px solid #f59e0b;
+        border-radius: 50%;
+    }
 </style>
