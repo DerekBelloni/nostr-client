@@ -83,22 +83,8 @@ class TrendingEventsManager
 
     private static function _processImages(&$trending_images)
     {
-        // $pattern = '/https:\/\/[^\s]+/i';
-        // $trending_images->transform(function ($item) use ($pattern) {
-        //     if (isset($item["event"]["content"])) {
-        //         $item["event"]["content"] = preg_replace_callback($pattern, function ($matches) {
-        //             $url = $matches[0];
-        //             if (preg_match('/\.(jpg|jpeg|png|gif)$/i', $url)) {
-        //                 return '<img src="' . $url . '">';
-        //             } else {
-        //                 return '<a href="' . $url . '" target="_blank">' . $url . '</a>';
-        //             }
-        //         }, $item["event"]["content"]);
-        //     }
-        //     return $item;
-        // });
         $pattern = '/https:\/\/[^\s]+(\.(mp4|webm|ogg|mov|jpg|jpeg|png|gif))?/i';
-        $url_meta = [];
+
         $trending_images->transform(function ($item) use ($pattern) {
             if (isset($item["event"]["content"])) {
                 $item["event"]["content"] = preg_replace_callback($pattern, function ($matches) {
@@ -160,20 +146,26 @@ class TrendingEventsManager
 
     private static function _processContent(&$trending_content, $type = null)
     {
-        switch ($type) {
-            case "images":
-                self::_processImages($trending_content);
-                self::_processVideos($trending_content);
-                break;
-            case "notes":
-                self::_processImages($trending_content);
-                self::_processVideos($trending_content);
-                break;
-            case "videos":
-                self::_processImages($trending_content);
-                self::_processVideos($trending_content);
-                break;
-        }
+        // dd($trending_content);
+        $processor = new ContentProcessor();
+        $processor->processContent($trending_content[2]["event"]["content"]);
+        // foreach ($trending_content as $content) {
+        //     $processor->processContent($content["event"]["content"]);
+        // }
+        // switch ($type) {
+        //     case "images":
+        //         self::_processImages($trending_content);
+        //         self::_processVideos($trending_content);
+        //         break;
+        //     case "notes":
+        //         self::_processImages($trending_content);
+        //         self::_processVideos($trending_content);
+        //         break;
+        //     case "videos":
+        //         self::_processImages($trending_content);
+        //         self::_processVideos($trending_content);
+        //         break;
+        // }
 
         return $trending_content->transform(function ($note) {
             if (isset($note["author"])) {
