@@ -74,11 +74,6 @@ class TrendingEventsManager
     private static function _mergeTrendingContent($trending_notes, $trending_images, $trending_videos)
     {
         return $trending_notes->merge($trending_images)->merge($trending_videos);
-        
-        // $trending_content = $trending_notes->merge($trending_images)->merge($trending_videos);
-        
-        // $sorted_trending_content = $trending_content->sortByDesc('event.created_at');
-        // return $sorted_trending_content->values();
     }
 
     private static function _processImages(&$trending_images)
@@ -95,9 +90,6 @@ class TrendingEventsManager
                     } else if (in_array($extension, ['mp4', 'webm', 'ogg', 'mov'])) {
                         return '<video width="600" height="405" controls><source src="' . $url . '" type="video/' . $extension . '">Your browser does not support the video tag.</video>';
                     } else {
-                        $url_meta[] = $url;
-                        self::_getUrlMetadata($url);
-                        // TODO: Create what is known as a rich preview
                         return '<a href="' . $url . '" target="_blank">' . $url . '</a>';
                     }
                 }, $item["event"]["content"]);
@@ -146,28 +138,29 @@ class TrendingEventsManager
 
     private static function _processContent(&$trending_content, $type = null)
     {
-        // dd($trending_content);
         $processor = new ContentProcessor();
-        $processor->processContent($trending_content[2]["event"]["content"]);
-        // foreach ($trending_content as $content) {
-        //     $processor->processContent($content["event"]["content"]);
-        // }
-        // switch ($type) {
-        //     case "images":
-        //         self::_processImages($trending_content);
-        //         self::_processVideos($trending_content);
-        //         break;
-        //     case "notes":
-        //         self::_processImages($trending_content);
-        //         self::_processVideos($trending_content);
-        //         break;
-        //     case "videos":
-        //         self::_processImages($trending_content);
-        //         self::_processVideos($trending_content);
-        //         break;
-        // }
+        
+        $processor->processContent($trending_content[7]["event"]["content"]);
 
-        return $trending_content->transform(function ($note) {
+        switch ($type) {
+            case "images":
+                self::_processImages($trending_content);
+                self::_processVideos($trending_content);
+                break;
+            case "notes":
+                self::_processImages($trending_content);
+                self::_processVideos($trending_content);
+                break;
+            case "videos":
+                self::_processImages($trending_content);
+                self::_processVideos($trending_content);
+                break;
+        }
+
+        return $trending_content->transform(function ($note) use ($processor) {
+            if (isset($note["event"]["content"])) {
+                $note["processed_content"] = $processor->processContent($note["event"]["content"]);
+            }
             if (isset($note["author"])) {
                 $note["author"]["content"] = json_decode($note["author"]["content"], true);
             }
