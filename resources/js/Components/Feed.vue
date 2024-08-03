@@ -16,13 +16,23 @@
                     </div>
                 </div>
                 <div class="grid grid-cols-12">
-                    <div class="col-span-11 col-start-2">
-                        <!-- <template v-if="!note.metadata_content.name && !note.metadata_content.nip05">
-                            <span class="text-amber-600 font-semibold">{{note.npub}}</span>
-                        </template> -->
-                        <div class="text-wrap">
-                            <!-- <span class="font-medium" v-html="note.event.content">{{note.event.content}}</span> -->
-                            <span class="font-medium" v-html="note.event.content"></span>
+                    <div v-for="content in note.event.processed_content" class="col-span-11 col-start-2">
+                        <div v-if="content.type === 'video'" class="rounded">
+                            <div class="my-2">
+                                <video class="rounded-video" width="600" height="405" controls>
+                                    <source :src="content.content" type="video/mp4">
+                                </video>
+                            </div>
+                        </div>
+                        <div v-if="content.type === 'text'">
+                            <div class="text-wrap">
+                                <span class="font-medium" v-html="content.content"></span>
+                            </div>
+                        </div>
+                        <div v-if="content.type === 'image'" class="my-4">
+                            <div class="text-wrap">
+                                <img class="rounded" :src="content.content" alt="">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -60,5 +70,12 @@ const notes = ref(props.notes);
         overflow-y: auto;
         padding: 10px;
        
+    }
+    .rounded-video {
+        border-radius: 15px; /* Adjust the value to your preference */
+        overflow: hidden; /* Ensures the rounded corners are applied */
+        border: none !important; /* Removes any border */
+        outline: none !important; /* Removes any outline */
+        box-shadow: none !important; /* Removes any box shadow */
     }
 </style>

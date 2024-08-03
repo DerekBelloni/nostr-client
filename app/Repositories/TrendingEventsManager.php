@@ -139,8 +139,6 @@ class TrendingEventsManager
     private static function _processContent(&$trending_content, $type = null)
     {
         $processor = new ContentProcessor();
-        
-        $processor->processContent($trending_content[7]["event"]["content"]);
 
         switch ($type) {
             case "images":
@@ -157,16 +155,31 @@ class TrendingEventsManager
                 break;
         }
 
-        return $trending_content->transform(function ($note) use ($processor) {
+        // $note["event"]["processed_content"] = $processor->processContent($trending_content[2]["event"]["content"]);
+        // dd($note);
+        $test = $trending_content->transform(function ($note) use ($processor) {
             if (isset($note["event"]["content"])) {
-                $note["processed_content"] = $processor->processContent($note["event"]["content"]);
+                $note["event"]["processed_content"] = $processor->processContent($note["event"]["content"]);
             }
             if (isset($note["author"])) {
-                $note["author"]["content"] = json_decode($note["author"]["content"], true);
+                $note["author"]["content"] = !is_array($note["author"]["content"]) ? json_decode($note["author"]["content"], true) : [];
             }
             $note["event"]["utc_timestamp"] = Carbon::createFromTimestampUTC($note["event"]["created_at"])->format('Y-m-d H:i:s');
             return $note;
         });
+        // dd("skolamine", $test);
+        return $test;
+
+        // return $trending_content->transform(function ($note) use ($processor) {
+        //     if (isset($note["event"]["content"])) {
+        //         $note["event"]["processed_content"] = $processor->processContent($note["event"]["content"]);
+        //     }
+        //     if (isset($note["author"])) {
+        //         $note["author"]["content"] = json_decode($note["author"]["content"], true);
+        //     }
+        //     $note["event"]["utc_timestamp"] = Carbon::createFromTimestampUTC($note["event"]["created_at"])->format('Y-m-d H:i:s');
+        //     return $note;
+        // });
     }
 
     
