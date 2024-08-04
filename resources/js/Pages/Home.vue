@@ -7,6 +7,7 @@
             <Profile v-if="activeView == 'profile'"></Profile>
         </div>
         <div class="right-sidebar">
+            <TrendingTags></TrendingTags>
         </div>
     </div>
 </template>
@@ -19,6 +20,7 @@ import Account from '../Components/Account.vue'
 import Feed from '../Components/Feed.vue'
 import Profile from '../Components/Profile.vue'
 import Sidebar from '../Components/Sidebar.vue'
+import TrendingTags from '../Components/TrendingTags.vue'
 
 const activeView = ref('');
 const isSet = ref(false);

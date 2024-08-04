@@ -36,6 +36,14 @@
                         </div>
                     </div>
                 </div>
+                <div class="grid grid-cols-12 mt-4 mb-2 mx-4">
+                    <div class="col-start-2 col-span-11 flex space-x-12">
+                        <i class="pi pi-comment text-emerald-500" style="font-size: 1.1rem"></i>
+                        <i class="pi pi-heart text-rose-500" style="font-size: 1.1rem"></i>
+                        <i class="pi pi-bolt text-amber-500" style="font-size: 1.1rem"></i>
+                    </div>
+                </div>
+                <!-- pi-bell, pi-bolt, pi-comment, pi-bitcoin-->
             </li>
         </ul>
     </div>
