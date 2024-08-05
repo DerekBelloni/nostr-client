@@ -13,6 +13,8 @@ class TrendingEventsManager
     {
         $client = new Client();
 
+        $test = RabbitMQManager::testQueue($request);
+       
         $trending_notes = self::_getTrendingNotes($client);
         $trending_videos = self::_getTrendingVideos($client);
         $trending_images = self::_getTrendingImages($client);
@@ -167,7 +169,7 @@ class TrendingEventsManager
             $note["event"]["utc_timestamp"] = Carbon::createFromTimestampUTC($note["event"]["created_at"])->format('Y-m-d H:i:s');
             return $note;
         });
-        // dd("skolamine", $test);
+
         return $test;
 
         // return $trending_content->transform(function ($note) use ($processor) {

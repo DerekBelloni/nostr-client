@@ -24,17 +24,24 @@ class NostrKeyManager
                 // Convert hex public key to npub
                 $publicKeyBech32 = $key->convertPublicKeyToBech32($publicKeyHex);
 
-                $cached_metadata = self::_checkCachedMetadata($publicKeyHex);
+                // $cached_metadata = self::_checkCachedMetadata($publicKeyHex);
             
-                if (isset($cached_metadata)) {
-                    list($name, $domain) = self::_processUserMetadata($cached_metadata);
-                    $verified = self::_getNip05Verification($name, $domain, $publicKeyHex);
+                // if (isset($cached_metadata)) {
+                //     list($name, $domain) = self::_processUserMetadata($cached_metadata);
+                //     $verified = self::_getNip05Verification($name, $domain, $publicKeyHex);
                     
-                } else {
-                    self::_setRedisStream($publicKeyHex);
-                }
+                // } else {
+                //     // self::_setRedisStream($publicKeyHex);
+                //     $test = RabbitMQManager::testQueue($publicKeyHex);
+                // }
+                $user_hex_req = new Request([
+                    'user_pub_hex' => $publicKeyHex
+                ]);
+                // dd($publicKeyHex);
+                $test = RabbitMQManager::testQueue($user_hex_req);
 
-                $metadata_content = $cached_metadata[2];
+                dd($test);
+                // $metadata_content = $cached_metadata[2];
 
                 return [$metadata_content, $publicKeyHex, $publicKeyBech32, $verified];
             } catch (\Exception $e) {
