@@ -10,9 +10,14 @@
                         </div>
                     </div>
                     <div class="col-span-11 col-start-2">
-                        <span class="text-gray-700 font-semibold">{{note.author?.content.name}}</span>
-                        <i class="pi pi-verified pl-1"></i>
-                        <span class="text-amber-600 pl-1">{{note.author?.content.nip05}}</span>
+                        <div class="flex justify-between">
+                            <div>
+                                <span class="text-gray-700 font-semibold">{{note.author?.content.name}}</span>
+                                <i class="pi pi-verified pl-1"></i>
+                                <span class="text-amber-600 pl-1">{{note.author?.content.nip05}}</span>
+                            </div>
+                            <span class="text-xs font-medium text-gray-600">{{noteDate(note.event.utc_timestamp)}}</span>
+                        </div>
                     </div>
                 </div>
                 <div class="grid grid-cols-12">
@@ -59,6 +64,12 @@ import FeedSearch from './FeedSearch.vue';
 
 const props = defineProps(['trendingContent']);
 const notes = ref(props.notes);
+
+const noteDate = (utcDate) => {
+    console.log("utc date: ", utcDate);
+    const formattedDate = utcDate.split(' ')
+    return formattedDate[0];
+}
 
 </script>
 
