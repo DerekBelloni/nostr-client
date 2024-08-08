@@ -34,7 +34,6 @@
             preserveState: true,
             onSuccess: page => {
                 nostrStore.metadataContent = page.props.metadataContent;
-                console.log("nostr store metadata content: ", nostrStore.metadataContent);
                 nostrStore.npub = page.props.npub;
                 nostrStore.hexPub = page.props.hexPub;
                 nostrStore.verified = page.props.verified;

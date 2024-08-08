@@ -29,7 +29,11 @@
                 <span class="font-semibold">{{nostrStore.metadataContent.content.name}}</span>
             </a>
         </div>
+        <div class="mx-16">
+            <Button @click="openNoteDialog" label="+ Note" class="rounded-full px-2 py-1 text-amber-700 font-semibold bg-amber-200"></Button>
+        </div>
         <AccountDialog ref="accountDialog" @setActiveView="setActiveView"></AccountDialog>
+        <NoteDialog ref="noteDialog"></NoteDialog>
     </div>
 </template>
 
@@ -37,11 +41,13 @@
 import {  computed, defineEmits, ref, watch, } from "vue";
 import { useNostrStore } from '@/stores/useNostrStore';
 import AccountDialog from '../Components/AccountDialog.vue';
-import Logo from '../Components/Logo.vue'
+import NoteDialog from '../Components/NoteDialog.vue';
+import Logo from '../Components/Logo.vue';
 import sidebarItems from "@/Data/SidebarData";
 
 const activeView = ref(null);
 const accountDialog = ref(null);
+const noteDialog = ref(null);
 const nostrStore = useNostrStore();
 
 const npub = computed(() => nostrStore.npub);
@@ -52,10 +58,12 @@ const emit = defineEmits(['setActiveView']);
 const openAccountDialog = () => {
     accountDialog.value.open();
 }
+const openNoteDialog = () => {
+    noteDialog.value.open();
+}
 
 function setActiveView(item) {
     activeView.value = item;
-    console.log("activeView: ", activeView.value);
     emit('setActiveView', activeView.value);
 }
 

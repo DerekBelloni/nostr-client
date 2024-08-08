@@ -10,6 +10,7 @@ import PrimeVue from 'primevue/config';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import FloatLabel from 'primevue/floatlabel';
+import Textarea from 'primevue/textarea';
 import Lodash from 'lodash';
 
 import 'primevue/resources/themes/aura-light-amber/theme.css';
@@ -31,6 +32,7 @@ createInertiaApp({
             .component('Button', Button)
             .component('InputText', InputText)
             .component('FloatLabel', FloatLabel)
+            .component('Textarea', Textarea)
             .mount(el);
     },
     progress: {
