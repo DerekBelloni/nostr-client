@@ -2,6 +2,8 @@
 
 namespace App\Repositories;
 
+use App\Facades\UserMetada;
+use App\Facades\UserMetadata;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -37,10 +39,13 @@ class NostrKeyManager
                 $user_hex_req = new Request([
                     'user_pub_hex' => $publicKeyHex
                 ]);
-                // dd($publicKeyHex);
-                $test = RabbitMQManager::testQueue($user_hex_req);
+                
+                $complete = RabbitMQManager::testQueue($user_hex_req);
 
-                dd($test);
+                if ($complete) {
+                    UserMetadata::listenForMetadata($publicKeyHex);
+                }
+
                 // $metadata_content = $cached_metadata[2];
 
                 return [$metadata_content, $publicKeyHex, $publicKeyBech32, $verified];

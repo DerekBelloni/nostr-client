@@ -30,7 +30,7 @@
             </a>
         </div>
         <div class="mx-16">
-            <Button @click="openNoteDialog" label="+ Note" class="rounded-full px-2 py-1 text-amber-700 font-semibold bg-amber-200"></Button>
+            <Button @click="openNoteDialog" label="+ Note" class="rounded-full px-2 py-1 font-semibold"></Button>
         </div>
         <AccountDialog ref="accountDialog" @setActiveView="setActiveView"></AccountDialog>
         <NoteDialog ref="noteDialog"></NoteDialog>

@@ -10,9 +10,8 @@ class RabbitMQManager
 {
     public static function testQueue(Request $request)
     {
-        // dd($request->all());
         $user_pub_hex = $request->input('user_pub_hex');
-        // dd($user_pub_hex);
+
         $connection = new AMQPStreamConnection('localhost', 5672, 'guest', 'guest');
 
         $channel = $connection->channel();
