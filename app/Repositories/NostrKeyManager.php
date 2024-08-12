@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Facades\UserMetada;
 use App\Facades\UserMetadata;
+use App\Jobs\ListenUserMetadata;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -26,16 +27,15 @@ class NostrKeyManager
                 // Convert hex public key to npub
                 $publicKeyBech32 = $key->convertPublicKeyToBech32($publicKeyHex);
 
-                // $cached_metadata = self::_checkCachedMetadata($publicKeyHex);
+                $cached_metadata = self::_checkCachedMetadata($publicKeyHex);
             
-                // if (isset($cached_metadata)) {
-                //     list($name, $domain) = self::_processUserMetadata($cached_metadata);
-                //     $verified = self::_getNip05Verification($name, $domain, $publicKeyHex);
-                    
-                // } else {
-                //     // self::_setRedisStream($publicKeyHex);
-                //     $test = RabbitMQManager::testQueue($publicKeyHex);
-                // }
+                $verified = null;
+
+                if (isset($cached_metadata)) {
+                    list($name, $domain) = self::_processUserMetadata($cached_metadata);
+                    $verified = self::_getNip05Verification($name, $domain, $publicKeyHex);
+                }
+
                 $user_hex_req = new Request([
                     'user_pub_hex' => $publicKeyHex
                 ]);
@@ -43,10 +43,10 @@ class NostrKeyManager
                 $complete = RabbitMQManager::testQueue($user_hex_req);
 
                 if ($complete) {
-                    UserMetadata::listenForMetadata($publicKeyHex);
+                    ListenUserMetadata::dispatch($publicKeyHex)->onQueue('metadata');
                 }
 
-                // $metadata_content = $cached_metadata[2];
+                $metadata_content = $cached_metadata[2] ?? null;
 
                 return [$metadata_content, $publicKeyHex, $publicKeyBech32, $verified];
             } catch (\Exception $e) {
