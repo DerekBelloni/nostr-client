@@ -2,12 +2,16 @@
 
 namespace App\Jobs;
 
+use App\Events\UserMetadataSet;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Redis;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
+
+use function Pest\Laravel\json;
 
 class ListenUserMetadata implements ShouldQueue
 {
@@ -34,7 +38,13 @@ class ListenUserMetadata implements ShouldQueue
         echo "[*] Waiting for messages. To exist press CTRL+C\n";
 
         $callback = function ($msg) {
-            dd($msg->body);
+            $pubHexKey = $msg->body;
+            // dd($pubHexKey);
+            $redis_metadata = json_decode(Redis::get($pubHexKey), true);
+            dd($redis_metadata);
+            if (isset($redis_metadata)) {
+                event(new UserMetadataSet($this->pubHexKey, $redis_metadata));
+            }
         };
 
         $channel->basic_consume('metadata_set', '', false, true, false, false, $callback);
