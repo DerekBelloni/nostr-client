@@ -4,6 +4,7 @@ use App\Http\Controllers\NostrKeyController;
 use App\Http\Controllers\NotesController;
 use App\Http\Controllers\RedisController;
 use App\Http\Controllers\Trending\TrendingEventsController;
+use App\Http\Controllers\SSEController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -20,6 +21,8 @@ Route::get('/', function () {
 Route::get('/notes', [NotesController::class, 'show']);
 
 Route::post('/npub', [NostrKeyController::class, 'login']);
+
+Route::get('/sse', [SSEController::class, 'streamMetadata']);
 
 Route::get('/trending-events', [TrendingEventsController::class, 'index']);
 

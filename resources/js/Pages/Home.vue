@@ -1,6 +1,6 @@
 <template>
     <div class="flex h-screen overflow-hidden">
-        <Sidebar class="sidebar border border-r border-gray-200" @setActiveView="setActiveView"></Sidebar>
+        <Sidebar class="sidebar border border-r border-gray-200" @setActiveView="setActiveView" @pubKeyRetrieved="pubKeyRetrieved"></Sidebar>
         <div class="center-feature border-r">
             <Feed v-if="activeView == 'Home'" :trendingContent="trendingContent"></Feed>
             <Account v-if="activeView == 'account'"></Account>
@@ -14,8 +14,9 @@
 
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
-import { onMounted, ref, reactive } from "vue";
+import { onBeforeUnmount ,onMounted, ref, reactive } from "vue";
 import { router } from '@inertiajs/vue3'
+import { useNostrStore } from '@/stores/useNostrStore';
 import Account from '../Components/Account.vue'
 import Feed from '../Components/Feed.vue'
 import Profile from '../Components/Profile.vue'
@@ -23,13 +24,21 @@ import Sidebar from '../Components/Sidebar.vue'
 import TrendingTags from '../Components/TrendingTags.vue'
 
 const activeView = ref('');
+const eventSource = ref(null);
 const isSet = ref(false);
-const trendingContent = ref([]);
+const nostrStore = useNostrStore();
 const reactions = ref([]);
+const trendingContent = ref([]);
 
 onMounted(() => {
     retrieveNotes();
 });
+
+onBeforeUnmount(() => {
+    if (eventSource.value) {
+        eventSource.value.close();
+    }
+})
 
 const retrieveNotes = () => {
     router.visit('/trending-events', {
@@ -49,6 +58,28 @@ const retrieveNotes = () => {
 const setActiveView = (input) => {
     activeView.value = input;
 }
+
+const pubKeyRetrieved = () => {
+    let pubKeyHex = nostrStore.hexPub;
+    if (!!pubKeyHex) {
+        setupSSE();
+    }
+}
+
+// will become a composable
+function setupSSE() {
+    eventSource.value = new EventSource(`/sse?pubHexKey=${nostrStore.hexPub}`);
+
+    eventSource.value.onmessage = (event) => {
+        console.log("[Server side event]: ", event);
+    }
+
+    eventSource.value.onerror = (error) => {
+        console.error('[Server side event error]: ', error);
+        eventSource.value.close();
+    }
+}
+
 
 </script>
 

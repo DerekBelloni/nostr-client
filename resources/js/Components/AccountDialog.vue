@@ -11,7 +11,7 @@
             </div>
         </div>
     </Dialog>
-    <LoginDialog ref="loginDialog"></LoginDialog>
+    <LoginDialog ref="loginDialog" @pubKeyRetrieved="pubKeyRetrieved"></LoginDialog>
 </template>
 
 <script setup>
@@ -23,7 +23,7 @@ const accountDialog = ref(false);
 const loginDialog = ref(null);
 const activeView = ref(null);
 
-const emit = defineEmits(['setActiveView']);
+const emit = defineEmits(['setActiveView', 'pubKeyRetrieved']);
 
 function setActiveView() {
     activeView.value = 'account';
@@ -42,6 +42,10 @@ const open = () => {
 const openLoginDialog = () => {
     loginDialog.value.open();
     accountDialog.value = false;
+}
+
+const pubKeyRetrieved = () => {
+    emit('pubKeyRetrieved');
 }
 
 

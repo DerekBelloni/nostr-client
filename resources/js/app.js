@@ -11,6 +11,8 @@ import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import FloatLabel from 'primevue/floatlabel';
 import Textarea from 'primevue/textarea';
+import Toast from 'primevue/toast';
+import ToastService from 'primevue/toastservice';
 import Lodash from 'lodash';
 
 import 'primevue/resources/themes/aura-light-amber/theme.css';
@@ -29,10 +31,12 @@ createInertiaApp({
             .use(PrimeVue)
             .use(ZiggyVue)
             .use(Lodash)
+            .use(ToastService)
             .component('Button', Button)
             .component('InputText', InputText)
             .component('FloatLabel', FloatLabel)
             .component('Textarea', Textarea)
+            .component('Toast', Toast)
             .mount(el);
     },
     progress: {

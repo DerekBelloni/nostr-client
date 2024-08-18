@@ -25,6 +25,8 @@ class ListenUserMetadata implements ShouldQueue
         $this->pubHexKey = $pubHexKey;
     }
 
+    // Array to string Conversion
+
     /**
      * Execute the job.
      */
@@ -39,11 +41,12 @@ class ListenUserMetadata implements ShouldQueue
 
         $callback = function ($msg) {
             $pubHexKey = $msg->body;
-            // dd($pubHexKey);
             $redis_metadata = json_decode(Redis::get($pubHexKey), true);
-            dd($redis_metadata);
+        
             if (isset($redis_metadata)) {
+                dd($redis_metadata);
                 event(new UserMetadataSet($this->pubHexKey, $redis_metadata));
+                Log::info('UserMetadataSet event fired', ['pubHexKey' => $this->pubHexKey]);
             }
         };
 

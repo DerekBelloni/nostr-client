@@ -25,6 +25,8 @@
     
     const nostrStore = useNostrStore();
 
+    const emit = defineEmits(['pubKeyRetrieved']);
+
     const open = () => {
         loginDialog.value = true;
     }
@@ -37,6 +39,7 @@
                 nostrStore.npub = page.props.npub;
                 nostrStore.hexPub = page.props.hexPub;
                 nostrStore.verified = page.props.verified;
+                emit('pubKeyRetrieved');
                 router.replace('/'); 
                 loginDialog.value = false; 
             },
