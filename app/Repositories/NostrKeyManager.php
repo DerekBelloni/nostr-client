@@ -43,6 +43,7 @@ class NostrKeyManager
                 $complete = RabbitMQManager::testQueue($user_hex_req);
 
                 if ($complete) {
+                    Log::info('In nostr key manager: ', ['pubHexKey' => $publicKeyHex]);
                     ListenUserMetadata::dispatch($publicKeyHex)->onQueue('metadata');
                 }
 

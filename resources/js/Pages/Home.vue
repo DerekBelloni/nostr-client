@@ -32,6 +32,7 @@ const trendingContent = ref([]);
 
 onMounted(() => {
     retrieveNotes();
+    setupSSE();
 });
 
 onBeforeUnmount(() => {
@@ -78,6 +79,7 @@ function setupSSE() {
         console.error('[Server side event error]: ', error);
         eventSource.value.close();
     }
+
 }
 
 

@@ -3,15 +3,15 @@
 namespace App\Jobs;
 
 use App\Events\UserMetadataSet;
+use App\Facades\UserMetadata;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\Log;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
-
-use function Pest\Laravel\json;
 
 class ListenUserMetadata implements ShouldQueue
 {
@@ -36,17 +36,25 @@ class ListenUserMetadata implements ShouldQueue
         $channel = $connection->channel();
         
         $channel->queue_declare('metadata_set', false, false, false, false);
-
-        echo "[*] Waiting for messages. To exist press CTRL+C\n";
+        Log::info('Waiting for messages on queue: metadata_set');
 
         $callback = function ($msg) {
-            $pubHexKey = $msg->body;
-            $redis_metadata = json_decode(Redis::get($pubHexKey), true);
+            $receivedPubHexKey = $msg->body;
+            Log::info('Received message', ['receivedPubHexKey' => $receivedPubHexKey]);
+            $redis_metadata = json_decode(Redis::get($receivedPubHexKey), true);
         
             if (isset($redis_metadata)) {
-                dd($redis_metadata);
-                event(new UserMetadataSet($this->pubHexKey, $redis_metadata));
-                Log::info('UserMetadataSet event fired', ['pubHexKey' => $this->pubHexKey]);
+                Log::info('Metadata found in Redis', ['metadata' => $redis_metadata]);
+                try {
+                    Log::info('About to fire UserMetadataSet event', ['pubHexKey' => $receivedPubHexKey]);
+                    event(new UserMetadataSet($receivedPubHexKey, $redis_metadata));
+                    // UserMetadataSet::dispatch($receivedPubHexKey, $redis_metadata);
+                    Log::info('UserMetadataSet event fired', ['pubHexKey' => $receivedPubHexKey]);
+                } catch (\Exception $e) {
+                    Log::error('Error firing UserMetadataSet event', ['error' => $e->getMessage()]);
+                }
+            } else {
+                Log::warning('No metadata found in Redis for key', ['pubHexKey' => $receivedPubHexKey]);
             }
         };
 
