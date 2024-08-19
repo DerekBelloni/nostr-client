@@ -40,15 +40,13 @@ class ListenUserMetadata implements ShouldQueue
 
         $callback = function ($msg) {
             $receivedPubHexKey = $msg->body;
-            Log::info('Received message', ['receivedPubHexKey' => $receivedPubHexKey]);
             $redis_metadata = json_decode(Redis::get($receivedPubHexKey), true);
-        
+            
+            $formattedMetadata = self::decodeMetadata($redis_metadata);
+
             if (isset($redis_metadata)) {
-                Log::info('Metadata found in Redis', ['metadata' => $redis_metadata]);
                 try {
-                    Log::info('About to fire UserMetadataSet event', ['pubHexKey' => $receivedPubHexKey]);
-                    event(new UserMetadataSet($receivedPubHexKey, $redis_metadata));
-                    // UserMetadataSet::dispatch($receivedPubHexKey, $redis_metadata);
+                    event(new UserMetadataSet($formattedMetadata));
                     Log::info('UserMetadataSet event fired', ['pubHexKey' => $receivedPubHexKey]);
                 } catch (\Exception $e) {
                     Log::error('Error firing UserMetadataSet event', ['error' => $e->getMessage()]);
@@ -65,5 +63,13 @@ class ListenUserMetadata implements ShouldQueue
         } catch (\Throwable $exception) {
             echo $exception->getMessage();
         }
+    }
+
+    public function decodeMetadata($metadata)
+    {
+        if (isset($metadata)) {
+            $metadata[2]["content"] = json_decode($metadata[2]["content"], true);
+        }
+        return $metadata[2];
     }
 }

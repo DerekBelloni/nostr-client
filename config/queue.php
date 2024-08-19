@@ -109,4 +109,6 @@ return [
         'table' => 'failed_jobs',
     ],
 
+    'timeout' => 0,
+
 ];

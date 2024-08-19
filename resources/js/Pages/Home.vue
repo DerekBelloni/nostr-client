@@ -1,6 +1,7 @@
 <template>
     <div class="flex h-screen overflow-hidden">
-        <Sidebar class="sidebar border border-r border-gray-200" @setActiveView="setActiveView" @pubKeyRetrieved="pubKeyRetrieved"></Sidebar>
+        <!-- <Sidebar class="sidebar border border-r border-gray-200" @setActiveView="setActiveView" @pubKeyRetrieved="pubKeyRetrieved"></Sidebar> -->
+        <Sidebar class="sidebar border border-r border-gray-200" @setActiveView="setActiveView" :mq-verified="mqVerified"></Sidebar>
         <div class="center-feature border-r">
             <Feed v-if="activeView == 'Home'" :trendingContent="trendingContent"></Feed>
             <Account v-if="activeView == 'account'"></Account>
@@ -17,22 +18,26 @@ import { Head, Link } from '@inertiajs/vue3';
 import { onBeforeUnmount ,onMounted, ref, reactive } from "vue";
 import { router } from '@inertiajs/vue3'
 import { useNostrStore } from '@/stores/useNostrStore';
+import { useToast } from 'primevue/usetoast';
 import Account from '../Components/Account.vue'
 import Feed from '../Components/Feed.vue'
 import Profile from '../Components/Profile.vue'
 import Sidebar from '../Components/Sidebar.vue'
 import TrendingTags from '../Components/TrendingTags.vue'
+import echo from '../echo.js';
 
 const activeView = ref('');
 const eventSource = ref(null);
 const isSet = ref(false);
+const mqVerified = ref(false);
 const nostrStore = useNostrStore();
 const reactions = ref([]);
+const toast = useToast();
 const trendingContent = ref([]);
 
 onMounted(() => {
     retrieveNotes();
-    setupSSE();
+    setUpEcho();
 });
 
 onBeforeUnmount(() => {
@@ -40,6 +45,17 @@ onBeforeUnmount(() => {
         eventSource.value.close();
     }
 })
+
+const setUpEcho = () => {
+    console.log('here', echo)
+    echo.channel('user_metadata')
+        .listen('.metadata_set', (event) => {
+            console.log("Metadata event received: ", event.metadata);
+            toast.add({ severity: 'success', summary: 'Info', detail: 'Metadata Retrieved', life: 3000 });
+            nostrStore.metadataContent = event.metadata;
+            mqVerified.value = true;
+        })
+}
 
 const retrieveNotes = () => {
     router.visit('/trending-events', {
@@ -58,13 +74,6 @@ const retrieveNotes = () => {
 
 const setActiveView = (input) => {
     activeView.value = input;
-}
-
-const pubKeyRetrieved = () => {
-    let pubKeyHex = nostrStore.hexPub;
-    if (!!pubKeyHex) {
-        setupSSE();
-    }
 }
 
 // will become a composable

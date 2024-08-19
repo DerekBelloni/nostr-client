@@ -22,8 +22,6 @@ Route::get('/notes', [NotesController::class, 'show']);
 
 Route::post('/npub', [NostrKeyController::class, 'login']);
 
-Route::get('/sse', [SSEController::class, 'streamMetadata']);
-
 Route::get('/trending-events', [TrendingEventsController::class, 'index']);
 
 require __DIR__.'/auth.php';

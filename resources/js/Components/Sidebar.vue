@@ -32,10 +32,7 @@
         <div class="mx-16">
             <Button @click="openNoteDialog" label="+ Note" class="rounded-full px-2 py-1 font-semibold"></Button>
         </div>
-        <div class="mx-16">
-            <Button @click="callToast" label="Toast" class="rounded-full px-2 py-1 font-semibold"></Button>
-        </div>
-        <AccountDialog ref="accountDialog" @setActiveView="setActiveView" @pubKeyRetrieved="pubKeyRetrieved"></AccountDialog>
+        <AccountDialog ref="accountDialog" @setActiveView="setActiveView"></AccountDialog>
         <NoteDialog ref="noteDialog"></NoteDialog>
         <Toast />
     </div>
@@ -44,18 +41,17 @@
 <script setup>
 import {  computed, defineEmits, ref, watch, } from "vue";
 import { useNostrStore } from '@/stores/useNostrStore';
-import { useToast } from 'primevue/usetoast';
 import AccountDialog from '../Components/AccountDialog.vue';
 import NoteDialog from '../Components/NoteDialog.vue';
 import Logo from '../Components/Logo.vue';
 import sidebarItems from "@/Data/SidebarData";
 
-const toast = useToast();
-
 const activeView = ref(null);
 const accountDialog = ref(null);
 const noteDialog = ref(null);
 const nostrStore = useNostrStore();
+
+const props = defineProps(['mqVerified'])
 
 const npub = computed(() => nostrStore.npub);
 const nip05Verified = computed(() => nostrStore.verified);
@@ -70,20 +66,18 @@ const openNoteDialog = () => {
     noteDialog.value.open();
 }
 
-const callToast = () => {
-    toast.add({ severity: 'success', summary: 'Info', detail: 'Metadata Retrieved', life: 3000 });
-}
-
-const pubKeyRetrieved = () => {
-    emit('pubKeyRetrieved');
-}
-
-
 function setActiveView(item) {
     activeView.value = item;
     emit('setActiveView', activeView.value);
 }
 
+
+watch(() => props.mqVerified, (newValue) => {
+  console.log('mqVerified changed:', newValue);
+  if (newValue) {
+      nostrStore.verified = true;
+  }
+});
 
 </script>
 
