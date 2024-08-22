@@ -14,9 +14,13 @@
 <script setup>
 import Dialog from 'primevue/dialog';
 import { ref, defineEmits } from 'vue';
+import { router } from '@inertiajs/vue3';
+import { useNostrStore } from '@/stores/useNostrStore';
 
 const noteDialog = ref(false);
 const note = ref(null);
+
+const nostrStore = useNostrStore();
 
 const emit = defineEmits(['submitNote']);
 
@@ -29,7 +33,22 @@ const open = () => {
 }
 
 const submitNote = () => {
-
+    if (!!note.value && note.value != '') {
+        console.log("note content: ", note.value);
+        const params = {
+            noteContent: note.value,
+            pubHexKey: nostrStore.hexPub
+        }
+        const url = '/note/create'
+        router.visit(url, {
+            method: 'post',
+            data: params,
+            preserveState: true,
+            onSuccess: () => {
+                console.log("success!");
+            }
+        })
+    }
 }
 
 defineExpose({ open });

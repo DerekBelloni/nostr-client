@@ -20,7 +20,6 @@ class UserMetadataSet implements ShouldBroadcastNow
 
     public function broadcastOn(): array
     {
-        Log::info("Broadcasting metadata event");
         return [
             new Channel('user_metadata')
         ];

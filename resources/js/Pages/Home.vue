@@ -47,10 +47,8 @@ onBeforeUnmount(() => {
 })
 
 const setUpEcho = () => {
-    console.log('here', echo)
     echo.channel('user_metadata')
         .listen('.metadata_set', (event) => {
-            console.log("Metadata event received: ", event.metadata);
             toast.add({ severity: 'success', summary: 'Info', detail: 'Metadata Retrieved', life: 3000 });
             nostrStore.metadataContent = event.metadata;
             mqVerified.value = true;

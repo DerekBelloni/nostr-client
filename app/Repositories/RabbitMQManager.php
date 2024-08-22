@@ -10,17 +10,37 @@ class RabbitMQManager
 {
     public static function testQueue(Request $request)
     {
-        $user_pub_hex = $request->input('user_pub_hex');
+        $pub_hex_key = $request->input('user_pub_hex');
 
         $connection = new AMQPStreamConnection('localhost', 5672, 'guest', 'guest');
 
         $channel = $connection->channel();
         $channel->queue_declare('user_pub_key', false, false, false, false);
 
-        $message = new AMQPMessage($user_pub_hex);
+        $message = new AMQPMessage($pub_hex_key);
 
         $channel->basic_publish($message, '', 'user_pub_key');
         
+        $channel->close();
+        $connection->close();
+        return 'complete';
+    }
+
+    public static function newNoteQueue(Request $request)
+    {
+        $note_content = $request->input('noteContent');
+        $pub_hex_key = $request->input('pubHexKey');
+
+        $connection = new AMQPStreamConnection('localhost', 5672, 'guest', 'guest');
+        $channel = $connection->channel();
+        $channel->queue_declare('new_note', false, false, false, false,);
+
+        $formatted_body = $pub_hex_key . ':' . $note_content;
+
+        $message = new AMQPMessage($formatted_body);
+
+        $channel->basic_publish($message, '', 'new_note');
+
         $channel->close();
         $connection->close();
         return 'complete';

@@ -12,7 +12,7 @@
                 </div>
             </ul>
         </div>
-        <div class="ml-16">
+        <div class="ml-16" v-if="!npub || !nip05Verified">
             <div>
                 <span class="text-xs ml-2">Welcome to nostr!</span>
             </div>
@@ -73,7 +73,6 @@ function setActiveView(item) {
 
 
 watch(() => props.mqVerified, (newValue) => {
-  console.log('mqVerified changed:', newValue);
   if (newValue) {
       nostrStore.verified = true;
   }

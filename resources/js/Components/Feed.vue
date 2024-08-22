@@ -48,7 +48,6 @@
                         <i class="pi pi-bolt text-amber-500" style="font-size: 1.1rem"></i>
                     </div>
                 </div>
-                <!-- pi-bell, pi-bolt, pi-comment, pi-bitcoin-->
             </li>
         </ul>
     </div>
@@ -66,7 +65,6 @@ const props = defineProps(['trendingContent']);
 const notes = ref(props.notes);
 
 const noteDate = (utcDate) => {
-    console.log("utc date: ", utcDate);
     const formattedDate = utcDate.split(' ')
     return formattedDate[0];
 }

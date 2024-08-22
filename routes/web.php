@@ -19,6 +19,7 @@ Route::get('/', function () {
 });
 
 Route::get('/notes', [NotesController::class, 'show']);
+Route::post('/note/create', [NotesController::class, 'create']);
 
 Route::post('/npub', [NostrKeyController::class, 'login']);
 
