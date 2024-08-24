@@ -37,32 +37,17 @@ class NostrKeyManager
                         'user_pub_hex' => $publicKeyHex
                     ]);
                     
-                    $complete = RabbitMQManager::testQueue($user_hex_req);
-    
-                    if ($complete) {
-                        ListenUserMetadata::dispatch($publicKeyHex)->onQueue('metadata');
-                    }
+                    RabbitMQManager::testQueue($user_hex_req);
                 // }
 
-                // I will want to handle two different returns whether or not there is cached metadata
-
-                // $user_hex_req = new Request([
-                //     'user_pub_hex' => $publicKeyHex
-                // ]);
-                
-                // $complete = RabbitMQManager::testQueue($user_hex_req);
-
-                // if ($complete) {
-                //     ListenUserMetadata::dispatch($publicKeyHex)->onQueue('metadata');
-                // }
-
-                // $metadata_content = $cached_metadata[2] ?? null;
 
                 return [$metadata_content, $publicKeyHex, $publicKeyBech32, $verified];
             } catch (\Exception $e) {
                 Log::error('Error processing Nostr key: ' . $e->getMessage());
                 dd('Error: ' . $e->getMessage());
             }
+        } else {
+            return response()->json(['error' => 'No nsec provided'], 400);
         }
     }
 

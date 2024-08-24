@@ -81,7 +81,7 @@ class RelayNotesManager
         self::_storeMetadata();
         
         $processed_notes = collect($processed_notes)->sortByDesc("utc_time")->values()->all();
-        // dd($processed_notes);
+
         $metadata_formatted_notes = collect(self::_mergeNotesWithMetadata($processed_notes))->values()->all();
     
         return [$metadata_formatted_notes, $metadata_formatted_reactions];
