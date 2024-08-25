@@ -41,7 +41,7 @@ class NostrKeyManager
                 // }
 
 
-                return [$metadata_content, $publicKeyHex, $publicKeyBech32, $verified];
+                return [$metadata_content, $publicKeyHex, $publicKeyBech32, $verified, $privateKeyHex];
             } catch (\Exception $e) {
                 Log::error('Error processing Nostr key: ' . $e->getMessage());
                 dd('Error: ' . $e->getMessage());
@@ -104,19 +104,9 @@ class NostrKeyManager
         return [$name, $domain];
     }
 
-    public static function genKeyPair()
-    {
-
-    }
-
     public static function genNPubKey($publicKeyHex)
     {
         $key = new Key();
         return $key->convertPublicKeyToBech32($publicKeyHex);
-    }
-
-    public static function validateKeys($nsec)
-    {
-
     }
 }

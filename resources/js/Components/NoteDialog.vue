@@ -34,10 +34,10 @@ const open = () => {
 
 const submitNote = () => {
     if (!!note.value && note.value != '') {
-        console.log("note content: ", note.value);
         const params = {
             noteContent: note.value,
-            pubHexKey: nostrStore.hexPub
+            pubHexKey: nostrStore.hexPub,
+            hexPriv: nostrStore.hexPriv
         }
         const url = '/note/create'
         router.visit(url, {
@@ -49,6 +49,8 @@ const submitNote = () => {
             }
         })
     }
+    // provide some type of warning, maybe a toast
+    // about a note must have content
 }
 
 defineExpose({ open });

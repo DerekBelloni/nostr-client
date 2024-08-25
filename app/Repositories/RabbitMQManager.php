@@ -30,14 +30,21 @@ class RabbitMQManager
     {
         $note_content = $request->input('noteContent');
         $pub_hex_key = $request->input('pubHexKey');
+        $priv_hex_key = $request->input('hexPriv');
 
         $connection = new AMQPStreamConnection('localhost', 5672, 'guest', 'guest');
         $channel = $connection->channel();
         $channel->queue_declare('new_note', false, false, false, false,);
 
-        $formatted_body = $pub_hex_key . ':' . $note_content;
+        // $formatted_body = $pub_hex_key . ':' . $note_content;
+        $params = [
+            'privHexKey' => $priv_hex_key,
+            'pubHexKey' => $pub_hex_key,
+            'kind' => 1,
+            'content' => $note_content
+        ];
 
-        $message = new AMQPMessage($formatted_body);
+        $message = new AMQPMessage(json_encode($params), true);
 
         $channel->basic_publish($message, '', 'new_note');
 

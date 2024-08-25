@@ -37,6 +37,7 @@
             onSuccess: page => {
                 nostrStore.metadataContent = page.props.metadataContent;
                 nostrStore.npub = page.props.npub;
+                nostrStore.hexPriv = page.props.hexPriv;
                 nostrStore.hexPub = page.props.hexPub;
                 nostrStore.verified = page.props.verified;
                 router.replace('/'); 
