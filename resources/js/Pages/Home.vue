@@ -37,7 +37,8 @@ const trendingContent = ref([]);
 
 onMounted(() => {
     retrieveNotes();
-    setUpEcho();
+    listenForMetadata();
+    listenForUserNotes();
 });
 
 onBeforeUnmount(() => {
@@ -46,12 +47,20 @@ onBeforeUnmount(() => {
     }
 })
 
-const setUpEcho = () => {
+const listenForMetadata = () => {
     echo.channel('user_metadata')
         .listen('.metadata_set', (event) => {
             toast.add({ severity: 'success', summary: 'Info', detail: 'Metadata Retrieved', life: 3000 });
             nostrStore.metadataContent = event.metadata;
             mqVerified.value = true;
+        })
+}
+
+const listenForUserNotes = () => {
+    echo.channel('user_notes') 
+        .listen('.user_notes_retrieved', (event) => {
+            toast.add({ severity: 'info', summary: 'Info', detail: 'Notes Retrieved', life: 3000 });
+            console.log('user notes event: ', event);
         })
 }
 

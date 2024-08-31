@@ -31,7 +31,8 @@ class UserMetadataSet implements ShouldBroadcastNow
         return 'metadata_set';
     }
 
-    public function broadcastWith() {
+    public function broadcastWith() 
+    {
         return ['metadata' => $this->metadata];
     }
 

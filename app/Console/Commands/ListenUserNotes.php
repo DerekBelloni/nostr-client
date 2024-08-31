@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Events\UserNotes;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
@@ -57,8 +58,37 @@ class ListenUserNotes extends Command
     public function processMessage(AMQPMessage $msg) 
     {
         $user_notes = $msg->getBody();
+        $processed_notes = self::removeDuplicateNotes($user_notes);
 
-        Log::info("user notes: ", [$user_notes]);
+        if (isset($processed_notes)) {
+            try {
+                event(new UserNotes($processed_notes));
+                $this->info('UserNotes event fired: ' . $processed_notes);
+            } catch (\Exception $e) {
+                $this->error('Error firing UserNotes event: ', $e->getMessage());
+            }
+        }
+    }
+
+    private function removeDuplicateNotes($user_notes)
+    {
+        // decode json
+        $decoded_notes = json_decode($user_notes, true);
+        Log::info("decoded notes: ", $decoded_notes);
+        // unset the duplicates - eventually this should happen in go before
+        $eventIds = [];
+        foreach ($decoded_notes as $index => $event) {
+            if ($event[0] == 'EVENT') {
+                Log::info("array key 1: ", $event[1]);
+                if (!in_array($event[1], $eventIds)) {
+                    array_push($eventIds, $event[1]);
+                } else {
+                    unset($decoded_notes[$index]);
+                }
+            }
+        }
+
+        return $decoded_notes;
     }
 
     private function closeConnection()
@@ -67,7 +97,7 @@ class ListenUserNotes extends Command
             $this->channel->close();
         }
         if ($this->connection) {
-            $this->conneciton->close();
+            $this->connection->close();
         }
     }
 
