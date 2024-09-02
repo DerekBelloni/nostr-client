@@ -15,7 +15,9 @@ class ListenUserNotes extends Command
 
     private $connection;
     private $channel;
-
+    private $noteIds = [];
+    private $uniqueNotes = [];
+    
     public function __construct()
     {
         parent::__construct();
@@ -58,37 +60,26 @@ class ListenUserNotes extends Command
     public function processMessage(AMQPMessage $msg) 
     {
         $user_notes = $msg->getBody();
-        $processed_notes = self::removeDuplicateNotes($user_notes);
-
-        if (isset($processed_notes)) {
+        self::removeDuplicateNotes($user_notes);
+        Log::info("user note ids: ", $this->noteIds);
+        if (isset($this->uniqueNotes)) {
             try {
-                event(new UserNotes($processed_notes));
-                $this->info('UserNotes event fired: ' . $processed_notes);
+                event(new UserNotes($this->uniqueNotes));
+                $this->info('UserNotes event fired: ' . $this->uniqueNotes);
             } catch (\Exception $e) {
                 $this->error('Error firing UserNotes event: ', $e->getMessage());
             }
         }
     }
 
-    private function removeDuplicateNotes($user_notes)
+    private function removeDuplicateNotes($user_note)
     {
-        // decode json
-        $decoded_notes = json_decode($user_notes, true);
-        Log::info("decoded notes: ", $decoded_notes);
-        // unset the duplicates - eventually this should happen in go before
-        $eventIds = [];
-        foreach ($decoded_notes as $index => $event) {
-            if ($event[0] == 'EVENT') {
-                Log::info("array key 1: ", $event[1]);
-                if (!in_array($event[1], $eventIds)) {
-                    array_push($eventIds, $event[1]);
-                } else {
-                    unset($decoded_notes[$index]);
-                }
-            }
-        }
-
-        return $decoded_notes;
+        $decoded_note = json_decode($user_note, true);
+    
+        if (!in_array($decoded_note[1], $this->noteIds)) {
+            array_push($this->noteIds, $decoded_note[1]);
+            array_push($this->uniqueNotes, $decoded_note);
+        } 
     }
 
     private function closeConnection()

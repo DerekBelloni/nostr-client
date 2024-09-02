@@ -64,6 +64,10 @@ const listenForUserNotes = () => {
         })
 }
 
+const removeDuplicates = () => {
+    
+}
+
 const retrieveNotes = () => {
     router.visit('/trending-events', {
         method: 'get',
@@ -82,22 +86,6 @@ const retrieveNotes = () => {
 const setActiveView = (input) => {
     activeView.value = input;
 }
-
-// // will become a composable
-// function setupSSE() {
-//     eventSource.value = new EventSource(`/sse?pubHexKey=${nostrStore.hexPub}`);
-
-//     eventSource.value.onmessage = (event) => {
-//         console.log("[Server side event]: ", event);
-//     }
-
-//     eventSource.value.onerror = (error) => {
-//         console.error('[Server side event error]: ', error);
-//         eventSource.value.close();
-//     }
-
-// }
-
 
 </script>
 
