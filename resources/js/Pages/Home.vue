@@ -61,11 +61,8 @@ const listenForUserNotes = () => {
         .listen('.user_notes_retrieved', (event) => {
             toast.add({ severity: 'info', summary: 'Info', detail: 'Notes Retrieved', life: 3000 });
             console.log('user notes event: ', event);
+            nostrStore.userNotes.push(event.usernotes);
         })
-}
-
-const removeDuplicates = () => {
-    
 }
 
 const retrieveNotes = () => {

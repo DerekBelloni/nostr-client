@@ -16,7 +16,6 @@ class ListenUserNotes extends Command
     private $connection;
     private $channel;
     private $noteIds = [];
-    private $uniqueNotes = [];
     
     public function __construct()
     {
@@ -60,12 +59,12 @@ class ListenUserNotes extends Command
     public function processMessage(AMQPMessage $msg) 
     {
         $user_notes = $msg->getBody();
-        self::removeDuplicateNotes($user_notes);
-        Log::info("user note ids: ", $this->noteIds);
-        if (isset($this->uniqueNotes)) {
+        $validatedNote = self::removeDuplicateNotes($user_notes);
+    
+        if (isset($validatedNote)) {
             try {
-                event(new UserNotes($this->uniqueNotes));
-                $this->info('UserNotes event fired: ' . $this->uniqueNotes);
+                event(new UserNotes($validatedNote));
+                $this->info('UserNotes event fired: ' . $validatedNote);
             } catch (\Exception $e) {
                 $this->error('Error firing UserNotes event: ', $e->getMessage());
             }
@@ -78,7 +77,9 @@ class ListenUserNotes extends Command
     
         if (!in_array($decoded_note[1], $this->noteIds)) {
             array_push($this->noteIds, $decoded_note[1]);
-            array_push($this->uniqueNotes, $decoded_note);
+            return $decoded_note;
+        } else {
+            return null;
         } 
     }
 

@@ -6,7 +6,7 @@ export const useNostrStore = defineStore('nostr', () => {
     const hexPriv = ref(null);
     const metadataContent = ref(null);
     const npub = ref(null);
-    const userNotes = ref(null);
+    const userNotes = ref([]);
     const verified = ref(false);
 
     return { hexPub, hexPriv, metadataContent, npub, userNotes, verified };
