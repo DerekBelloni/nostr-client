@@ -101,6 +101,6 @@ class ListenUserNotes extends Command
 
     public function __destruct()
     {
-        
+        $this->closeConnection();
     }
 }
