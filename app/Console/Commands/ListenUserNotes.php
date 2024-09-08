@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Events\UserNotes;
+use App\Repositories\UserNotesManager;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
@@ -59,12 +60,17 @@ class ListenUserNotes extends Command
     public function processMessage(AMQPMessage $msg) 
     {
         $user_notes = $msg->getBody();
-        $validatedNote = self::removeDuplicateNotes($user_notes);
+        $validated_note = $this->removeDuplicateNotes($user_notes);
+        $process_user_note = new UserNotesManager();
+
+        if (isset($validated_note)) {
+            $processed_note = $process_user_note->processUserNotes($validated_note);
+        }
     
-        if (isset($validatedNote)) {
+        if (isset($processed_note)) {
             try {
-                event(new UserNotes($validatedNote));
-                $this->info('UserNotes event fired: ' . $validatedNote);
+                event(new UserNotes($processed_note));
+                $this->info('UserNotes event fired: ' . $processed_note);
             } catch (\Exception $e) {
                 $this->error('Error firing UserNotes event: ', $e->getMessage());
             }

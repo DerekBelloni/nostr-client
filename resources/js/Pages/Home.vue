@@ -1,6 +1,5 @@
 <template>
     <div class="flex h-screen overflow-hidden">
-        <!-- <Sidebar class="sidebar border border-r border-gray-200" @setActiveView="setActiveView" @pubKeyRetrieved="pubKeyRetrieved"></Sidebar> -->
         <Sidebar class="sidebar border border-r border-gray-200" @setActiveView="setActiveView" :mq-verified="mqVerified"></Sidebar>
         <div class="center-feature border-r">
             <Feed v-if="activeView == 'Home'" :trendingContent="trendingContent"></Feed>

@@ -21,12 +21,6 @@ class RelayNotesManager
             "wss://purplerelay.com-trending",
             "wss://relay.primal.net-trending"
         ];
-        // $default_relays = [
-        //     "wss://relay.damus.io",
-        //     "wss://nos.lol",
-        //     "wss://purplerelay.com",
-        //     "wss://relay.primal.net"
-        // ];
 
         $merged_notes = [];
 
@@ -36,12 +30,6 @@ class RelayNotesManager
                 $merged_notes = array_merge($merged_notes, $notes);
            }
         }
-        // foreach ($default_relays as $relay) {
-        //    $notes = json_decode(Redis::get($relay), true);
-        //    if (is_array($notes)) {
-        //         $merged_notes = array_merge($merged_notes, $notes);
-        //    }
-        // }
     
         return self::_processNotes($merged_notes);
     }
