@@ -12,6 +12,7 @@ use PhpAmqpLib\Message\AMQPMessage;
 class ListenUserNotes extends Command
 {
     protected $signature = 'rabbitmq:user-notes';
+    // protected $signature = 'rabbitmq:listen-metadata';
     protected $description = 'Listen for user notes on RabbitMQ queue';
 
     private $connection;
@@ -59,21 +60,38 @@ class ListenUserNotes extends Command
 
     public function processMessage(AMQPMessage $msg) 
     {
-        $user_notes = $msg->getBody();
-        $validated_note = $this->removeDuplicateNotes($user_notes);
-        $process_user_note = new UserNotesManager();
+        // $this->info("message received");
+        // $user_notes = $msg->getBody();
+        // $validated_note = $this->removeDuplicateNotes($user_notes);
+        // $process_user_note = new UserNotesManager();
 
-        if (isset($validated_note)) {
-            $processed_note = $process_user_note->processUserNotes($validated_note);
-        }
+        // if (isset($validated_note)) {
+        //     $processed_note = $process_user_note->processUserNotes($validated_note);
+        // }
     
-        if (isset($processed_note)) {
+        // if (isset($processed_note)) {
+        //     try {
+        //         event(new UserNotes($processed_note));
+        //         $this->info('UserNotes event fired: ' . $processed_note);
+        //     } catch (\Exception $e) {
+        //         $this->error('Error firing UserNotes event: ', $e->getMessage());
+        //     }
+        // }
+        $receivedPubHexKey = $msg->getBody();
+        $redis_metadata = json_decode(Redis::get($receivedPubHexKey), true);
+        
+        $formattedMetadata = $this->decodeMetadata($redis_metadata);
+
+        if (isset($redis_metadata)) {
+            Log::info("redis metadata set");
             try {
-                event(new UserNotes($processed_note));
-                $this->info('UserNotes event fired: ' . $processed_note);
+                event(new UserMetadataSet($formattedMetadata));
+                $this->info('UserMetadataSet event fired for pubHexKey: ' . $receivedPubHexKey);
             } catch (\Exception $e) {
-                $this->error('Error firing UserNotes event: ', $e->getMessage());
+                $this->error('Error firing UserMetadataSet event: ' . $e->getMessage());
             }
+        } else {
+            $this->warn('No metadata found in Redis for pubHexKey: ' . $receivedPubHexKey);
         }
     }
 

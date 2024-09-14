@@ -12,6 +12,7 @@ use PhpAmqpLib\Connection\AMQPStreamConnection;
 class ListenRabbitMQMetadata extends Command
 {
     protected $signature = 'rabbitmq:listen-metadata';
+    // protected $signature = 'test';
     protected $description = 'Listen for metadata messages on RabbitMQ queue';
 
     private $connection;
@@ -42,7 +43,7 @@ class ListenRabbitMQMetadata extends Command
     private function connect()
     {
         // Move the arguments to a config file and pull in those
-        $this->connection = new AMQPStreamConnection('localhost', 5672, 'guest', 'guest');
+        $this->connection = new AMQPStreamConnection('localhost', 25672, 'guest', 'guest', '/');
         $this->channel = $this->connection->channel();
         $this->channel->queue_declare('metadata_set', false, false, false, false);
     }

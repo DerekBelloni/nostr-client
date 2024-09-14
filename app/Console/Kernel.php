@@ -14,6 +14,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         \App\Console\Commands\ListenRabbitMQMetadata::class,
+        \App\Console\Commands\ListenUserNotes::class,
     ];
 
 
