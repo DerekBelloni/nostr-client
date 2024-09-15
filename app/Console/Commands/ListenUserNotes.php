@@ -76,22 +76,6 @@ class ListenUserNotes extends Command
                 $this->error('Error firing UserNotes event: ', $e->getMessage());
             }
         }
-        // $receivedPubHexKey = $msg->getBody();
-        // $redis_metadata = json_decode(Redis::get($receivedPubHexKey), true);
-        
-        // $formattedMetadata = $this->decodeMetadata($redis_metadata);
-
-        // if (isset($redis_metadata)) {
-        //     Log::info("redis metadata set");
-        //     try {
-        //         event(new UserMetadataSet($formattedMetadata));
-        //         $this->info('UserMetadataSet event fired for pubHexKey: ' . $receivedPubHexKey);
-        //     } catch (\Exception $e) {
-        //         $this->error('Error firing UserMetadataSet event: ' . $e->getMessage());
-        //     }
-        // } else {
-        //     $this->warn('No metadata found in Redis for pubHexKey: ' . $receivedPubHexKey);
-        // }
     }
 
     private function removeDuplicateNotes($user_note)

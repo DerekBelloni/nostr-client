@@ -37,7 +37,7 @@ const trendingContent = ref([]);
 onMounted(() => {
     retrieveNotes();
     listenForMetadata();
-    // listenForUserNotes();
+    listenForUserNotes();
 });
 
 onBeforeUnmount(() => {
@@ -56,14 +56,14 @@ const listenForMetadata = () => {
         })
 }
 
-// const listenForUserNotes = () => {
-//     echo.channel('user_notes') 
-//         .listen('.user_notes_retrieved', (event) => {
-//             toast.add({ severity: 'info', summary: 'Info', detail: 'Notes Retrieved', life: 3000 });
-//             console.log('user notes event: ', event);
-//             nostrStore.userNotes.push(event.usernotes);
-//         })
-// }
+const listenForUserNotes = () => {
+    echo.channel('user_notes') 
+        .listen('.user_notes_retrieved', (event) => {
+            toast.add({ severity: 'info', summary: 'Info', detail: 'Notes Retrieved', life: 3000 });
+            console.log('user notes event: ', event);
+            nostrStore.userNotes.push(event.usernotes);
+        })
+}
 
 const verifyNIP05 = () => {
     router.post('/nip05-verification', {metadataContent: nostrStore.metadataContent, publicKeyHex: nostrStore.hexPub}, {

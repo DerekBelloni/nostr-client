@@ -26,6 +26,7 @@ import { Inertia } from '@inertiajs/inertia';
     
     const nostrStore = useNostrStore();
 
+    // fallthrough attribute?
     const emit = defineEmits(['pubKeyRetrieved']);
 
     const open = () => {
