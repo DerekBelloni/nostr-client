@@ -11,11 +11,11 @@
 </template>
 
 <script setup>
-    // import { ref, defineEmits } from 'vue';
-    import { ref } from 'vue';
+    import { ref, defineEmits } from 'vue';
     import { router } from '@inertiajs/vue3';
     import { useNostrStore } from '@/stores/useNostrStore';
     import Dialog from 'primevue/dialog';
+import { Inertia } from '@inertiajs/inertia';
     
     const loginDialog = ref(false);
     const hexPub = ref('');
@@ -36,12 +36,10 @@
         router.post('/npub', { nsec: nsec.value }, {
             preserveState: true,
             onSuccess: page => {
-                nostrStore.metadataContent = page.props.metadataContent;
                 nostrStore.npub = page.props.npub;
                 nostrStore.hexPriv = page.props.hexPriv;
                 nostrStore.hexPub = page.props.hexPub;
-                nostrStore.verified = page.props.verified;
-                router.replace('/'); 
+                router.replace('/');
                 loginDialog.value = false; 
             },
             onError: errors => {

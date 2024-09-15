@@ -35,7 +35,7 @@ const toast = useToast();
 const trendingContent = ref([]);
 
 onMounted(() => {
-    // retrieveNotes();
+    retrieveNotes();
     listenForMetadata();
     // listenForUserNotes();
 });
@@ -47,12 +47,12 @@ onBeforeUnmount(() => {
 })
 
 const listenForMetadata = () => {
+    console.log("banana")
     echo.channel('user_metadata')
         .listen('.metadata_set', (event) => {
             toast.add({ severity: 'success', summary: 'Info', detail: 'Metadata Retrieved', life: 3000 });
             nostrStore.metadataContent = event.metadata;
-            console.log("metadata content: ", nostrStore.metadataContent)
-            mqVerified.value = true;
+            verifyNIP05();
         })
 }
 
@@ -64,6 +64,20 @@ const listenForMetadata = () => {
 //             nostrStore.userNotes.push(event.usernotes);
 //         })
 // }
+
+const verifyNIP05 = () => {
+    router.post('/nip05-verification', {metadataContent: nostrStore.metadataContent, publicKeyHex: nostrStore.hexPub}, {
+        preserveState: true,
+        only: ['verified'],
+        onSuccess: page => {
+            nostrStore.verified = page.props.verified;
+            router.replace('/'); 
+        },
+        onError: errors => {
+            console.error('Error fetching notes:', errors);
+        }
+    })
+}
 
 const retrieveNotes = () => {
     router.visit('/trending-events', {

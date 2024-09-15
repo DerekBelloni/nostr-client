@@ -10,9 +10,16 @@ class NostrKeyController extends Controller
 {
     public static function login(Request $request)
     {
+        // list($metadata_content, $hexPub, $npub, $verified, $hexPriv) = NostrKeyManager::login($request);
+        list($hexPub, $npub, $hexPriv) = NostrKeyManager::login($request);
 
-        list($metadata_content, $hexPub, $npub, $verified, $hexPriv) = NostrKeyManager::login($request);
+        // return Inertia::render('Home', ['metadataContent' => $metadata_content, 'npub' => $npub, 'hexPub' => $hexPub, 'hexPriv' => $hexPriv ,'verified' => $verified]);
+        return Inertia::render('Home', ['npub' => $npub, 'hexPub' => $hexPub, 'hexPriv' => $hexPriv]);
+    }
 
-        return Inertia::render('Home', ['metadataContent' => $metadata_content, 'npub' => $npub, 'hexPub' => $hexPub, 'hexPriv' => $hexPriv ,'verified' => $verified]);
+    public static function authenticate(Request $request)
+    {
+        $verified = NostrKeyManager::authenticateNip05($request);
+        return Inertia::render('Home', ['verified' => $verified]);
     }
 }

@@ -24,24 +24,14 @@ class NostrKeyManager
                 $publicKeyHex = $key->getPublicKey($privateKeyHex);
                 $publicKeyBech32 = $key->convertPublicKeyToBech32($publicKeyHex);
 
-                // $cached_metadata = self::_checkCachedMetadata($publicKeyHex);
-                $verified = null;
-                $metadata_content = null;
-
-                // if (isset($cached_metadata)) {
-                //     list($name, $domain) = self::_processUserMetadata($cached_metadata);
-                //     $verified = self::_getNip05Verification($name, $domain, $publicKeyHex);
-                //     $metadata_content = $cached_metadata[2] ?? null;
-                // } else {
-                    $user_hex_req = new Request([
-                        'user_pub_hex' => $publicKeyHex
-                    ]);
-                    
-                    RabbitMQManager::testQueue($user_hex_req);
-                // }
+                $user_hex_req = new Request([
+                    'user_pub_hex' => $publicKeyHex
+                ]);
+                
+                RabbitMQManager::testQueue($user_hex_req);
 
 
-                return [$metadata_content, $publicKeyHex, $publicKeyBech32, $verified, $privateKeyHex];
+                return [$publicKeyHex, $publicKeyBech32, $privateKeyHex];
             } catch (\Exception $e) {
                 Log::error('Error processing Nostr key: ' . $e->getMessage());
                 dd('Error: ' . $e->getMessage());
@@ -49,6 +39,49 @@ class NostrKeyManager
         } else {
             return response()->json(['error' => 'No nsec provided'], 400);
         }
+        // $nsec = $request->input('nsec');
+
+        // if (isset($nsec)) {
+        //     try {
+        //         $key = new Key();
+        //         $privateKeyHex = $key->convertToHex($nsec);
+        //         $publicKeyHex = $key->getPublicKey($privateKeyHex);
+        //         $publicKeyBech32 = $key->convertPublicKeyToBech32($publicKeyHex);
+
+        //         $cached_metadata = self::_checkCachedMetadata($publicKeyHex);
+        //         $verified = null;
+        //         $metadata_content = null;
+
+        //         if (isset($cached_metadata)) {
+        //             list($name, $domain) = self::_processUserMetadata($cached_metadata);
+        //             $verified = self::_getNip05Verification($name, $domain, $publicKeyHex);
+        //             $metadata_content = $cached_metadata[2] ?? null;
+        //         } else {
+        //             $user_hex_req = new Request([
+        //                 'user_pub_hex' => $publicKeyHex
+        //             ]);
+                    
+        //             RabbitMQManager::testQueue($user_hex_req);
+        //         }
+
+
+        //         return [$metadata_content, $publicKeyHex, $publicKeyBech32, $verified, $privateKeyHex];
+        //     } catch (\Exception $e) {
+        //         Log::error('Error processing Nostr key: ' . $e->getMessage());
+        //         dd('Error: ' . $e->getMessage());
+        //     }
+        // } else {
+        //     return response()->json(['error' => 'No nsec provided'], 400);
+        // }
+    }
+
+    public static function authenticateNip05(Request $request)
+    {
+        $metadata = $request->input('metadataContent');
+        $publicKeyHex = $request->input('publicKeyHex');
+        list($name, $domain) = self::_processUserMetadata($metadata);
+
+        return self::_getNip05Verification($name, $domain, $publicKeyHex);
     }
 
     private static function _getNip05Verification($name, $domain, $publicKeyHex)
@@ -72,9 +105,9 @@ class NostrKeyManager
         } 
     }
 
-    private static function _checkCachedMetadata($publicKeyHex)
+    private static function _checkCachedMetadata($publicKeyHex, $metadata_content)
     {
-        $cached_metadata = json_decode(Redis::get($publicKeyHex), true);
+        // $cached_metadata = json_decode(Redis::get($publicKeyHex), true);
       
         if (isset($cached_metadata)) {
             $cached_metadata[2]["content"] = json_decode($cached_metadata[2]["content"], true);
@@ -89,10 +122,9 @@ class NostrKeyManager
         $nip05 = null;
         $name = null;
         $domain = null;
-        foreach ($cached_metadata as $data) {
-            if (is_array($data) && isset($data["content"]["nip05"])) {
-                $nip05 = $data["content"]["nip05"];
-            }
+
+        if (is_array($cached_metadata) && isset($cached_metadata["content"]["nip05"])) {
+            $nip05 = $cached_metadata["content"]["nip05"];
         }
         
         if (isset($nip05)) {

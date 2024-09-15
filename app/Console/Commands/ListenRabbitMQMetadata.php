@@ -12,7 +12,6 @@ use PhpAmqpLib\Connection\AMQPStreamConnection;
 class ListenRabbitMQMetadata extends Command
 {
     protected $signature = 'rabbitmq:listen-metadata';
-    // protected $signature = 'test';
     protected $description = 'Listen for metadata messages on RabbitMQ queue';
 
     private $connection;
@@ -43,16 +42,16 @@ class ListenRabbitMQMetadata extends Command
     private function connect()
     {
         // Move the arguments to a config file and pull in those
-        $this->connection = new AMQPStreamConnection('localhost', 25672, 'guest', 'guest', '/');
+        $this->connection = new AMQPStreamConnection('localhost', 5672, 'guest', 'guest');
         $this->channel = $this->connection->channel();
-        $this->channel->queue_declare('metadata_set', false, false, false, false);
+        $this->channel->queue_declare('user_metadata', false, false, false, false);
     }
 
     private function consumeMessages()
     {
         $this->info("Waiting for messages. To exit press CTRL+C");
 
-        $this->channel->basic_consume('metadata_set', '', false, true, false, false, [$this, 'processMessage']);
+        $this->channel->basic_consume('user_metadata', '', false, true, false, false, [$this, 'processMessage']);
 
         while ($this->channel->is_consuming()) {
             $this->channel->wait();
@@ -61,21 +60,19 @@ class ListenRabbitMQMetadata extends Command
 
     public function processMessage(AMQPMessage $msg)
     {
-        $receivedPubHexKey = $msg->getBody();
-        $redis_metadata = json_decode(Redis::get($receivedPubHexKey), true);
+        $received_metadata = $msg->getBody();
+        $decoded_metadata = json_decode($received_metadata, true);
         
-        $formattedMetadata = $this->decodeMetadata($redis_metadata);
+        $formatted_metadata = $this->decodeMetadata($decoded_metadata);
 
-        if (isset($redis_metadata)) {
-            Log::info("redis metadata set");
+        if (isset($formatted_metadata)) {
             try {
-                event(new UserMetadataSet($formattedMetadata));
-                $this->info('UserMetadataSet event fired for pubHexKey: ' . $receivedPubHexKey);
+                event(new UserMetadataSet($formatted_metadata));
             } catch (\Exception $e) {
                 $this->error('Error firing UserMetadataSet event: ' . $e->getMessage());
             }
         } else {
-            $this->warn('No metadata found in Redis for pubHexKey: ' . $receivedPubHexKey);
+            $this->warn('No metadata received');
         }
     }
 

@@ -13,8 +13,7 @@
 
 <script setup>
 import Dialog from 'primevue/dialog';
-// import { ref, defineEmits } from 'vue';
-import { ref } from 'vue';
+import { ref, defineEmits } from 'vue';
 import { router } from '@inertiajs/vue3';
 import { useNostrStore } from '@/stores/useNostrStore';
 
