@@ -35,7 +35,7 @@ const toast = useToast();
 const trendingContent = ref([]);
 
 onMounted(() => {
-    // retrieveNotes();/
+    // retrieveNotes();
     listenForMetadata();
     listenForUserNotes();
 });
