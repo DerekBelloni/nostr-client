@@ -1,5 +1,4 @@
 <template>
-    <!-- <div class="border-b border-gray-200"> -->
     <div class="shadow">
         <div class="flex ml-6 mt-12 mr-6 items-center pb-12">
             <div class="icon-border  mr-2">

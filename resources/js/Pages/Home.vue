@@ -35,7 +35,7 @@ const toast = useToast();
 const trendingContent = ref([]);
 
 onMounted(() => {
-    // retrieveNotes();
+    retrieveNotes();
     listenForMetadata();
     listenForUserNotes();
 });
@@ -46,8 +46,8 @@ onBeforeUnmount(() => {
     }
 })
 
+// Maybe create a listeners service that just gets initialized here
 const listenForMetadata = () => {
-    console.log("banana")
     echo.channel('user_metadata')
         .listen('.metadata_set', (event) => {
             toast.add({ severity: 'success', summary: 'Info', detail: 'Metadata Retrieved', life: 3000 });
@@ -63,6 +63,10 @@ const listenForUserNotes = () => {
             console.log('user notes event: ', event);
             nostrStore.userNotes.push(event.usernotes);
         })
+}
+
+const listenForFollowsList = () => {
+    //
 }
 
 const verifyNIP05 = () => {
@@ -105,7 +109,7 @@ const setActiveView = (input) => {
         width: 25%;
     }
     .center-feature {
-        width: 50%;
+        width: 45%;
     }
     .right-sidebar {
         width: 25%;

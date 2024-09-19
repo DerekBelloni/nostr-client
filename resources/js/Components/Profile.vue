@@ -1,29 +1,31 @@
 <template>
-    <div class="banner-container pt-12">
-        <img class="banner" :src="userMetadata.banner" />
-    </div>
-    <div class="flex flex-row justify-between">
-        <div class="profile-picture-container px-6">
-            <img class="profile-picture" :src="userMetadata.picture"/>
+    <div class="overflow-y-auto h-full">
+        <div class="banner-container pt-12">
+            <img class="banner" :src="userMetadata.banner" />
         </div>
-        <div class="mt-6 mx-10">
-            <div class="rounded-full bg-amber-500 py-1 px-3">
-                <span class="text-white">Edit</span>
+        <div class="flex flex-row justify-between">
+            <div class="profile-picture-container px-6">
+                <img class="profile-picture" :src="userMetadata.picture"/>
+            </div>
+            <div class="mt-6 mx-10">
+                <div class="rounded-full bg-amber-500 py-1 px-3">
+                    <span class="text-white">Edit</span>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="px-6 username-container">
-        <span class="text-3xl font-semibold text-gray-700">{{userMetadata.display_name}}</span>
-        <i class="pi pi-check text-emerald-500 pl-4 text-lg"></i>
-    </div>
-    <div class="pl-4 pt-4 space-x-2">
-        <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium">Notes</span>
-        <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium">Reactions</span>
-        <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium">Followers</span>
-        <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium">Followed</span>
-    </div>
-    <div class="mt-4">
-        <UserNote></UserNote>
+        <div class="px-6 username-container">
+            <span class="text-3xl font-semibold text-gray-700">{{userMetadata.display_name}}</span>
+            <i class="pi pi-check text-emerald-500 pl-4 text-lg"></i>
+        </div>
+        <div class="pl-4 pt-4 space-x-2">
+            <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium">Notes</span>
+            <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium">Reactions</span>
+            <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium">Followers</span>
+            <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium">Followed</span>
+        </div>
+        <div class="mt-4 overflow-y-auto">
+            <UserNote></UserNote>
+        </div>
     </div>
 </template>
 
@@ -35,9 +37,6 @@ import UserNote from './UserNotes.vue';
 const nostrStore = useNostrStore();
 const userMetadata = ref(nostrStore.metadataContent.content);
 
-onMounted(() => {
-    console.log("user metadata: ", userMetadata.value);
-})
 </script>
 
 <style scoped>
