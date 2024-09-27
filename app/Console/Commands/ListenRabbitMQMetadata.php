@@ -65,7 +65,7 @@ class ListenRabbitMQMetadata extends Command
         
         $formatted_metadata = $this->decodeMetadata($decoded_metadata);
 
-        if (isset($formatted_metadata)) {
+        if (isset($formatted_metadata) && $formatted_metadata["pubkey"]) {
             try {
                 event(new UserMetadataSet($formatted_metadata));
             } catch (\Exception $e) {
@@ -80,6 +80,7 @@ class ListenRabbitMQMetadata extends Command
     {
         if (isset($metadata[2]["content"])) {
             $metadata[2]["content"] = json_decode($metadata[2]["content"], true);
+            Log::info("user metadata: ", [$metadata[2]["pubkey"]]);
         }
         return $metadata[2] ?? null;
     }

@@ -28,6 +28,8 @@ class NostrKeyManager
                     'user_pub_hex' => $publicKeyHex
                 ]);
                 
+                // going to need to put a session id as the key, pybkey as the value
+                // Redis::set('pubkey')
                 RabbitMQManager::testQueue($user_hex_req);
 
 
