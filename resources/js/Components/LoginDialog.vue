@@ -16,14 +16,12 @@
     import { useNostrStore } from '@/stores/useNostrStore';
     import Dialog from 'primevue/dialog';
     import { Inertia } from '@inertiajs/inertia';
-    import { v4 as uuidv4 } from 'uuid';
     
     const loginDialog = ref(false);
     const hexPub = ref('');
     const metadataContent = ref([]);
     const npub = ref('');
     const nsec = ref('');
-    const sessionId = ref('');
     const verified = ref(false);
     
     const nostrStore = useNostrStore();
@@ -42,7 +40,6 @@
                 nostrStore.npub = page.props.npub;
                 nostrStore.hexPriv = page.props.hexPriv;
                 nostrStore.hexPub = page.props.hexPub;
-                generateSessionId();
                 router.replace('/');
                 loginDialog.value = false; 
             },
@@ -50,11 +47,6 @@
                 console.error('Error: ', errors);
             }
         });
-    }
-
-    const generateSessionId = () => {
-        sessionId.value = uuidv4();
-        localStorage.setItem('sessionId', sessionId.value)
     }
 
     defineExpose({ open });

@@ -64,10 +64,17 @@ class ListenRabbitMQMetadata extends Command
         $decoded_metadata = json_decode($received_metadata, true);
         
         $formatted_metadata = $this->decodeMetadata($decoded_metadata);
+        $pubkey = $decoded_metadata[2]["pubkey"];
 
-        if (isset($formatted_metadata) && $formatted_metadata["pubkey"]) {
+        Log::info("formatted metadata: ", [$formatted_metadata]);
+        if ($received_metadata) {
+            $redis_key = "{$pubkey}:metadata";
+            $metadata_set = Redis::set($redis_key, $received_metadata);
+        }
+        Log::info('test in redis', [$metadata_set]);
+        if ($metadata_set) {
             try {
-                event(new UserMetadataSet($formatted_metadata));
+                event(new UserMetadataSet(true, $pubkey));
             } catch (\Exception $e) {
                 $this->error('Error firing UserMetadataSet event: ' . $e->getMessage());
             }
@@ -78,11 +85,12 @@ class ListenRabbitMQMetadata extends Command
 
     private function decodeMetadata($metadata)
     {
+        // change this to return 
         if (isset($metadata[2]["content"])) {
             $metadata[2]["content"] = json_decode($metadata[2]["content"], true);
             Log::info("user metadata: ", [$metadata[2]["pubkey"]]);
         }
-        return $metadata[2] ?? null;
+        return $metadata[2]["content"] ?? null;
     }
 
     private function closeConnection()

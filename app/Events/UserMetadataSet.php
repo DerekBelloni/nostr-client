@@ -13,9 +13,10 @@ class UserMetadataSet implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public function __construct($metadata)
+    public function __construct($metadata_set, $user_pubkey)
     {
-        $this->metadata = $metadata;
+        $this->metadata_set = $metadata_set;
+        $this->user_pubkey = $user_pubkey;
     }
 
     public function broadcastOn(): array
@@ -33,7 +34,7 @@ class UserMetadataSet implements ShouldBroadcastNow
 
     public function broadcastWith() 
     {
-        return ['metadata' => $this->metadata];
+        return ['metadata' => $this->metadata_set, 'userPubKey' => $this->user_pubkey];
     }
 
 }

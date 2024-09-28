@@ -18,13 +18,18 @@ Route::get('/', function () {
     ]);
 });
 
+// Notes Controller
 Route::get('/notes', [NotesController::class, 'show']);
 Route::post('/note/create', [NotesController::class, 'create']);
 
+// Nostr Key Controller
 Route::post('/nip05-verification', [NostrKeyController::class, 'authenticate']);
-
 Route::post('/npub', [NostrKeyController::class, 'login']);
 
+// Redis Controller
+Route::post('/redis/user-metadata', [RedisController::class, 'userMetadata']);
+
+// Trending Events Controller
 Route::get('/trending-events', [TrendingEventsController::class, 'index']);
 
 require __DIR__.'/auth.php';

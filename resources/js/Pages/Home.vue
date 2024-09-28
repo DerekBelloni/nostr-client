@@ -50,9 +50,13 @@ onBeforeUnmount(() => {
 const listenForMetadata = () => {
     echo.channel('user_metadata')
         .listen('.metadata_set', (event) => {
+            console.log("event: ", event);
             toast.add({ severity: 'success', summary: 'Info', detail: 'Metadata Retrieved', life: 3000 });
-            nostrStore.metadataContent = event.metadata;
-            verifyNIP05();
+            if (event.userPubKey === nostrStore.hexPub) {
+                retrieveUserMetadata(nostrStore.hexPub);
+            }
+            // verifyNIP05();
+
         })
 }
 
@@ -79,6 +83,17 @@ const verifyNIP05 = () => {
         },
         onError: errors => {
             console.error('Error fetching notes:', errors);
+        }
+    })
+}
+
+const retrieveUserMetadata = () => {
+    router.post('/redis/user-metadata', {publicKeyHex: nostrStore.hexPub}, {
+        method: 'post',
+        preserveState: true,
+        only: ['userMetadata'],
+        onSuccess: page => {
+            console.log('user metadata: ', page.props);
         }
     })
 }
