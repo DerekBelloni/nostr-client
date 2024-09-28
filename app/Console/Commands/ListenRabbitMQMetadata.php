@@ -63,10 +63,8 @@ class ListenRabbitMQMetadata extends Command
         $received_metadata = $msg->getBody();
         $decoded_metadata = json_decode($received_metadata, true);
         
-        $formatted_metadata = $this->decodeMetadata($decoded_metadata);
         $pubkey = $decoded_metadata[2]["pubkey"];
 
-        Log::info("formatted metadata: ", [$formatted_metadata]);
         if ($received_metadata) {
             $redis_key = "{$pubkey}:metadata";
             $metadata_set = Redis::set($redis_key, $received_metadata);

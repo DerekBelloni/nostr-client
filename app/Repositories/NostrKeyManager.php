@@ -76,6 +76,7 @@ class NostrKeyManager
 
     public static function authenticateNip05(Request $request)
     {
+        // dd($request->all());
         $metadata = $request->input('metadataContent');
         $publicKeyHex = $request->input('publicKeyHex');
         list($name, $domain) = self::_processUserMetadata($metadata);
@@ -122,8 +123,8 @@ class NostrKeyManager
         $name = null;
         $domain = null;
 
-        if (is_array($cached_metadata) && isset($cached_metadata["content"]["nip05"])) {
-            $nip05 = $cached_metadata["content"]["nip05"];
+        if (is_array($cached_metadata) && isset($cached_metadata["nip05"])) {
+            $nip05 = $cached_metadata["nip05"];
         }
         
         if (isset($nip05)) {

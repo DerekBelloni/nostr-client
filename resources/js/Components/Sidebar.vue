@@ -25,8 +25,8 @@
         </div>
         <div class="mx-16" v-else-if="npub && nip05Verified">
             <a @click="setActiveView('profile')" class="items-center space-x-2 cursor-pointer profile-container hover:bg-gray-200 hover:rounded-full hover:mr-16">
-                <img :src="nostrStore.metadataContent.content.picture" class="profile-picture">
-                <span class="font-semibold">{{nostrStore.metadataContent.content.name}}</span>
+                <img :src="nostrStore.metadataContent.picture" class="profile-picture">
+                <span class="font-semibold">{{nostrStore.metadataContent.name}}</span>
             </a>
         </div>
         <div class="mx-16">
