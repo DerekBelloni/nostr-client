@@ -35,7 +35,7 @@ import { useNostrStore } from '@/stores/useNostrStore';
 import UserNote from './UserNotes.vue';
 
 const nostrStore = useNostrStore();
-const userMetadata = ref(nostrStore.metadataContent.content);
+const userMetadata = ref(nostrStore.metadataContent);
 
 </script>
 

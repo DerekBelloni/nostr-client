@@ -69,7 +69,7 @@ class ListenRabbitMQMetadata extends Command
             $redis_key = "{$pubkey}:metadata";
             $metadata_set = Redis::set($redis_key, $received_metadata);
         }
-        Log::info('test in redis', [$metadata_set]);
+ 
         if ($metadata_set) {
             try {
                 event(new UserMetadataSet(true, $pubkey));
@@ -79,16 +79,6 @@ class ListenRabbitMQMetadata extends Command
         } else {
             $this->warn('No metadata received');
         }
-    }
-
-    private function decodeMetadata($metadata)
-    {
-        // change this to return 
-        if (isset($metadata[2]["content"])) {
-            $metadata[2]["content"] = json_decode($metadata[2]["content"], true);
-            Log::info("user metadata: ", [$metadata[2]["pubkey"]]);
-        }
-        return $metadata[2]["content"] ?? null;
     }
 
     private function closeConnection()

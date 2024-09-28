@@ -75,16 +75,17 @@ const listenForUserNotes = () => {
 }
 
 const listenForFollowsList = () => {
-    //
+    echo.channel('follow_list')
+        .listen('follow_list_set', (event) => {
+            toast.add({ severity: 'contrast', summary: 'Info', detail: 'Follow List Retrieved', life: 3000 });
+        })
 }
 
 const verifyNIP05 = () => {
-    console.log("banana")
     router.post('/nip05-verification', {metadataContent: nostrStore.metadataContent, publicKeyHex: nostrStore.hexPub}, {
         preserveState: true,
         only: ['verified'],
         onSuccess: page => {
-            console.log('verified props: ', page.props.verified)
             nostrStore.verified = page.props.verified;
             router.replace('/'); 
         },
@@ -101,7 +102,6 @@ const retrieveUserMetadata = () => {
         only: ['userMetadata'],
         onSuccess: page => {
             nostrStore.metadataContent = page.props.userMetadata;
-            console.log('nostr metadata content: ', nostrStore.metadataContent)
             metadataContent.value = nostrStore.metadataContent;
             router.replace('/'); 
         }

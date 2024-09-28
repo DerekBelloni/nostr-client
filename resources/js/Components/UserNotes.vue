@@ -26,8 +26,8 @@
 import { useNostrStore } from '@/stores/useNostrStore';
 
 const nostrStore = useNostrStore();
-const profilePic = nostrStore.metadataContent.content.picture;
-const displayName = nostrStore.metadataContent.content.displayName;
+const profilePic = nostrStore.metadataContent.picture;
+const displayName = nostrStore.metadataContent.displayName;
 
 </script>
 

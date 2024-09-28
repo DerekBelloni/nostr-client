@@ -1,0 +1,17 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Repositories\RedisManager;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+
+class RedisController extends Controller
+{
+    public function userMetadata(Request $request) 
+    {
+        $user_metadata = RedisManager::retrieveUsersMetadata($request);
+
+        return Inertia::render('Home', ['userMetadata' => $user_metadata]);
+    }
+}

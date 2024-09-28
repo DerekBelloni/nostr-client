@@ -76,7 +76,6 @@ class NostrKeyManager
 
     public static function authenticateNip05(Request $request)
     {
-        // dd($request->all());
         $metadata = $request->input('metadataContent');
         $publicKeyHex = $request->input('publicKeyHex');
         list($name, $domain) = self::_processUserMetadata($metadata);
