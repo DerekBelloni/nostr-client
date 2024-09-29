@@ -24,6 +24,7 @@ import Profile from '../Components/Profile.vue'
 import Sidebar from '../Components/Sidebar.vue'
 import TrendingTags from '../Components/TrendingTags.vue'
 import echo from '../echo.js';
+import axios from 'axios';
 
 const activeView = ref('');
 const eventSource = ref(null);
@@ -58,7 +59,6 @@ watch(metadataContent, async(newValue, oldValue) => {
 const listenForMetadata = () => {
     echo.channel('user_metadata')
         .listen('.metadata_set', (event) => {
-            console.log("event: ", event);
             toast.add({ severity: 'success', summary: 'Info', detail: 'Metadata Retrieved', life: 3000 });
             if (event.userPubKey === nostrStore.hexPub) {
                 retrieveUserMetadata(nostrStore.hexPub);
@@ -76,7 +76,8 @@ const listenForUserNotes = () => {
 
 const listenForFollowsList = () => {
     echo.channel('follow_list')
-        .listen('follow_list_set', (event) => {
+        .listen('.follow_list_set', (event) => {
+            console.log('follows event: ', event);
             toast.add({ severity: 'contrast', summary: 'Info', detail: 'Follow List Retrieved', life: 3000 });
         })
 }
@@ -109,19 +110,39 @@ const retrieveUserMetadata = () => {
 }
 
 const retrieveNotes = () => {
-    router.visit('/trending-events', {
-        method: 'get',
-        preserveState: true,
-        only: ['trendingContent'],
-        onSuccess: page => {
-            trendingContent.value = page.props.trendingContent;
-            router.replace('/'); 
-        },
-        onError: errors => {
-            console.error('Error fetching notes:', errors);
-        }
-    });
+    // router.visit('/trending-events', {
+    //     method: 'get',
+    //     preserveState: true,
+    //     only: ['trendingContent'],
+    //     onSuccess: page => {
+    //         trendingContent.value = page.props.trendingContent;
+    //         router.replace('/'); 
+    //     },
+    //     onError: errors => {
+    //         console.error('Error fetching notes:', errors);
+    //     }
+    // });
+
+    // Use axios until inertia 2.0
+    return axios.get('/trending-events')
+        .then((response) => {
+            trendingContent.value = response.data;
+        })
 }
+// const retrieveNotes = () => {
+//     router.visit('/trending-events', {
+//         method: 'get',
+//         preserveState: true,
+//         only: ['trendingContent'],
+//         onSuccess: page => {
+//             trendingContent.value = page.props.trendingContent;
+//             router.replace('/'); 
+//         },
+//         onError: errors => {
+//             console.error('Error fetching notes:', errors);
+//         }
+//     });
+// }
 
 const setActiveView = (input) => {
     activeView.value = input;

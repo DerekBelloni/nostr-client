@@ -8,13 +8,13 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class UserFollowList implements ShouldBroadcastNow 
+class UserFollowList implements ShouldBroadcastNow
 {
-    use Dispatchable, InteractsWithSockets, ShouldBroadcastNow
+    use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public function __construct($followlist_set, $user_pubkey)
+    public function __construct($follow_list_set, $user_pubkey)
     {
-        $this->followlist_set = $followlist_set;
+        $this->follow_list_set = $follow_list_set;
         $this->user_pubkey = $user_pubkey;
     }
 
@@ -32,6 +32,6 @@ class UserFollowList implements ShouldBroadcastNow
 
     public function broadcastWith()
     {
-        return ['follow_list' => $this->followlist_set, 'userPubKey' => $this->user_pubkey]
+        return ['follow_list' => $this->follow_list_set, 'userPubKey' => $this->user_pubkey];
     }
 }

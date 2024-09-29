@@ -2,8 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Events\UserFollowList;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redis;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
@@ -55,7 +57,24 @@ class ListenFollowList extends Command
 
     public function processMessage(AMQPMessage $msg) 
     {
-        Log::info("follow list: ", json_decode($msg->getBody(), true));
+        $received_follows = $msg->getBody();
+        $decoded_follows = json_decode($received_follows, true);
+        $pubkey = $decoded_follows[2]["pubkey"];
+        
+        if ($received_follows) {
+            $redis_key = "{$pubkey}:follows";
+            $follows_set = Redis::set($redis_key, $received_follows);
+        }
+
+        if ($follows_set) {
+            try {
+                event(new UserFollowList(true, $pubkey));
+            } catch (\Exception $e) {
+                $this->error('Error firing user follows list event: ' . $e->getMessage());
+            }
+        } else {
+            $this->warn('No follows received');
+        }
     }
 
     private function closeConnection() 

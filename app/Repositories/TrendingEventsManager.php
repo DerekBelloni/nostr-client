@@ -18,7 +18,7 @@ class TrendingEventsManager
         $trending_notes = self::_getTrendingNotes($client);
         $trending_videos = self::_getTrendingVideos($client);
         $trending_images = self::_getTrendingImages($client);
-
+       
         return self::_mergeTrendingContent($trending_notes, $trending_images, $trending_videos);
     }
 
