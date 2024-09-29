@@ -82,47 +82,49 @@ const listenForFollowsList = () => {
         })
 }
 
+// Convert to axios
 const verifyNIP05 = () => {
-    router.post('/nip05-verification', {metadataContent: nostrStore.metadataContent, publicKeyHex: nostrStore.hexPub}, {
-        preserveState: true,
-        only: ['verified'],
-        onSuccess: page => {
-            nostrStore.verified = page.props.verified;
-            router.replace('/'); 
-        },
-        onError: errors => {
-            console.error('Error fetching notes:', errors);
-        }
-    })
+    return axios.post('/nip05-verification', {metadataContent: nostrStore.metadataContent, publicKeyHex: nostrStore.hexPub})
+        .then((response) => {
+            nostrStore.verified = response.data.verified;
+        })
 }
+// const verifyNIP05 = () => {
+//     router.post('/nip05-verification', {metadataContent: nostrStore.metadataContent, publicKeyHex: nostrStore.hexPub}, {
+//         preserveState: true,
+//         only: ['verified'],
+//         onSuccess: page => {
+//             nostrStore.verified = page.props.verified;
+//             router.replace('/'); 
+//         },
+//         onError: errors => {
+//             console.error('Error fetching notes:', errors);
+//         }
+//     })
+// }
 
+// Convert to axios
 const retrieveUserMetadata = () => {
-    router.post('/redis/user-metadata', {publicKeyHex: nostrStore.hexPub}, {
-        method: 'post',
-        preserveState: true,
-        only: ['userMetadata'],
-        onSuccess: page => {
-            nostrStore.metadataContent = page.props.userMetadata;
+    return axios.post('/redis/user-metadata', {publicKeyHex: nostrStore.hexPub})
+        .then((response) => {
+            nostrStore.metadataContent = response.data.userMetadata;
             metadataContent.value = nostrStore.metadataContent;
-            router.replace('/'); 
-        }
-    })
+        })
 }
+// const retrieveUserMetadata = () => {
+//     router.post('/redis/user-metadata', {publicKeyHex: nostrStore.hexPub}, {
+//         method: 'post',
+//         preserveState: true,
+//         only: ['userMetadata'],
+//         onSuccess: page => {
+//             nostrStore.metadataContent = page.props.userMetadata;
+//             metadataContent.value = nostrStore.metadataContent;
+//             router.replace('/'); 
+//         }
+//     })
+// }
 
 const retrieveNotes = () => {
-    // router.visit('/trending-events', {
-    //     method: 'get',
-    //     preserveState: true,
-    //     only: ['trendingContent'],
-    //     onSuccess: page => {
-    //         trendingContent.value = page.props.trendingContent;
-    //         router.replace('/'); 
-    //     },
-    //     onError: errors => {
-    //         console.error('Error fetching notes:', errors);
-    //     }
-    // });
-
     // Use axios until inertia 2.0
     return axios.get('/trending-events')
         .then((response) => {

@@ -11,7 +11,10 @@ class RedisController extends Controller
     public function userMetadata(Request $request) 
     {
         $user_metadata = RedisManager::retrieveUsersMetadata($request);
+        return ['userMetadata' => $user_metadata];
 
-        return Inertia::render('Home', ['userMetadata' => $user_metadata]);
+        // $user_metadata = RedisManager::retrieveUsersMetadata($request);
+
+        // return Inertia::render('Home', ['userMetadata' => $user_metadata]);
     }
 }

@@ -20,6 +20,8 @@ class NostrKeyController extends Controller
     public static function authenticate(Request $request)
     {
         $verified = NostrKeyManager::authenticateNip05($request);
-        return Inertia::render('Home', ['verified' => $verified]);
+        return ['verified' => $verified];
+        // $verified = NostrKeyManager::authenticateNip05($request);
+        // return Inertia::render('Home', ['verified' => $verified]);
     }
 }
