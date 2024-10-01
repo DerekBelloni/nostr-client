@@ -28,7 +28,8 @@ class NostrKeyManager
                     'user_pub_hex' => $publicKeyHex
                 ]);
             
-                RabbitMQManager::testQueue($user_hex_req);
+                // Start checking for cached metadta, call to its own function
+                RabbitMQManager::userMetadataQueue($user_hex_req);
 
                 return [$publicKeyHex, $publicKeyBech32, $privateKeyHex];
             } catch (\Exception $e) {
@@ -38,40 +39,6 @@ class NostrKeyManager
         } else {
             return response()->json(['error' => 'No nsec provided'], 400);
         }
-        // $nsec = $request->input('nsec');
-
-        // if (isset($nsec)) {
-        //     try {
-        //         $key = new Key();
-        //         $privateKeyHex = $key->convertToHex($nsec);
-        //         $publicKeyHex = $key->getPublicKey($privateKeyHex);
-        //         $publicKeyBech32 = $key->convertPublicKeyToBech32($publicKeyHex);
-
-        //         $cached_metadata = self::_checkCachedMetadata($publicKeyHex);
-        //         $verified = null;
-        //         $metadata_content = null;
-
-        //         if (isset($cached_metadata)) {
-        //             list($name, $domain) = self::_processUserMetadata($cached_metadata);
-        //             $verified = self::_getNip05Verification($name, $domain, $publicKeyHex);
-        //             $metadata_content = $cached_metadata[2] ?? null;
-        //         } else {
-        //             $user_hex_req = new Request([
-        //                 'user_pub_hex' => $publicKeyHex
-        //             ]);
-                    
-        //             RabbitMQManager::testQueue($user_hex_req);
-        //         }
-
-
-        //         return [$metadata_content, $publicKeyHex, $publicKeyBech32, $verified, $privateKeyHex];
-        //     } catch (\Exception $e) {
-        //         Log::error('Error processing Nostr key: ' . $e->getMessage());
-        //         dd('Error: ' . $e->getMessage());
-        //     }
-        // } else {
-        //     return response()->json(['error' => 'No nsec provided'], 400);
-        // }
     }
 
     public static function authenticateNip05(Request $request)
@@ -88,7 +55,7 @@ class NostrKeyManager
         $client = new Client();
 
         $url = "https://{$domain}/.well-known/nostr.json?name={$name}";
- 
+        dd($url);
         $response = $client->request('GET', $url, [
             'headers' => [
                 'Accept' => 'application/json'

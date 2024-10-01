@@ -95,7 +95,7 @@ const verifyNIP05 = () => {
 }
 
 const retrieveFollowsMetadata = () => {
-
+    return 
 }
 
 const retrieveUserMetadata = () => {

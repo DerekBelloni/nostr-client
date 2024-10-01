@@ -28,6 +28,7 @@ Route::post('/npub', [NostrKeyController::class, 'login']);
 
 // Redis Controller
 Route::post('/redis/user-metadata', [RedisController::class, 'userMetadata']);
+Route::post('/redis/follows-metadata', [RedisController::class, 'followsMetadata']);
 
 // Trending Events Controller
 Route::get('/trending-events', [TrendingEventsController::class, 'index']);

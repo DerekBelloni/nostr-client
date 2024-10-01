@@ -9,7 +9,7 @@ use PhpAmqpLib\Message\AMQPMessage;
 class RabbitMQManager 
 {
     // maybe use a constructor to instantiate the connection and channel
-    public static function testQueue(Request $request)
+    public static function userMetadataQueue(Request $request)
     {
         $pub_hex_key = $request->input('user_pub_hex');
 
