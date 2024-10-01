@@ -2,20 +2,15 @@
 
 use App\Http\Controllers\NostrKeyController;
 use App\Http\Controllers\NotesController;
+use App\Http\Controllers\RabbitMQController;
 use App\Http\Controllers\RedisController;
 use App\Http\Controllers\Trending\TrendingEventsController;
-use App\Http\Controllers\SSEController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('Home', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
+    return Inertia::render('Home');
 });
 
 // Notes Controller
@@ -26,11 +21,13 @@ Route::post('/note/create', [NotesController::class, 'create']);
 Route::post('/nip05-verification', [NostrKeyController::class, 'authenticate']);
 Route::post('/npub', [NostrKeyController::class, 'login']);
 
+// RabbitMQ Controller
+Route::post('/rabbit-mq/follows-metadata', [RabbitMQController::class, 'getFollowsMetadata']);
+
 // Redis Controller
 Route::post('/redis/user-metadata', [RedisController::class, 'userMetadata']);
-Route::post('/redis/follows-metadata', [RedisController::class, 'followsMetadata']);
 
 // Trending Events Controller
 Route::get('/trending-events', [TrendingEventsController::class, 'index']);
 
-require __DIR__.'/auth.php';
+// require __DIR__.'/auth.php';

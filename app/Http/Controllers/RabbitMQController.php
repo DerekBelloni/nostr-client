@@ -8,6 +8,6 @@ class RabbitMQController extends Controller
 {
     public function getFollowsMetadata(Request $request) 
     {
-        
+        dd($request->all());
     }
 }

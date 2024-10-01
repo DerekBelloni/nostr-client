@@ -27,6 +27,11 @@ class RabbitMQManager
         return 'complete';
     }
 
+    public static function followMetadataQueue(Request $request) 
+    {
+        
+    }
+
     public static function newNoteQueue(Request $request)
     {
         $note_content = $request->input('noteContent');

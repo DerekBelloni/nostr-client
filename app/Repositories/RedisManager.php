@@ -15,15 +15,12 @@ class RedisManager
    
         abort_if(is_null($decoded_metadata), 404 ,"Metadata could not be found in Redis");
         
-        // $decoded_metadata[2]["content"] = json_decode($decoded_metadata[2]["content"], true);
         $formatted_metadata = self::formatMetadata($decoded_metadata);
-        // return $decoded_metadata[2]["content"];
         return $formatted_metadata;
     }
 
     private static function formatMetadata($metadata)
     {
-        // change this to return 
         if (isset($metadata[2]["content"])) {
             $metadata[2]["content"] = json_decode($metadata[2]["content"], true);
             Log::info("user metadata: ", [$metadata[2]["pubkey"]]);

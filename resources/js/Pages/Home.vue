@@ -95,7 +95,10 @@ const verifyNIP05 = () => {
 }
 
 const retrieveFollowsMetadata = () => {
-    return 
+    return axios.post('/rabbit-mq/follows-metadata', {publicKeyHex: nostrStore.hexPub})
+        .then((response) => {
+            console.log('response: ', response);
+        })
 }
 
 const retrieveUserMetadata = () => {
