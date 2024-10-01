@@ -88,7 +88,7 @@ class NostrKeyManager
         $client = new Client();
 
         $url = "https://{$domain}/.well-known/nostr.json?name={$name}";
-
+ 
         $response = $client->request('GET', $url, [
             'headers' => [
                 'Accept' => 'application/json'

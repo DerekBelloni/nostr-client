@@ -64,17 +64,19 @@ class ListenFollowList extends Command
         if ($received_follows) {
             $redis_key = "{$pubkey}:follows";
             $follows_set = Redis::set($redis_key, $received_follows);
+            Log::info("follows set: ", [$follows_set]);
         }
 
         if ($follows_set) {
             try {
                 event(new UserFollowList(true, $pubkey));
+                $this->info("User follows list event fired: " . $follows_set);
             } catch (\Exception $e) {
                 $this->error('Error firing user follows list event: ' . $e->getMessage());
             }
         } else {
             $this->warn('No follows received');
-        }
+        } 
     }
 
     private function closeConnection() 

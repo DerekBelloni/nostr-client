@@ -44,14 +44,15 @@ onBeforeUnmount(() => {
 
 onMounted(() => {
     retrieveNotes();
+    listenForFollowsList();
     listenForMetadata();
     listenForUserNotes();
 });
 
 watch(metadataContent, async(newValue, oldValue) => {
     if (newValue && !oldValue) {
-        console.log('in watcher: ', metadataContent);
-        verifyNIP05();
+        // verifyNIP05();
+        console.log('banana')
     }
 }, { once: true });
 
@@ -59,7 +60,6 @@ watch(metadataContent, async(newValue, oldValue) => {
 const listenForMetadata = () => {
     echo.channel('user_metadata')
         .listen('.metadata_set', (event) => {
-            toast.add({ severity: 'success', summary: 'Info', detail: 'Metadata Retrieved', life: 3000 });
             if (event.userPubKey === nostrStore.hexPub) {
                 retrieveUserMetadata(nostrStore.hexPub);
             }
@@ -69,17 +69,21 @@ const listenForMetadata = () => {
 const listenForUserNotes = () => {
     echo.channel('user_notes') 
         .listen('.user_notes_retrieved', (event) => {
-            toast.add({ severity: 'info', summary: 'Info', detail: 'Notes Retrieved', life: 3000 });
-            nostrStore.userNotes.push(event.usernotes);
+            if (event.userPubKey === nostrStore.hexPub) {
+                toast.add({ severity: 'info', summary: 'Info', detail: 'Notes Retrieved', life: 3000 });
+                nostrStore.userNotes.push(event.usernotes);
+            }
         })
 }
 
 const listenForFollowsList = () => {
     echo.channel('follow_list')
         .listen('.follow_list_set', (event) => {
-            console.log('follows event: ', event);
-            toast.add({ severity: 'contrast', summary: 'Info', detail: 'Follow List Retrieved', life: 3000 });
+            if (event.userPubKey === nostrStore.hexPub) {
+                toast.add({ severity: 'contrast', summary: 'Info', detail: 'Follow List Retrieved', life: 3000 });
+            }
         })
+        .error((error) => {console.error("Error in the follow list listener")});
 }
 
 // Convert to axios
@@ -89,21 +93,11 @@ const verifyNIP05 = () => {
             nostrStore.verified = response.data.verified;
         })
 }
-// const verifyNIP05 = () => {
-//     router.post('/nip05-verification', {metadataContent: nostrStore.metadataContent, publicKeyHex: nostrStore.hexPub}, {
-//         preserveState: true,
-//         only: ['verified'],
-//         onSuccess: page => {
-//             nostrStore.verified = page.props.verified;
-//             router.replace('/'); 
-//         },
-//         onError: errors => {
-//             console.error('Error fetching notes:', errors);
-//         }
-//     })
-// }
 
-// Convert to axios
+const retrieveFollowsMetadata = () => {
+
+}
+
 const retrieveUserMetadata = () => {
     return axios.post('/redis/user-metadata', {publicKeyHex: nostrStore.hexPub})
         .then((response) => {
@@ -111,40 +105,13 @@ const retrieveUserMetadata = () => {
             metadataContent.value = nostrStore.metadataContent;
         })
 }
-// const retrieveUserMetadata = () => {
-//     router.post('/redis/user-metadata', {publicKeyHex: nostrStore.hexPub}, {
-//         method: 'post',
-//         preserveState: true,
-//         only: ['userMetadata'],
-//         onSuccess: page => {
-//             nostrStore.metadataContent = page.props.userMetadata;
-//             metadataContent.value = nostrStore.metadataContent;
-//             router.replace('/'); 
-//         }
-//     })
-// }
 
 const retrieveNotes = () => {
-    // Use axios until inertia 2.0
     return axios.get('/trending-events')
         .then((response) => {
             trendingContent.value = response.data;
         })
 }
-// const retrieveNotes = () => {
-//     router.visit('/trending-events', {
-//         method: 'get',
-//         preserveState: true,
-//         only: ['trendingContent'],
-//         onSuccess: page => {
-//             trendingContent.value = page.props.trendingContent;
-//             router.replace('/'); 
-//         },
-//         onError: errors => {
-//             console.error('Error fetching notes:', errors);
-//         }
-//     });
-// }
 
 const setActiveView = (input) => {
     activeView.value = input;
