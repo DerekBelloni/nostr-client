@@ -14,7 +14,6 @@ class RabbitMQManager
         $pub_hex_key = $request->input('user_pub_hex');
 
         $connection = new AMQPStreamConnection('localhost', 5672, 'guest', 'guest');
-
         $channel = $connection->channel();
         $channel->queue_declare('user_pub_key', false, false, false, false);
 
@@ -29,7 +28,13 @@ class RabbitMQManager
 
     public static function followMetadataQueue(Request $request) 
     {
-        
+        $pub_key_hex = $request->input('publicKeyHex');
+        $connection = new AMQPStreamConnection('localhost', 5672, 'guest', 'guest');
+        $channel = $connection->channel();
+        $channel->queue_declare('follow_list', false, false, false, false,);
+
+        $message = new AMQPMessage($pub_key_hex);
+        // $channel->basic_publish($message, '', )
     }
 
     public static function newNoteQueue(Request $request)

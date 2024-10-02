@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Repositories\RabbitMQManager;
 use Illuminate\Http\Request;
 
 class RabbitMQController extends Controller
 {
     public function getFollowsMetadata(Request $request) 
     {
-        dd($request->all());
+        return RabbitMQManager::followMetadataQueue($request);
     }
 }

@@ -81,6 +81,7 @@ const listenForFollowsList = () => {
         .listen('.follow_list_set', (event) => {
             if (event.userPubKey === nostrStore.hexPub) {
                 toast.add({ severity: 'contrast', summary: 'Info', detail: 'Follow List Retrieved', life: 3000 });
+                retrieveFollowsMetadata();
             }
         })
         .error((error) => {console.error("Error in the follow list listener")});
