@@ -13,7 +13,7 @@ class TrendingEventsManager
     {
         $client = new Client();
 
-        $test = RabbitMQManager::testQueue($request);
+        $test = RabbitMQManager::userMetadataQueue($request);
        
         $trending_notes = self::_getTrendingNotes($client);
         $trending_videos = self::_getTrendingVideos($client);

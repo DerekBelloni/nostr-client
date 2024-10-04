@@ -46,7 +46,7 @@ class ListenUserMetadata implements ShouldQueue
 
             if (isset($redis_metadata)) {
                 try {
-                    event(new UserMetadataSet($formattedMetadata));
+                    event(new UserMetadataSet($formattedMetadata, $receivedPubHexKey));
                     Log::info('UserMetadataSet event fired', ['pubHexKey' => $receivedPubHexKey]);
                 } catch (\Exception $e) {
                     Log::error('Error firing UserMetadataSet event', ['error' => $e->getMessage()]);

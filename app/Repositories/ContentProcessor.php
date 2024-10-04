@@ -77,7 +77,7 @@ class ContentProcessor
         $metadata["url"] = $crawler->filterXPath('//meta[@property="og:url"]')->attr('content') ?? '';
         $metadata["image"] = $crawler->filterXPath('//meta[@property="og:image"]')->attr('content') ?? '';
 
-        dd($metadata);
+        // dd($metadata);
     }
 
     private function sortOffsets($a, $b)

@@ -51,7 +51,7 @@ onMounted(() => {
 
 watch(metadataContent, async(newValue, oldValue) => {
     if (newValue && !oldValue) {
-        // verifyNIP05();
+        verifyNIP05();
         console.log('banana')
     }
 }, { once: true });
@@ -61,6 +61,7 @@ const listenForMetadata = () => {
     echo.channel('user_metadata')
         .listen('.metadata_set', (event) => {
             if (event.userPubKey === nostrStore.hexPub) {
+            console.log("bananan!")
                 retrieveUserMetadata(nostrStore.hexPub);
             }
         })

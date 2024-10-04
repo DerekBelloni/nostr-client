@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
@@ -34,7 +35,11 @@ class RabbitMQManager
         $channel->queue_declare('follow_list', false, false, false, false,);
 
         $message = new AMQPMessage($pub_key_hex);
-        // $channel->basic_publish($message, '', )
+        $channel->basic_publish($message, '', 'user_pub_key');
+        Log::info('follow metadata queue published', [$pub_key_hex]);
+        $channel->close();
+        $connection->close();
+        return 'complete';
     }
 
     public static function newNoteQueue(Request $request)
