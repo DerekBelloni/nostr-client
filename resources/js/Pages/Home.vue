@@ -36,6 +36,10 @@ const reactions = ref([]);
 const toast = useToast();
 const trendingContent = ref([]);
 
+
+const tempcount = ref(0)
+const metadatacnt = ref(0)
+
 onBeforeUnmount(() => {
     if (eventSource.value) {
         eventSource.value.close();
@@ -46,13 +50,12 @@ onMounted(() => {
     retrieveNotes();
     listenForFollowsList();
     listenForMetadata();
-    listenForUserNotes();
+    // listenForUserNotes();
 });
 
 watch(metadataContent, async(newValue, oldValue) => {
     if (newValue && !oldValue) {
         verifyNIP05();
-        console.log('banana')
     }
 }, { once: true });
 
@@ -61,7 +64,8 @@ const listenForMetadata = () => {
     echo.channel('user_metadata')
         .listen('.metadata_set', (event) => {
             if (event.userPubKey === nostrStore.hexPub) {
-            console.log("bananan!")
+                metadatacnt.value++;
+                console.log('metadata count: ', metadatacnt.value)
                 retrieveUserMetadata(nostrStore.hexPub);
             }
         })
@@ -81,7 +85,8 @@ const listenForFollowsList = () => {
     echo.channel('follow_list')
         .listen('.follow_list_set', (event) => {
             if (event.userPubKey === nostrStore.hexPub) {
-                toast.add({ severity: 'contrast', summary: 'Info', detail: 'Follow List Retrieved', life: 3000 });
+                tempcount.value++;
+                console.log("follow list retrieval count: ", tempcount.value)
                 retrieveFollowsMetadata();
             }
         })

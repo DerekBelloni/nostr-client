@@ -61,6 +61,7 @@ class ListenUserNotes extends Command
     {
         $this->info("message received");
         $user_notes = $msg->getBody();
+        Log::info('user notes: ', [$user_notes]);
         $validated_note = $this->removeDuplicateNotes($user_notes);
         $process_user_note = new UserNotesManager();
 
