@@ -50,7 +50,7 @@ onMounted(() => {
     retrieveNotes();
     listenForFollowsList();
     listenForMetadata();
-    // listenForUserNotes();
+    listenForUserNotes();
 });
 
 watch(metadataContent, async(newValue, oldValue) => {
