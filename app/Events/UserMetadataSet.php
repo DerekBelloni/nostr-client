@@ -26,7 +26,6 @@ class UserMetadataSet implements ShouldBroadcastNow
         ];
     }
 
-
     public function broadcastAs()
     {
         return 'metadata_set';

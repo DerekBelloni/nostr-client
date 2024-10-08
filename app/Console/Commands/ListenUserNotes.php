@@ -18,6 +18,7 @@ class ListenUserNotes extends Command
     private $connection;
     private $channel;
     private $noteIds = [];
+    private $notes = [];
     
     public function __construct()
     {
@@ -93,7 +94,7 @@ class ListenUserNotes extends Command
     {
         $decoded_note = json_decode($user_note, true);
     
-        if (!in_array($decoded_note[1], $this->noteIds)) {
+        if (!in_array($decoded_note[2]["id"], $this->noteIds)) {
             array_push($this->noteIds, $decoded_note[1]);
             return $decoded_note;
         } else {

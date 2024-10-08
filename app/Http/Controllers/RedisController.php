@@ -16,7 +16,7 @@ class RedisController extends Controller
 
     public function userNotes(Request $request)
     {
-        $user_notes = Re
+        // $user_notes = Re
     }
 
     public function followsMetadata(Request $request) {
