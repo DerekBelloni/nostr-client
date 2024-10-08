@@ -12,9 +12,10 @@ class UserNotes implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public function __construct($user_notes)
+    public function __construct($user_notes_set, $user_pubkey)
     {
-        $this->user_notes = $user_notes;
+        $this->user_notes_set = $user_notes_set;
+        $this->user_pubkey = $user_pubkey;
     }
 
     public function broadcastOn(): array
@@ -26,11 +27,11 @@ class UserNotes implements ShouldBroadcastNow
 
     public function broadcastAs()
     {
-        return 'user_notes_retrieved';
+        return 'user_notes_set';
     }
 
     public function broadcastWith() 
     {
-        return ['usernotes' => $this->user_notes];
+        return ['usernotes' => $this->user_notes_set, 'userPubKey' => $this->user_pubkey];
     }
 }

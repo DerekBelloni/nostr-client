@@ -36,10 +36,6 @@ const reactions = ref([]);
 const toast = useToast();
 const trendingContent = ref([]);
 
-
-const tempcount = ref(0)
-const metadatacnt = ref(0)
-
 onBeforeUnmount(() => {
     if (eventSource.value) {
         eventSource.value.close();
@@ -64,8 +60,6 @@ const listenForMetadata = () => {
     echo.channel('user_metadata')
         .listen('.metadata_set', (event) => {
             if (event.userPubKey === nostrStore.hexPub) {
-                metadatacnt.value++;
-                console.log('metadata count: ', metadatacnt.value)
                 retrieveUserMetadata(nostrStore.hexPub);
             }
         })
@@ -73,10 +67,9 @@ const listenForMetadata = () => {
 
 const listenForUserNotes = () => {
     echo.channel('user_notes') 
-        .listen('.user_notes_retrieved', (event) => {
+        .listen('.user_notes_set', (event) => {
             if (event.userPubKey === nostrStore.hexPub) {
-                toast.add({ severity: 'info', summary: 'Info', detail: 'Notes Retrieved', life: 3000 });
-                nostrStore.userNotes.push(event.usernotes);
+                retrieveUserNotes(nostrStore.hexPub);
             }
         })
 }
@@ -85,12 +78,9 @@ const listenForFollowsList = () => {
     echo.channel('follow_list')
         .listen('.follow_list_set', (event) => {
             if (event.userPubKey === nostrStore.hexPub) {
-                tempcount.value++;
-                console.log("follow list retrieval count: ", tempcount.value)
                 retrieveFollowsMetadata();
             }
         })
-        .error((error) => {console.error("Error in the follow list listener")});
 }
 
 // Convert to axios
@@ -103,6 +93,13 @@ const verifyNIP05 = () => {
 
 const retrieveFollowsMetadata = () => {
     return axios.post('/rabbit-mq/follows-metadata', {publicKeyHex: nostrStore.hexPub})
+        .then((response) => {
+            console.log('response: ', response);
+        })
+}
+
+const retrieveUserNotes = () => {
+    return axios.post('/redis/user-notes', {publicKeyHex: nostrStore.hexPub})
         .then((response) => {
             console.log('response: ', response);
         })

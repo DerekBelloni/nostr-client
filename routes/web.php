@@ -26,6 +26,7 @@ Route::post('/rabbit-mq/follows-metadata', [RabbitMQController::class, 'getFollo
 
 // Redis Controller
 Route::post('/redis/user-metadata', [RedisController::class, 'userMetadata']);
+Route::post('/redis/user-notes', [RedisController::class, 'userNotes']);
 
 // Trending Events Controller
 Route::get('/trending-events', [TrendingEventsController::class, 'index']);

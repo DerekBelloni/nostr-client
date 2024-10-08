@@ -6,6 +6,7 @@ use App\Events\UserNotes;
 use App\Repositories\UserNotesManager;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redis;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
@@ -59,23 +60,32 @@ class ListenUserNotes extends Command
 
     public function processMessage(AMQPMessage $msg) 
     {
-        $this->info("message received");
         $user_notes = $msg->getBody();
-        Log::info('user notes: ', [$user_notes]);
-        $validated_note = $this->removeDuplicateNotes($user_notes);
-        $process_user_note = new UserNotesManager();
+        $decoded_notes = json_decode($user_notes, true);
+        $pubkey = $decoded_notes[2]["pubkey"];
+        $validated_notes = $this->removeDuplicateNotes($user_notes);
 
-        if (isset($validated_note)) {
-            $processed_note = $process_user_note->processUserNotes($validated_note);
+        if ($validated_notes) {
+            $redis_key = "{$pubkey}:user-notes";
+            $user_notes_set = Redis::set($redis_key, $validated_notes);
         }
+
+        // Move this to redis controller
+        // $process_user_note = new UserNotesManager();
+
+        // if (isset($validated_note)) {
+        //     $processed_note = $process_user_note->processUserNotes($validated_note);
+        // }
+        //
     
-        if (isset($processed_note)) {
+        if (isset($user_notes_set)) {
             try {
-                event(new UserNotes($processed_note));
-                $this->info('UserNotes event fired: ' . $processed_note);
+                event(new UserNotes(true, $pubkey));
             } catch (\Exception $e) {
                 $this->error('Error firing UserNotes event: ', $e->getMessage());
             }
+        } else {
+            $this->warn('No user notes received');
         }
     }
 
