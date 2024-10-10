@@ -27,4 +27,9 @@ class RedisManager
         }
         return $metadata[2]["content"] ?? null;
     }
+
+    public static function retrieveUserNotes(Request $request)
+    {
+        
+    }
 }

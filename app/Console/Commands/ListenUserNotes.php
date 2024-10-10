@@ -63,13 +63,28 @@ class ListenUserNotes extends Command
     {
         $user_notes = $msg->getBody();
         $decoded_notes = json_decode($user_notes, true);
-        $pubkey = $decoded_notes[2]["pubkey"];
-        $validated_notes = $this->removeDuplicateNotes($user_notes);
 
-        if ($validated_notes) {
-            $redis_key = "{$pubkey}:user-notes";
-            $user_notes_set = Redis::set($redis_key, $validated_notes);
+        if (!isset($decoded_note["pubkey"] || !isset($decoded_note["id"]))) {
+            $this->error("Invalid note structure");
+            return;
         }
+
+        $pubkey = $decoded_notes[2]["pubkey"];
+        $redis_key = "{$pubkey}:user-notes";
+        // $validated_notes = $this->noteExists($user_notes);
+        $validated_notes = $this->noteExists($user_notes);
+
+        if (!this->noteExists($redis_key, $note_id)) {
+            $encoded_note = json_encode($decoded_note);
+
+            Redis::rpush($redis_key, $encoded_note);
+            $this->info("Added new note {$note_id} for user {$pubkey}");
+        }
+
+        // if ($validated_notes) {
+        //     // $redis_key = "{$pubkey}:user-notes";
+        //     $user_notes_set = Redis::set($redis_key, $validated_notes);
+        // }
 
         // Move this to redis controller
         // $process_user_note = new UserNotesManager();
@@ -90,16 +105,17 @@ class ListenUserNotes extends Command
         }
     }
 
-    private function removeDuplicateNotes($user_note)
+    private function noteExists($redis_key, $note_id)
     {
-        $decoded_note = json_decode($user_note, true);
+        // $decoded_note = json_decode($user_note, true);
     
-        if (!in_array($decoded_note[2]["id"], $this->noteIds)) {
-            array_push($this->noteIds, $decoded_note[1]);
-            return $decoded_note;
-        } else {
-            return null;
-        } 
+        // if (!in_array($decoded_note[2]["id"], $this->noteIds)) {
+        //     array_push($this->noteIds, $decoded_note[1]);
+        //     return $decoded_note;
+        // } else {
+        //     return null;
+        // } 
+        $notes = Redis::lrange($redis_key)
     }
 
     private function closeConnection()
