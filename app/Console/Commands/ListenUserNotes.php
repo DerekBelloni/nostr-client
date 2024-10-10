@@ -17,8 +17,6 @@ class ListenUserNotes extends Command
 
     private $connection;
     private $channel;
-    private $noteIds = [];
-    private $notes = [];
     
     public function __construct()
     {
@@ -62,37 +60,25 @@ class ListenUserNotes extends Command
     public function processMessage(AMQPMessage $msg) 
     {
         $user_notes = $msg->getBody();
-        $decoded_notes = json_decode($user_notes, true);
+        $decoded_note = json_decode($user_notes, true);
 
-        if (!isset($decoded_note["pubkey"] || !isset($decoded_note["id"]))) {
+        if (!isset($decoded_note[2]["pubkey"]) || !isset($decoded_note[2]["id"])) {
             $this->error("Invalid note structure");
             return;
         }
 
-        $pubkey = $decoded_notes[2]["pubkey"];
+        $pubkey = $decoded_note[2]["pubkey"];
+        $note_id = $decoded_note[2]["id"];
         $redis_key = "{$pubkey}:user-notes";
-        // $validated_notes = $this->noteExists($user_notes);
-        $validated_notes = $this->noteExists($user_notes);
 
-        if (!this->noteExists($redis_key, $note_id)) {
+        if (!self::noteExists($redis_key, $note_id)) {
             $encoded_note = json_encode($decoded_note);
 
             Redis::rpush($redis_key, $encoded_note);
             $this->info("Added new note {$note_id} for user {$pubkey}");
+            $notes = Redis::lrange($redis_key, 0, -1);
+            Log::info('notes from redis',[$notes]);
         }
-
-        // if ($validated_notes) {
-        //     // $redis_key = "{$pubkey}:user-notes";
-        //     $user_notes_set = Redis::set($redis_key, $validated_notes);
-        // }
-
-        // Move this to redis controller
-        // $process_user_note = new UserNotesManager();
-
-        // if (isset($validated_note)) {
-        //     $processed_note = $process_user_note->processUserNotes($validated_note);
-        // }
-        //
     
         if (isset($user_notes_set)) {
             try {
@@ -107,15 +93,20 @@ class ListenUserNotes extends Command
 
     private function noteExists($redis_key, $note_id)
     {
-        // $decoded_note = json_decode($user_note, true);
-    
-        // if (!in_array($decoded_note[2]["id"], $this->noteIds)) {
-        //     array_push($this->noteIds, $decoded_note[1]);
-        //     return $decoded_note;
-        // } else {
-        //     return null;
-        // } 
-        $notes = Redis::lrange($redis_key)
+        $notes = Redis::lrange($redis_key, 0, -1);
+        if (!$notes) {
+            return false;
+        }
+
+        foreach ($notes as $note) {
+            $decoded_note = json_decode($note, true);
+            if ($decoded_note[2]['id'] && $decoded_note[2]['id'] === $note_id) {
+                Log::info("decoded note id: ", [$decoded_note[2]['id']]);
+                Log::info("note id: ", [$note_id]);
+                return true;
+            }
+        }
+        return false;
     }
 
     private function closeConnection()
