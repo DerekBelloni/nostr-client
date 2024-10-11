@@ -17,6 +17,7 @@ class RedisController extends Controller
     public function userNotes(Request $request)
     {
         $user_notes = RedisManager::retrieveUserNotes($request);
+        return $user_notes;
     }
 
     public function followsMetadata(Request $request) {

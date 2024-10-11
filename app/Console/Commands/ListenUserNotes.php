@@ -76,8 +76,6 @@ class ListenUserNotes extends Command
       
         foreach($existing_notes as $note) {
             $existing_note_id = json_decode($note, true)[2]['id'];
-            Log::info("existing note id: ", [$existing_note_id]);
-            Log::info("incoming note id: ", [$note_id]);
             if ($existing_note_id == $note_id) {
                 $note_exists = true;
                 break;
