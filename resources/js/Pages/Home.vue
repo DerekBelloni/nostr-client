@@ -69,8 +69,8 @@ const listenForUserNotes = () => {
     echo.channel('user_notes') 
         .listen('.user_notes_set', (event) => {
             if (event.userPubKey === nostrStore.hexPub) {
-                retrieveUserNotes(nostrStore.hexPub);
-                console.log('banana')
+                //retrieveUserNotes(nostrStore.hexPub);
+                console.log('banana', event)
             }
         })
 }

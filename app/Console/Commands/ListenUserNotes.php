@@ -70,19 +70,26 @@ class ListenUserNotes extends Command
         $pubkey = $decoded_note[2]["pubkey"];
         $note_id = $decoded_note[2]["id"];
         $redis_key = "{$pubkey}:user-notes";
+        $note_added = false;
 
-        if (!self::noteExists($redis_key, $note_id)) {
+        $exists = Redis::sMembers($redis_key, function($note) use ($note_id) {
+            return json_decode($note, true)[2]['id'] === $note_id;
+        });
+
+        // if (!self::noteExists($redis_key, $note_id)) {
+        if (!$exists) {
             $encoded_note = json_encode($decoded_note);
 
-            Redis::rpush($redis_key, $encoded_note);
+            $note_added = Redis::sAdd($redis_key:$note_id, $encoded_note);
             $this->info("Added new note {$note_id} for user {$pubkey}");
-            $notes = Redis::lrange($redis_key, 0, -1);
-            Log::info('notes from redis',[$notes]);
+            // $notes = Redis::lrange($redis_key, 0, -1);
+            // Log::info('notes from redis',[$notes]);
         }
     
-        if (isset($user_notes_set)) {
+        if ($note_added) {
             try {
                 event(new UserNotes(true, $pubkey));
+                $note_added = false;
             } catch (\Exception $e) {
                 $this->error('Error firing UserNotes event: ', $e->getMessage());
             }
@@ -101,8 +108,6 @@ class ListenUserNotes extends Command
         foreach ($notes as $note) {
             $decoded_note = json_decode($note, true);
             if ($decoded_note[2]['id'] && $decoded_note[2]['id'] === $note_id) {
-                Log::info("decoded note id: ", [$decoded_note[2]['id']]);
-                Log::info("note id: ", [$note_id]);
                 return true;
             }
         }
