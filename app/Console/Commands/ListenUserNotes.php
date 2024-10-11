@@ -71,22 +71,28 @@ class ListenUserNotes extends Command
         $note_id = $decoded_note[2]["id"];
         $redis_key = "{$pubkey}:user-notes";
         $note_added = false;
+        $note_exists = false;
+        $existing_notes = Redis::sMembers($redis_key);
+      
+        foreach($existing_notes as $note) {
+            $existing_note_id = json_decode($note, true)[2]['id'];
+            Log::info("existing note id: ", [$existing_note_id]);
+            Log::info("incoming note id: ", [$note_id]);
+            if ($existing_note_id == $note_id) {
+                $note_exists = true;
+                break;
+            }
+        }
 
-        $exists = Redis::sMembers($redis_key, function($note) use ($note_id) {
-            return json_decode($note, true)[2]['id'] === $note_id;
-        });
-
-        // if (!self::noteExists($redis_key, $note_id)) {
-        if (!$exists) {
+        if (!$note_exists) {
             $encoded_note = json_encode($decoded_note);
-
-            $note_added = Redis::sAdd($redis_key:$note_id, $encoded_note);
+            $note_added = Redis::sAdd($redis_key, $encoded_note);
             $this->info("Added new note {$note_id} for user {$pubkey}");
-            // $notes = Redis::lrange($redis_key, 0, -1);
-            // Log::info('notes from redis',[$notes]);
+        } else {
+            $this->info("Note {$note_id} already exists for user {$pubkey}");
         }
     
-        if ($note_added) {
+        if ($note_added || $note_exists) {
             try {
                 event(new UserNotes(true, $pubkey));
                 $note_added = false;
@@ -96,22 +102,6 @@ class ListenUserNotes extends Command
         } else {
             $this->warn('No user notes received');
         }
-    }
-
-    private function noteExists($redis_key, $note_id)
-    {
-        $notes = Redis::lrange($redis_key, 0, -1);
-        if (!$notes) {
-            return false;
-        }
-
-        foreach ($notes as $note) {
-            $decoded_note = json_decode($note, true);
-            if ($decoded_note[2]['id'] && $decoded_note[2]['id'] === $note_id) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private function closeConnection()

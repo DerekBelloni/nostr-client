@@ -30,6 +30,6 @@ class RedisManager
 
     public static function retrieveUserNotes(Request $request)
     {
-        
+        dd($request->all());
     }
 }
