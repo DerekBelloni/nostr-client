@@ -92,12 +92,13 @@ const addUserNotesToStore = (notes) => {
         if (existingUserNotes.length <= 0) {
             nostrStore.userNotes.push(parsedNote[2]);
         }
-        console.log('note id: ', parsedNote[2])
-        existingNote = existingUserNotes.find((existing) => {
+        console.log('existing user notes: ', existingUserNotes);
+        existingNote = existingUserNotes.some((existing) => {
+            console.log('existing id: ', existing?.id)
             return existing?.id == parsedNote[2]['id'];
         });
-
-        if (!existingNote) nostrStore.userNotes.push(parsedNote[2]);
+        console.log('existing note: ', existingNote);
+        if (!existingNote) {console.log('in final if'),nostrStore.userNotes.push(parsedNote[2])};
     })
 }
 
