@@ -89,20 +89,19 @@ const addUserNotesToStore = (notes) => {
     notes.forEach((note) => {
         let parsedNote = JSON.parse(note);
         let existingNote = null;
+
         if (existingUserNotes.length <= 0) {
             nostrStore.userNotes.push(parsedNote[2]);
         }
-        console.log('existing user notes: ', existingUserNotes);
+
         existingNote = existingUserNotes.some((existing) => {
-            console.log('existing id: ', existing?.id)
             return existing?.id == parsedNote[2]['id'];
         });
-        console.log('existing note: ', existingNote);
-        if (!existingNote) {console.log('in final if'),nostrStore.userNotes.push(parsedNote[2])};
+
+        if (!existingNote) nostrStore.userNotes.push(parsedNote[2]);
     })
 }
 
-// Convert to axios
 const verifyNIP05 = () => {
     return axios.post('/nip05-verification', {metadataContent: nostrStore.metadataContent, publicKeyHex: nostrStore.hexPub})
         .then((response) => {
@@ -114,6 +113,7 @@ const retrieveFollowsMetadata = () => {
     return axios.post('/rabbit-mq/follows-metadata', {publicKeyHex: nostrStore.hexPub})
         .then((response) => {
             console.log('response: ', response);
+            
         })
 }
 

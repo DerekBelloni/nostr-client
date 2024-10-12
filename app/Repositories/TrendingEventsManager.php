@@ -118,7 +118,6 @@ class TrendingEventsManager
         $metadata["description"] = $crawler->filterXPath('//meta[@property="og:description"]')->attr('content') ?? '';
         $metadata["url"] = $crawler->filterXPath('//meta[@property="og:url"]')->attr('content') ?? '';
         $metadata["image"] = $crawler->filterXPath('//meta[@property="og:image"]')->attr('content') ?? '';
-        dd($metadata);
     }
 
     private static function _processVideos(&$trending_videos)

@@ -19,12 +19,10 @@ class RabbitMQManager
             $connection = new AMQPStreamConnection('localhost', 5672, 'guest', 'guest');
             $channel = $connection->channel();
             $uuid = Str::uuid();
-            $test = $pub_hex_key . ':' . $uuid;
+            $pubKeyUUID = $pub_hex_key . ':' . $uuid;
             $channel->queue_declare('user_pub_key', false, false, false, false);
     
-            // $message = new AMQPMessage($pub_hex_key);
-            $message = new AMQPMessage($test);
-            Log::info("Publishing message to queue");
+            $message = new AMQPMessage($pubKeyUUID);
             $channel->basic_publish($message, '', 'user_pub_key');
             
             $channel->close();
@@ -37,13 +35,16 @@ class RabbitMQManager
 
     public static function followMetadataQueue(Request $request) 
     {
+        // dd($request->all());
         $pub_key_hex = $request->input('publicKeyHex');
         $connection = new AMQPStreamConnection('localhost', 5672, 'guest', 'guest');
         $channel = $connection->channel();
-        $channel->queue_declare('follow_list', false, false, false, false,);
+        $channel->queue_declare('follow_list_metadata', false, false, false, false,);
+
+        // dd($pub_key_hex);
 
         $message = new AMQPMessage($pub_key_hex);
-        $channel->basic_publish($message, '', 'user_pub_key');
+        $channel->basic_publish($message, '', 'follow_list_metadata');
      
         $channel->close();
         $connection->close();
