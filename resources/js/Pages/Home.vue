@@ -35,6 +35,7 @@ const nostrStore = useNostrStore();
 const reactions = ref([]);
 const toast = useToast();
 const trendingContent = ref([]);
+const trendingHashtags = ref([]);
 
 onBeforeUnmount(() => {
     if (eventSource.value) {
@@ -118,7 +119,8 @@ const retrieveUserMetadata = () => {
 const retrieveNotes = () => {
     return axios.get('/trending-events')
         .then((response) => {
-            trendingContent.value = response.data;
+            trendingContent.value = response.data.trending_content;
+            trendingHashtags.value = response.data.trending_hashtags;
         })
 }
 

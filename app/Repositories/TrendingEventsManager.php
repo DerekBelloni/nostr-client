@@ -13,13 +13,14 @@ class TrendingEventsManager
     {
         $client = new Client();
 
-        $test = RabbitMQManager::userMetadataQueue($request);
+        RabbitMQManager::userMetadataQueue($request);
        
         $trending_notes = self::_getTrendingNotes($client);
         $trending_videos = self::_getTrendingVideos($client);
         $trending_images = self::_getTrendingImages($client);
+        $trending_hashtags = self::_getTrendingHashtags($client);
        
-        return self::_mergeTrendingContent($trending_notes, $trending_images, $trending_videos);
+        return [self::_mergeTrendingContent($trending_notes, $trending_images, $trending_videos), $trending_hashtags];
     }
 
     private static function _getTrendingNotes($client)
@@ -72,6 +73,23 @@ class TrendingEventsManager
         $processed_images = self::_processContent($trending_images, "images");
         return $processed_images;
     }
+
+    private static function _getTrendingHashtags($client)
+    {
+        $response = $client->request('GET', 'https://api.nostr.band/v0/trending/hashtags', [
+            'header' => [
+                'Accept' => 'application/json'
+            ]
+        ]);
+
+        $body = $response->getBody();
+
+        return json_decode($body->getContents(), true);
+    }
+
+
+
+    // move processing functionality into its own class
 
     private static function _mergeTrendingContent($trending_notes, $trending_images, $trending_videos)
     {
