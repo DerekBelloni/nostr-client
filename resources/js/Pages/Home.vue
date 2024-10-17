@@ -84,24 +84,6 @@ const listenForFollowsList = () => {
         })
 }
 
-const addUserNotesToStore = (notes) => {
-    const existingUserNotes = nostrStore.userNotes;
-    notes.forEach((note) => {
-        let parsedNote = JSON.parse(note);
-        let existingNote = null;
-
-        if (existingUserNotes.length <= 0) {
-            nostrStore.userNotes.push(parsedNote[2]);
-        }
-
-        existingNote = existingUserNotes.some((existing) => {
-            return existing?.id == parsedNote[2]['id'];
-        });
-
-        if (!existingNote) nostrStore.userNotes.push(parsedNote[2]);
-    })
-}
-
 const verifyNIP05 = () => {
     return axios.post('/nip05-verification', {metadataContent: nostrStore.metadataContent, publicKeyHex: nostrStore.hexPub})
         .then((response) => {
@@ -121,7 +103,7 @@ const retrieveUserNotes = () => {
     return axios.post('/redis/user-notes', {publicKeyHex: nostrStore.hexPub})
         .then((response) => {
             console.log('retrieve notes: response: ', response);
-            addUserNotesToStore(response.data);
+            nostrStore.addNotes(response.data);
         })
 }
 

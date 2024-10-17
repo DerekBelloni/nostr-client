@@ -10,5 +10,24 @@ export const useNostrStore = defineStore('nostr', () => {
     const userFollows = ref([]);
     const verified = ref(false);
 
-    return { hexPub, hexPriv, metadataContent, npub, userFollows, userNotes, verified };
+    const addNotes = (notes) => {
+        const existingUserNotes = userNotes;
+
+        notes.forEach((note) => {
+            let parsedNote = JSON.parse(note);
+            let existingNote = null;
+            
+            if (existingUserNotes.length <= 0) {
+                userNotes.push(parsedNote[2]);
+            }
+        
+            existingNote = existingUserNotes?.value.some((existing) => {
+                return existing?.id == parsedNote[2]['id'];
+            });
+        
+            if (!existingNote) userNotes.value.push(parsedNote[2]);
+        })
+    }
+
+    return { addNotes, hexPub, hexPriv, metadataContent, npub, userFollows, userNotes, verified };
 })
