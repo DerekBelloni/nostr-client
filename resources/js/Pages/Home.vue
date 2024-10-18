@@ -7,7 +7,7 @@
             <Profile v-if="activeView == 'profile'"></Profile>
         </div>
         <div class="right-sidebar">
-            <TrendingTags></TrendingTags>
+            <TrendingTags :trendingHashtags="trendingHashtags"></TrendingTags>
         </div>
     </div>
 </template>
@@ -44,7 +44,7 @@ onBeforeUnmount(() => {
 });
 
 onMounted(() => {
-    retrieveNotes();
+    retrieveTrendingContent();
     listenForFollowsList();
     listenForMetadata();
     listenForUserNotes();
@@ -96,7 +96,6 @@ const retrieveFollowsMetadata = () => {
     return axios.post('/rabbit-mq/follows-metadata', {publicKeyHex: nostrStore.hexPub})
         .then((response) => {
             console.log('response: ', response);
-            
         })
 }
 
@@ -116,11 +115,13 @@ const retrieveUserMetadata = () => {
         })
 }
 
-const retrieveNotes = () => {
+const retrieveTrendingContent = () => {
     return axios.get('/trending-events')
         .then((response) => {
             trendingContent.value = response.data.trending_content;
-            trendingHashtags.value = response.data.trending_hashtags;
+            trendingHashtags.value = response.data.trending_hashtags.hashtags;
+            console.log('trending hashtags: ', trendingHashtags.value)
+            nostrStore.trendingHashtags = trendingHashtags.value;
         })
 }
 
