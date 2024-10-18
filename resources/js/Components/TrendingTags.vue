@@ -6,7 +6,7 @@
                 <li class="ml-2">
                     <div class="flex flex-row space-x-1 items-center">
                         <span class="font-semibold text-gray-500 text-lg">#</span>
-                        <span class="text-gray-500">{{hashTag.hashtag}}</span>
+                        <span class="text-gray-500 font-semibold">{{hashTag.hashtag}}</span>
                     </div>
                 </li>
             </ul>
@@ -16,5 +16,4 @@
 
 <script setup>
     const props = defineProps(['trendingHashtags']);
-
 </script>
