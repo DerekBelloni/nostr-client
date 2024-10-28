@@ -58,12 +58,19 @@ class ListenRabbitMQMetadata extends Command
         }
     }
 
+    private static function checkPubkey($pubkey) 
+    {
+
+    }
+
     public function processMessage(AMQPMessage $msg)
     {
         $received_metadata = $msg->getBody();
         $decoded_metadata = json_decode($received_metadata, true);
         
         $pubkey = $decoded_metadata[2]["pubkey"];
+
+        // $followsListPubkey = self::checkPubkey($pubkey);
 
         if ($received_metadata) {
             $redis_key = "{$pubkey}:metadata";
