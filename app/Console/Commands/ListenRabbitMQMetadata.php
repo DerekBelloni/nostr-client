@@ -60,7 +60,11 @@ class ListenRabbitMQMetadata extends Command
 
     private static function checkPubkey($pubkey) 
     {
-
+        if (!Redis::exists($pubkey)) {
+            Log::info('REDIS KEY DOES NOT EXIST FOR PUBKEY: ', [$pubkey]);
+            return false;
+        }
+        return true;
     }
 
     public function processMessage(AMQPMessage $msg)
@@ -70,13 +74,15 @@ class ListenRabbitMQMetadata extends Command
         
         $pubkey = $decoded_metadata[2]["pubkey"];
 
-        Log::info('received metadata: ', [$received_metadata, $pubkey]);
+        Log::info('received metadata for pubkey: ', [$pubkey]);
 
-        // $followsListPubkey = self::checkPubkey($pubkey);
-
-        if ($received_metadata) {
+        $metadata_set = null;
+        if ($received_metadata && self::checkPubkey($pubkey)) {
             $redis_key = "{$pubkey}:metadata";
             $metadata_set = Redis::set($redis_key, $received_metadata);
+        } else {
+            $redis_key = "follows_metadata";
+            Redis::append($redis_key, $received_metadata);
         }
  
         if ($metadata_set) {

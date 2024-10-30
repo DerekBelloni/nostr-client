@@ -47,21 +47,21 @@ case "$1" in
         # Store original directory
         ORIGINAL_DIR=$(pwd)
 
-        # Check for process using RabbitMQ port and kill it if found
-        RABBIT_PORT_PID=$(lsof -ti:25672)
-        if [ ! -z "$RABBIT_PORT_PID" ]; then
-            echo "Found process using port 25672, killing it..."
-            kill -9 $RABBIT_PORT_PID
-        fi
+        # # Check for process using RabbitMQ port and kill it if found
+        # RABBIT_PORT_PID=$(lsof -ti:25672)
+        # if [ ! -z "$RABBIT_PORT_PID" ]; then
+        #     echo "Found process using port 25672, killing it..."
+        #     kill -9 $RABBIT_PORT_PID
+        # fi
 
-        # Start RabbitMQ server
-        echo "Starting RabbitMQ server..."
-        rabbitmq-server & 
-        RABBIT_PID=$!
-        echo $RABBIT_PID >> $PID_FILE
+        # # Start RabbitMQ server
+        # echo "Starting RabbitMQ server..."
+        # rabbitmq-server & 
+        # RABBIT_PID=$!
+        # echo $RABBIT_PID >> $PID_FILE
         
-        # Give RabbitMQ time to start up
-        sleep 5
+        # # Give RabbitMQ time to start up
+        # sleep 5
         
         # Start each service and store its PID
         php artisan serve & echo $! >> $PID_FILE
@@ -72,31 +72,31 @@ case "$1" in
         npm run dev & echo $! >> $PID_FILE
         
         # Start Go server
-        echo "Starting GO socket server..."
-        GO_DIR=~/Developer/Personal/GO/go-socket-server
-        cd "$GO_DIR"
-        if [ $? -eq 0 ]; then
-            # First build the Go server and check for errors
-            echo "Building Go server..."
-            go build cmd/server/main.go
-            if [ $? -eq 0 ]; then
-                echo -e "${GREEN}Build successful${NC}"
+        # echo "Starting GO socket server..."
+        # GO_DIR=~/Developer/Personal/GO/go-socket-server
+        # cd "$GO_DIR"
+        # if [ $? -eq 0 ]; then
+        #     # First build the Go server and check for errors
+        #     echo "Building Go server..."
+        #     go build cmd/server/main.go
+        #     if [ $? -eq 0 ]; then
+        #         echo -e "${GREEN}Build successful${NC}"
                 
-                # Launch WezTerm with the Go server command directly
-                "/Applications/WezTerm.app/Contents/MacOS/wezterm" start --cwd "$GO_DIR" -- zsh -c "clear && echo 'Go Server Output:' && go run cmd/server/main.go" &
-                WEZTERM_PID=$!
-                echo $WEZTERM_PID >> $PID_FILE
+        #         # Launch WezTerm with the Go server command directly
+        #         "/Applications/WezTerm.app/Contents/MacOS/wezterm" start --cwd "$GO_DIR" -- zsh -c "clear && echo 'Go Server Output:' && go run cmd/server/main.go" &
+        #         WEZTERM_PID=$!
+        #         echo $WEZTERM_PID >> $PID_FILE
 
-            else
-                echo -e "${RED}Build failed${NC}"
-                exit 1
-            fi
+        #     else
+        #         echo -e "${RED}Build failed${NC}"
+        #         exit 1
+        #     fi
             
-            echo -e "${GREEN}Go socket server started${NC}"
-        else 
-            echo -e "${RED}Error: Could not change to Go application directory${NC}"
-            exit 1
-        fi
+        #     echo -e "${GREEN}Go socket server started${NC}"
+        # else 
+        #     echo -e "${RED}Error: Could not change to Go application directory${NC}"
+        #     exit 1
+        # fi
 
         # Return to original directory
         cd $ORIGINAL_DIR
