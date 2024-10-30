@@ -70,6 +70,8 @@ class ListenRabbitMQMetadata extends Command
         
         $pubkey = $decoded_metadata[2]["pubkey"];
 
+        Log::info('received metadata: ', [$received_metadata, $pubkey]);
+
         // $followsListPubkey = self::checkPubkey($pubkey);
 
         if ($received_metadata) {
