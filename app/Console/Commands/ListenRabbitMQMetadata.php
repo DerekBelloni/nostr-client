@@ -60,11 +60,7 @@ class ListenRabbitMQMetadata extends Command
 
     private static function checkPubkey($pubkey) 
     {
-        if (!Redis::exists($pubkey)) {
-            Log::info('REDIS KEY DOES NOT EXIST FOR PUBKEY: ', [$pubkey]);
-            return false;
-        }
-        return true;
+        return Redis::exists($pubkey);
     }
 
     public function processMessage(AMQPMessage $msg)
@@ -85,15 +81,15 @@ class ListenRabbitMQMetadata extends Command
             Redis::append($redis_key, $received_metadata);
         }
  
-        if ($metadata_set) {
-            try {
-                event(new UserMetadataSet(true, $pubkey));
-            } catch (\Exception $e) {
-                $this->error('Error firing UserMetadataSet event: ' . $e->getMessage());
-            }
-        } else {
-            $this->warn('No metadata received');
-        }
+        // if ($metadata_set) {
+        //     try {
+        //         event(new UserMetadataSet(true, $pubkey));
+        //     } catch (\Exception $e) {
+        //         $this->error('Error firing UserMetadataSet event: ' . $e->getMessage());
+        //     }
+        // } else {
+        //     $this->warn('No metadata received');
+        // }
     }
 
     private function closeConnection()
