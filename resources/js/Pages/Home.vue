@@ -120,7 +120,6 @@ const retrieveTrendingContent = () => {
         .then((response) => {
             trendingContent.value = response.data.trending_content;
             trendingHashtags.value = response.data.trending_hashtags.hashtags;
-            console.log('trending hashtags: ', trendingHashtags.value)
             nostrStore.trendingHashtags = trendingHashtags.value;
         })
 }
