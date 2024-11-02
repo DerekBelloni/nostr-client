@@ -36,11 +36,12 @@
     const retrieveNpub = () => {
         router.post('/npub', { nsec: nsec.value }, {
             preserveState: true,
+            preserveUrl: true,
             onSuccess: page => {
                 nostrStore.npub = page.props.npub;
                 nostrStore.hexPriv = page.props.hexPriv;
                 nostrStore.hexPub = page.props.hexPub;
-                router.replace('/');
+                // router.replace('/');
                 loginDialog.value = false; 
             },
             onError: errors => {

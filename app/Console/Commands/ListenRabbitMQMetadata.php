@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Events\UserFollowsMetadataSet;
 use App\Events\UserMetadataSet;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
@@ -105,9 +106,16 @@ class ListenRabbitMQMetadata extends Command
             $follows_set;
             if (self::checkExistingFollows($redis_key)) {
                 $follows_set = Redis::sAdd($redis_key, $received_metadata);
+                $this->info("UserFollowsMetadataSet event fired");
             }
 
-            if
+            if ($follows_set) {
+                try {
+                    event(new UserFollowsMetadataSet(true));
+                } catch (\Exception $e) {
+                    $this->error('Error firing UserFollowsMetadataSet event: ' . $e->getMessage());
+                }
+            }
         }
     }
 

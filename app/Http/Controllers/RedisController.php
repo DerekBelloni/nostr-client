@@ -21,6 +21,6 @@ class RedisController extends Controller
     }
 
     public function followsMetadata(Request $request) {
-        // RedisManager::
+        $follows_list = RedisManager::retrieveFollowsMetadata($request);
     }
 }

@@ -63,7 +63,7 @@ const listenForMetadata = () => {
             if (event.userPubKey === nostrStore.hexPub) {
                 retrieveUserMetadata(nostrStore.hexPub);
             }
-        })
+        });
 }
 
 const listenForUserNotes = () => {
@@ -73,7 +73,7 @@ const listenForUserNotes = () => {
                 retrieveUserNotes(nostrStore.hexPub);
                 console.log('banana', event)
             }
-        })
+        });
 }
 
 const listenForFollowsList = () => {
@@ -82,7 +82,15 @@ const listenForFollowsList = () => {
             if (event.userPubKey === nostrStore.hexPub) {
                 retrieveFollowsMetadata();
             }
-        })
+        });
+}
+
+const listenForFollowsMetadata = () => {
+    echo.channel('follows_metadata')
+        .listen('.follows_metadata_set', (event) => {
+            console.log('event retrieve set follows metadata event: ', event);
+            retrieveSetFollowsMetadata();
+        });
 }
 
 const verifyNIP05 = () => {
@@ -96,6 +104,13 @@ const retrieveFollowsMetadata = () => {
     return axios.post('/rabbit-mq/follows-metadata', {publicKeyHex: nostrStore.hexPub})
         .then((response) => {
             console.log('response: ', response);
+        })
+}
+
+const retrieveSetFollowsMetadata = () => {
+    return axios.post('/redis/follows-metadata', {publicKeyHex: nostrStore.hexPub})
+        .then((response) => {
+            console.log('darkest before the dawn');
         })
 }
 

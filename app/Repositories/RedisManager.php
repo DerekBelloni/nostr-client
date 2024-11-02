@@ -35,4 +35,20 @@ class RedisManager
         $user_notes = Redis::sMembers($redis_key);
         return $user_notes;
     }
+
+    private static function extractFollowsListPubkeys()
+    {
+
+    }
+
+    public static function retrieveFollowsMetadata(Request $request)
+    {
+        $user_pubkey = $request->input('publicKeyHex');
+        $follows_metadata_redis_key = "follows_metadata";
+        $follows_list_redis_key = "{$user_pubkey}:follows";
+        $follows_metadata = Redis::sMember($redis_key);
+        $follows_list = Redis::get($follows_list_redis_key);
+        dd($follows_list);
+
+    }
 }
