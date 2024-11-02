@@ -60,7 +60,13 @@ class ListenRabbitMQMetadata extends Command
 
     private static function checkPubkey($pubkey) 
     {
-        return Redis::exists($pubkey);
+        Log::info('received metadata for pubkey: ', [Redis::exists("{$pubkey}:follows") || Redis::exists("{$pubkey}:user-notes")]);
+        return Redis::exists("{$pubkey}:follows") || Redis::exists("{$pubkey}:user-notes");
+    }
+
+    private static function checkExistingFollows($redis_key)
+    {
+
     }
 
     public function processMessage(AMQPMessage $msg)
@@ -78,18 +84,19 @@ class ListenRabbitMQMetadata extends Command
             $metadata_set = Redis::set($redis_key, $received_metadata);
         } else {
             $redis_key = "follows_metadata";
-            Redis::append($redis_key, $received_metadata);
+            self::checkExistingFollows($redis_key);
+            Redis::sAdd($redis_key, $received_metadata);
         }
  
-        // if ($metadata_set) {
-        //     try {
-        //         event(new UserMetadataSet(true, $pubkey));
-        //     } catch (\Exception $e) {
-        //         $this->error('Error firing UserMetadataSet event: ' . $e->getMessage());
-        //     }
-        // } else {
-        //     $this->warn('No metadata received');
-        // }
+        if ($metadata_set) {
+            try {
+                event(new UserMetadataSet(true, $pubkey));
+            } catch (\Exception $e) {
+                $this->error('Error firing UserMetadataSet event: ' . $e->getMessage());
+            }
+        } else {
+            $this->warn('No metadata received');
+        }
     }
 
     private function closeConnection()
