@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
@@ -26,4 +27,10 @@ class UserFollowsMetadataSet implements ShouldBroadcastNow
     {
         return 'follows_metadata_set';
     }
+
+    public function broadcastWith() 
+    {
+        return ['follows_metadata_set' => $this->follows_metadata_set];
+    }
+
 }

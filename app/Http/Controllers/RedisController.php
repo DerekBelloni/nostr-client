@@ -8,7 +8,7 @@ use Inertia\Inertia;
 
 class RedisController extends Controller
 {
-    public function userMetadata(Request $request) 
+    public function userMetadata(Request $request)
     {
         $user_metadata = RedisManager::retrieveUsersMetadata($request);
         return ['userMetadata' => $user_metadata];
@@ -21,6 +21,6 @@ class RedisController extends Controller
     }
 
     public function followsMetadata(Request $request) {
-        $follows_list = RedisManager::retrieveFollowsMetadata($request);
+         $follows_list = RedisManager::retrieveFollowsMetadata($request);
     }
 }

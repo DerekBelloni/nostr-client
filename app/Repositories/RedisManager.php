@@ -12,9 +12,9 @@ class RedisManager
     {
         $user_pubkey = $request->input('publicKeyHex');
         $decoded_metadata = json_decode(Redis::get("{$user_pubkey}:metadata"), true);
-   
+
         abort_if(is_null($decoded_metadata), 404 ,"Metadata could not be found in Redis");
-        
+
         $formatted_metadata = self::formatMetadata($decoded_metadata);
         return $formatted_metadata;
     }
@@ -43,7 +43,7 @@ class RedisManager
 
     public static function retrieveFollowsMetadata(Request $request)
     {
-        $user_pubkey = $request->input('publicKeyHex');
+         $user_pubkey = $request->input('publicKeyHex');
         $follows_metadata_redis_key = "follows_metadata";
         $follows_list_redis_key = "{$user_pubkey}:follows";
         $follows_metadata = Redis::sMember($redis_key);

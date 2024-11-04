@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Console\Commands;
 
@@ -22,7 +22,7 @@ class ListenRabbitMQMetadata extends Command
     {
         parent::__construct();
     }
-    
+
     public function handle()
     {
         $this->info("Starting to listen for metadata messages...");
@@ -33,7 +33,7 @@ class ListenRabbitMQMetadata extends Command
                 $this->consumeMessages();
             } catch (\Exception $e) {
                 $this->error("Error occurred: " . $e->getMessage());
-                Log::error("RabbitMQ Listener Error: " . $e->getMessage());
+                Log::error("RabbitMQ Listener Error Banana: " . $e->getMessage());
                 $this->closeConnection();
                 sleep(5);
             }
@@ -59,12 +59,12 @@ class ListenRabbitMQMetadata extends Command
         }
     }
 
-    private static function checkPubkey($pubkey) 
+    private static function checkPubkey($pubkey)
     {
         return Redis::exists("{$pubkey}:follows") || Redis::exists("{$pubkey}:user-notes");
     }
 
-    private static function checkExistingFollows($redis_key)
+    private static function checkExistingFollows($redis_key, $pubkey)
     {
         $existing_follows_metadata = Redis::sMembers($redis_key);
         $key_exists = false;
@@ -82,12 +82,13 @@ class ListenRabbitMQMetadata extends Command
     {
         $received_metadata = $msg->getBody();
         $decoded_metadata = json_decode($received_metadata, true);
-        
+
         $pubkey = $decoded_metadata[2]["pubkey"];
 
         Log::info('received metadata for pubkey: ', [$pubkey]);
 
         $metadata_set = null;
+        $follows_set = null;
         if ($received_metadata && self::checkPubkey($pubkey)) {
             $redis_key = "{$pubkey}:metadata";
             $metadata_set = Redis::set($redis_key, $received_metadata);
@@ -103,15 +104,14 @@ class ListenRabbitMQMetadata extends Command
             }
         } else {
             $redis_key = "follows_metadata";
-            $follows_set;
-            if (self::checkExistingFollows($redis_key)) {
+            if (self::checkExistingFollows($redis_key, $pubkey)) {
                 $follows_set = Redis::sAdd($redis_key, $received_metadata);
-                $this->info("UserFollowsMetadataSet event fired");
             }
-
+            
             if ($follows_set) {
                 try {
                     event(new UserFollowsMetadataSet(true));
+                    $this->info("UserFollowsMetadataSet event fired");
                 } catch (\Exception $e) {
                     $this->error('Error firing UserFollowsMetadataSet event: ' . $e->getMessage());
                 }

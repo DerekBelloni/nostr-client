@@ -48,6 +48,7 @@ onMounted(() => {
     listenForFollowsList();
     listenForMetadata();
     listenForUserNotes();
+    listenForFollowsMetadata();
 });
 
 watch(metadataContent, async(newValue, oldValue) => {
