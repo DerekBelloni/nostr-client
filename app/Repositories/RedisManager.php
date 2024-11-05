@@ -15,17 +15,20 @@ class RedisManager
 
         abort_if(is_null($decoded_metadata), 404 ,"Metadata could not be found in Redis");
 
-        $formatted_metadata = self::formatMetadata($decoded_metadata);
+        $formatted_metadata = self::formatEventContent($decoded_metadata);
         return $formatted_metadata;
     }
 
-    private static function formatMetadata($metadata)
+    private static function formatEventContent($event, $follows_metadata = false)
     {
-        if (isset($metadata[2]["content"])) {
-            $metadata[2]["content"] = json_decode($metadata[2]["content"], true);
-            Log::info("user metadata: ", [$metadata[2]["pubkey"]]);
+        if (json_decode($event) !== null && json_last_error() === JSON_ERROR_NONE) {
+            $event = json_decode($event, true);
         }
-        return $metadata[2]["content"] ?? null;
+ 
+        if (isset($event[2]["content"])) {
+            $event[2]["content"] = json_decode($event[2]["content"], true);
+        }
+        return $event[2]["content"] ?? null;
     }
 
     public static function retrieveUserNotes(Request $request)
@@ -43,12 +46,15 @@ class RedisManager
 
     public static function retrieveFollowsMetadata(Request $request)
     {
-         $user_pubkey = $request->input('publicKeyHex');
+        $user_pubkey = $request->input('publicKeyHex');
+        
         $follows_metadata_redis_key = "follows_metadata";
         $follows_list_redis_key = "{$user_pubkey}:follows";
-        $follows_metadata = Redis::sMember($redis_key);
-        $follows_list = Redis::get($follows_list_redis_key);
-        dd($follows_list);
 
+        $follows_metadata = Redis::sMembers($follows_metadata_redis_key);
+        $follows_list = Redis::get($follows_list_redis_key);
+        
+        $decoded_follow_list_content = self::formatEventContent($follows_list, true);
+        dd($decoded_follow_list_content);
     }
 }

@@ -91,8 +91,8 @@ class ListenRabbitMQMetadata extends Command
 
         Log::info('received metadata for pubkey: ', [$pubkey]);
 
-        $metadata_set = null;
-        $follows_set = null;
+        $metadata_set = false;
+        $follows_set = false;
         if ($received_metadata && self::checkPubkey($pubkey)) {
             $redis_key = "{$pubkey}:metadata";
             $metadata_set = Redis::set($redis_key, $received_metadata);
@@ -108,8 +108,11 @@ class ListenRabbitMQMetadata extends Command
             }
         } else {
             $redis_key = "follows_metadata";
-            if (self::checkExistingFollows($redis_key, $pubkey)) {
+            if (!self::checkExistingFollows($redis_key, $pubkey)) {
                 $follows_set = Redis::sAdd($redis_key, $received_metadata);
+            } else {
+                $follows_set = true;
+                $this->info("Follows already set");
             }
             
             if ($follows_set) {
