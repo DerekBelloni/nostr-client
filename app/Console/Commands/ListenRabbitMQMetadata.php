@@ -69,6 +69,10 @@ class ListenRabbitMQMetadata extends Command
         $existing_follows_metadata = Redis::sMembers($redis_key);
         $key_exists = false;
 
+        if ($existing_follows_metadata === false || !is_array($existing_follows_metadata)) {
+            return false;
+        }
+
         foreach($existing_follows_metadata as $metadata) {
             $decoded_metadata = json_decode($metadata, true);
             $metadata_pubkey = $decoded_metadata[2]["pubkey"];
