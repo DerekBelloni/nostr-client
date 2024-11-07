@@ -21,10 +21,17 @@ class RedisManager
 
     private static function formatEventContent($event, $follows_metadata = false)
     {
-        if (json_decode($event) !== null && json_last_error() === JSON_ERROR_NONE) {
-            $event = json_decode($event, true);
+        //dd($event);
+        if (!is_array($event)) {
+            if (json_decode($event) !== null && json_last_error() === JSON_ERROR_NONE) {
+                $event = json_decode($event, true);
+            }
         }
- 
+        if ($follows_metadata) {
+            dd($event);
+        }
+
+
         if (isset($event[2]["content"])) {
             $event[2]["content"] = json_decode($event[2]["content"], true);
         }
@@ -47,13 +54,13 @@ class RedisManager
     public static function retrieveFollowsMetadata(Request $request)
     {
         $user_pubkey = $request->input('publicKeyHex');
-        
+
         $follows_metadata_redis_key = "follows_metadata";
         $follows_list_redis_key = "{$user_pubkey}:follows";
 
         $follows_metadata = Redis::sMembers($follows_metadata_redis_key);
         $follows_list = Redis::get($follows_list_redis_key);
-        
+
         $decoded_follow_list_content = self::formatEventContent($follows_list, true);
         dd($decoded_follow_list_content);
     }
