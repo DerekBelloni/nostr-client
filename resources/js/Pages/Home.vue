@@ -111,7 +111,8 @@ const retrieveFollowsMetadata = () => {
 const retrieveSetFollowsMetadata = () => {
     return axios.post('/redis/follows-metadata', {publicKeyHex: nostrStore.hexPub})
         .then((response) => {
-            console.log('darkest before the dawn');
+            console.log('darkest before the dawn', response);
+            nostrStore.addFollows(response.data);
         })
 }
 

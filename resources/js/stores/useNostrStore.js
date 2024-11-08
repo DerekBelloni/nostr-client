@@ -8,8 +8,24 @@ export const useNostrStore = defineStore('nostr', () => {
     const npub = ref(null);
     const trendingHashtags = ref([]);
     const userNotes = ref([]);
-    const userFollows = ref([]);
+    const userFollowsContent = ref([]);
     const verified = ref(false);
+
+    const addFollows = (follows) => {
+        const existingFollows = userFollowsContent;
+
+        follows.forEach((follow) => {
+            if (existingFollows.length <= 0) {
+                userFollowsContent.value.push(follow);
+            }
+    
+            let existingFollow = existingFollows?.value.some((existing) => {
+                 return existing?.pubkey == follow.pubkey;
+            })
+
+            if (!existingFollow) userFollowsContent.value.push(follow);
+        })
+    }
 
     const addNotes = (notes) => {
         const existingUserNotes = userNotes;
@@ -30,5 +46,5 @@ export const useNostrStore = defineStore('nostr', () => {
         })
     }
 
-    return { addNotes, hexPub, hexPriv, metadataContent, npub, trendingHashtags, userFollows, userNotes, verified };
+    return { addFollows, addNotes, hexPub, hexPriv, metadataContent, npub, trendingHashtags, userFollowsContent, userFollowsContent, userNotes, verified };
 })

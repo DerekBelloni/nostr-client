@@ -29,6 +29,7 @@ class RedisManager
 
         if (isset($event[2]["content"])) {
             $event[2]["content"] = json_decode($event[2]["content"], true);
+            $event[2]["content"]["pubkey"] = $event[2]["pubkey"];
         }
         return $event[2]["content"] ?? null;
     }
@@ -82,9 +83,9 @@ class RedisManager
             return false;
         });
 
-        $decoded_metadata = array_map(function($item) {
+        $decoded_metadata = array_values(array_map(function($item) {
             return self::formatEventContent($item);
-        }, $valid_follows_metadata);
+        }, $valid_follows_metadata));
 
         return $decoded_metadata;
     }
