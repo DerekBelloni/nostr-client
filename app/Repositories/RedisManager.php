@@ -19,18 +19,13 @@ class RedisManager
         return $formatted_metadata;
     }
 
-    private static function formatEventContent($event, $follows_metadata = false)
+    private static function formatEventContent($event)
     {
-        //dd($event);
         if (!is_array($event)) {
             if (json_decode($event) !== null && json_last_error() === JSON_ERROR_NONE) {
                 $event = json_decode($event, true);
             }
         }
-        if ($follows_metadata) {
-            dd($event);
-        }
-
 
         if (isset($event[2]["content"])) {
             $event[2]["content"] = json_decode($event[2]["content"], true);
@@ -46,9 +41,15 @@ class RedisManager
         return $user_notes;
     }
 
-    private static function extractFollowsListPubkeys()
+    private static function extractFollowsListPubkeys($event)
     {
-
+        $follow_keys = array_column($event[2]['tags'], 1);
+        foreach($follow_keys as $key => $value) {
+            if (!ctype_xdigit($value) && !strlen($value)) {
+                unset($follow_keys[$key]);
+            }
+        }
+        return $follow_keys;
     }
 
     public static function retrieveFollowsMetadata(Request $request)
@@ -61,7 +62,10 @@ class RedisManager
         $follows_metadata = Redis::sMembers($follows_metadata_redis_key);
         $follows_list = Redis::get($follows_list_redis_key);
 
-        $decoded_follow_list_content = self::formatEventContent($follows_list, true);
-        dd($decoded_follow_list_content);
+        $decoded_follow_list_keys = self::extractFollowsListPubkeys($follows_list);
+
+        if (!empty($decoded_follow_list_keys)) {
+            dd($decoded_follow_list_keys);
+        }
     }
 }
