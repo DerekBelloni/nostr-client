@@ -43,6 +43,12 @@ class RedisManager
 
     private static function extractFollowsListPubkeys($event)
     {
+        if (!is_array($event)) {
+            if (json_decode($event) !== null && json_last_error() === JSON_ERROR_NONE) {
+                $event = json_decode($event, true);
+            }
+        }
+
         $follow_keys = array_column($event[2]['tags'], 1);
         foreach($follow_keys as $key => $value) {
             if (!ctype_xdigit($value) && !strlen($value)) {
@@ -64,8 +70,22 @@ class RedisManager
 
         $decoded_follow_list_keys = self::extractFollowsListPubkeys($follows_list);
 
-        if (!empty($decoded_follow_list_keys)) {
-            dd($decoded_follow_list_keys);
-        }
+        abort_if(empty($decoded_follow_list_keys), 404, 'No follows found for this user');
+
+        $checked_pubkey = [];
+        $valid_follows_metadata = array_filter($follows_metadata, function($item) use (&$checked_pubkey, $decoded_follow_list_keys) {
+            $decoded_item = json_decode($item, true);
+            if (!in_array($decoded_item[2]["pubkey"], $checked_pubkey)) {
+                $checked_pubkey[] = $decoded_item[2]["pubkey"];
+                return in_array($decoded_item[2]["pubkey"], $decoded_follow_list_keys);
+            }
+            return false;
+        });
+
+        $decoded_metadata = array_map(function($item) {
+            return self::formatEventContent($item);
+        }, $valid_follows_metadata);
+
+        return $decoded_metadata;
     }
 }
