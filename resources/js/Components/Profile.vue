@@ -21,13 +21,13 @@
             <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium cursor-pointer hover:bg-gray-300" @click="selectTab('notes')">Notes</span>
             <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium cursor-pointer hover:bg-gray-300" @click="selectTab('reactions')">Reactions</span>
             <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium cursor-pointer hover:bg-gray-300" @click="selectTab('followers')">Followers</span>
-            <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium cursor-pointer hover:bg-gray-300" @click="selectTab('follows')">Followed</span>
+            <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium cursor-pointer hover:bg-gray-300" @click="selectTab('followed')">Followed</span>
         </div>
         <div class="mt-4 overflow-y-auto">
             <div v-if="activeTab == 'notes'">
                 <UserNote></UserNote>
             </div>
-            <div v-if="activeTab == 'follows'">
+            <div v-if="activeTab == 'followed'">
                 <FollowsMetadata></FollowsMetadata>
             </div>
         </div>
@@ -50,11 +50,21 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-    activeTab.vlues = null;
+    activeTab.value = null;
 })
 
-selectTab = (tabType) => {
-    console.log('tab type: ', tabType);
+const selectTab = (tabType) => {
+    switch(tabType) {
+        case "notes":
+            activeTab.value = "notes";
+            break;
+        case "followed":
+            activeTab.value = "followed";
+            break;
+        default:
+            activeTab.value = null;
+            break;
+    }
 }
 
 
