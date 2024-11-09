@@ -4,10 +4,12 @@
             <div class="profile-picture-container ml-4">
                 <img class="profile-picture" :src="follow.picture" alt="">
             </div>
-            <div class="flex flex-col">
+            <div class="flex flex-col ml-2 mt-1">
                 <div>
-                    <!-- make into computed-->
                     <span>{{setDisplayName(follow)}}</span>
+                </div>
+                <div class="-mt-1">
+                    <span class="text-sm text-gray-600">{{follow.about}}</span>
                 </div>
             </div>
         </div>
@@ -22,7 +24,7 @@
     const followsMetadata = ref(nostrStore.userFollowsContent);
     
     const setDisplayName = (follow) => {
-        return follow.display_name ? follow.display_name : follow.name;
+        return follow.display_name || follow.name;
     }
 </script>
 
@@ -32,10 +34,10 @@
         display: flex;
     }
     .profile-picture {
-        width: 50px; /* Set a fixed width */
-        height: 50px; /* Set a fixed height to match the width */
-        border-radius: 50%; /* Adjust the value as needed to position the image */
-        object-fit: cover; /* Ensure the image covers the area */
-        border: 2px solid white; /* Optional: Add a border to enhance the circular look */
+        width: 50px; 
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover; 
+        border: 2px solid white;
     }
 </style>
