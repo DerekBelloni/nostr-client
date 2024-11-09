@@ -37,6 +37,7 @@ const toast = useToast();
 const trendingContent = ref([]);
 const trendingHashtags = ref([]);
 
+
 onBeforeUnmount(() => {
     if (eventSource.value) {
         eventSource.value.close();
@@ -68,7 +69,7 @@ const listenForMetadata = () => {
 }
 
 const listenForUserNotes = () => {
-    echo.channel('user_notes') 
+    echo.channel('user_notes')
         .listen('.user_notes_set', (event) => {
             if (event.userPubKey === nostrStore.hexPub) {
                 retrieveUserNotes(nostrStore.hexPub);

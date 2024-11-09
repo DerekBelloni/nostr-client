@@ -18,24 +18,45 @@
             <i class="pi pi-check text-emerald-500 pl-4 text-lg"></i>
         </div>
         <div class="pl-4 pt-4 space-x-2">
-            <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium">Notes</span>
-            <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium">Reactions</span>
-            <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium">Followers</span>
-            <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium">Followed</span>
+            <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium cursor-pointer hover:bg-gray-300" @click="selectTab('notes')">Notes</span>
+            <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium cursor-pointer hover:bg-gray-300" @click="selectTab('reactions')">Reactions</span>
+            <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium cursor-pointer hover:bg-gray-300" @click="selectTab('followers')">Followers</span>
+            <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium cursor-pointer hover:bg-gray-300" @click="selectTab('follows')">Followed</span>
         </div>
         <div class="mt-4 overflow-y-auto">
-            <UserNote></UserNote>
+            <div v-if="activeTab == 'notes'">
+                <UserNote></UserNote>
+            </div>
+            <div v-if="activeTab == 'follows'">
+                <FollowsMetadata></FollowsMetadata>
+            </div>
         </div>
     </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { useNostrStore } from '@/stores/useNostrStore';
 import UserNote from './UserNotes.vue';
+import FollowsMetadata from './FollowsMetadata.vue';
 
 const nostrStore = useNostrStore();
 const userMetadata = ref(nostrStore.metadataContent);
+const activeTab = ref(null);
+
+
+onMounted(() => {
+    activeTab.value = "notes";
+});
+
+onUnmounted(() => {
+    activeTab.vlues = null;
+})
+
+selectTab = (tabType) => {
+    console.log('tab type: ', tabType);
+}
+
 
 </script>
 
