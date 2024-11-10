@@ -1,11 +1,11 @@
 <template>
     <div v-for="follow in followsMetadata">
-        <div class="flex flex-row cursor-pointer">
-            <div class="profile-picture-container ml-4">
-                <img v-if="follow.picture" class="profile-picture" :src="follow.picture" alt="" @error="handleImageError">
+        <div class="flex flex-row cursor-pointer w-full pt-2 hover:bg-gray-100">
+            <div class="profile-picture-container ml-4 flex-shrink-0">
+                <img v-if="follow.picture" class="profile-picture" :src="follow.picture" alt="" @error="handleImageError" @load="handleImageLoad">
                 <Avatar v-else size="large"></Avatar>
             </div>
-            <div class="flex flex-col ml-2 mt-1">
+            <div class="flex flex-col ml-2 mt-1 flex-1 min-w-0">
                 <div>
                     <span>{{setDisplayName(follow)}}</span>
                 </div>
@@ -28,11 +28,6 @@
     const setDisplayName = (follow) => {
         return follow.display_name || follow.name;
     }
-
-    const handleImageError = (e) => {
-        console.log("image error: ", e.target.src);
-        e.target.style.display = 'none';
-    } 
 </script>
 
 <style scoped>

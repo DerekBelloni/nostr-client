@@ -105,7 +105,7 @@ class TrendingEventsManager
                 $item["event"]["content"] = preg_replace_callback($pattern, function ($matches) {
                     $url = $matches[0];
                     $extension = pathinfo($url, PATHINFO_EXTENSION);
-                    if (preg_match('/\.(jpg|jpeg|png|gif)$/i', $url)) {
+                    if (preg_match('/\.(jpg|jpeg|png|gif|webp)$/i', $url)) {
                         return '<img src="' . $url . '">';
                     } else if (in_array($extension, ['mp4', 'webm', 'ogg', 'mov'])) {
                         return '<video width="600" height="405" controls><source src="' . $url . '" type="video/' . $extension . '">Your browser does not support the video tag.</video>';
@@ -174,8 +174,6 @@ class TrendingEventsManager
                 break;
         }
 
-        // $note["event"]["processed_content"] = $processor->processContent($trending_content[2]["event"]["content"]);
-        // dd($note);
         $test = $trending_content->transform(function ($note) use ($processor) {
             if (isset($note["event"]["content"])) {
                 $note["event"]["processed_content"] = $processor->processContent($note["event"]["content"]);

@@ -11,7 +11,7 @@ class ContentProcessor
 
     private function parseContent($content)
     {
-        $pattern = '/<.*?src="(https?:\/\/[^\s"]+?\.(?:mp4|webm|ogg|mov|jpg|jpeg|png|gif))".*?>(?![^<]*<\/\w+>)|https?:\/\/[^\s"]+?\.(?:mp4|webm|ogg|mov|jpg|jpeg|png|gif)\b|(nostr:note[^\s]+)/i';
+        $pattern = '/<.*?src="(https?:\/\/[^\s"]+?\.(?:mp4|webm|ogg|mov|jpg|jpeg|png|gif|webp))".*?>(?![^<]*<\/\w+>)|https?:\/\/[^\s"]+?\.(?:mp4|webm|ogg|mov|jpg|jpeg|png|gif|webp)\b|(nostr:note[^\s]+)/i';
 
         $parts = preg_split($pattern, $content, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_OFFSET_CAPTURE);
 
@@ -44,7 +44,7 @@ class ContentProcessor
 
     private function determineUrlType($content)
     {
-        if (preg_match('/\.(jpg|jpeg|png|gif)$/i', $content)) {
+        if (preg_match('/\.(jpg|jpeg|png|gif|webp)$/i', $content)) {
             return 'image';
         } else if (preg_match('/\.(mp4|webm|ogg|mov)$/i', $content)) {
             return 'video';
