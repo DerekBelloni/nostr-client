@@ -90,7 +90,6 @@ const listenForFollowsList = () => {
 const listenForFollowsMetadata = () => {
     echo.channel('follows_metadata')
         .listen('.follows_metadata_set', (event) => {
-            console.log('event retrieve set follows metadata event: ', event);
             retrieveSetFollowsMetadata();
         });
 }
@@ -112,7 +111,6 @@ const retrieveFollowsMetadata = () => {
 const retrieveSetFollowsMetadata = () => {
     return axios.post('/redis/follows-metadata', {publicKeyHex: nostrStore.hexPub})
         .then((response) => {
-            console.log('darkest before the dawn', response);
             nostrStore.addFollows(response.data);
         })
 }
@@ -120,7 +118,6 @@ const retrieveSetFollowsMetadata = () => {
 const retrieveUserNotes = () => {
     return axios.post('/redis/user-notes', {publicKeyHex: nostrStore.hexPub})
         .then((response) => {
-            console.log('retrieve notes: response: ', response);
             nostrStore.addNotes(response.data);
         })
 }

@@ -41,7 +41,6 @@
                 nostrStore.npub = page.props.npub;
                 nostrStore.hexPriv = page.props.hexPriv;
                 nostrStore.hexPub = page.props.hexPub;
-                // router.replace('/');
                 loginDialog.value = false; 
             },
             onError: errors => {
