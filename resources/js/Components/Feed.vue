@@ -29,7 +29,7 @@
                                 </video>
                             </div>
                         </div>
-                        <div v-if="content.type === 'text'">
+                        <div v-if="content.type === 'text'" class="nostr-content">
                             <div class="text-wrap">
                                 <span class="font-medium" v-html="content.content"></span>
                             </div>
@@ -43,9 +43,9 @@
                 </div>
                 <div class="grid grid-cols-12 mt-4 mb-2 mx-4">
                     <div class="col-start-2 col-span-11 flex space-x-12">
-                        <i class="pi pi-comment text-emerald-500" style="font-size: 1.1rem"></i>
-                        <i class="pi pi-heart text-rose-500" style="font-size: 1.1rem"></i>
-                        <i class="pi pi-bolt text-amber-500" style="font-size: 1.1rem"></i>
+                        <i class="pi pi-comment text-emerald-500 cursor-pointer" style="font-size: 1.1rem"></i>
+                        <i class="pi pi-heart text-rose-500 cursor-pointer" style="font-size: 1.1rem"></i>
+                        <i class="pi pi-bolt text-amber-500 cursor-pointer" style="font-size: 1.1rem"></i>
                     </div>
                 </div>
             </li>
@@ -71,7 +71,7 @@ const noteDate = (utcDate) => {
 
 </script>
 
-<style scoped>
+<style>
     :root {
         --main-bg-color: #f0f0f0;
         --main-text-color: #333333;
@@ -82,6 +82,9 @@ const noteDate = (utcDate) => {
         width: 50%;
     }
 
+    .nostr-content a {
+        @apply text-amber-500 underline hover:text-amber-700;
+    }
     .notes-container {
         height: 100%;
         overflow-y: auto;
