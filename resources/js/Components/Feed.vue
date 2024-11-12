@@ -30,7 +30,7 @@
                             </div>
                         </div>
                         <div v-if="content.type === 'text'" class="nostr-content">
-                            <div class="text-wrap">
+                            <div class="text-wrap break-words">
                                 <span class="font-medium" v-html="content.content"></span>
                             </div>
                         </div>
@@ -83,7 +83,7 @@ const noteDate = (utcDate) => {
     }
 
     .nostr-content a {
-        @apply text-amber-500 underline hover:text-amber-700;
+        @apply text-amber-500 underline hover:text-amber-700 text-wrap;
     }
     .notes-container {
         height: 100%;
