@@ -158,7 +158,7 @@ class TrendingEventsManager
     private static function _processContent(&$trending_content, $type = null)
     {
         $processor = new ContentProcessor();
-
+        // definitely refactor this
         switch ($type) {
             case "images":
                 self::_processImages($trending_content);
@@ -173,7 +173,7 @@ class TrendingEventsManager
                 self::_processVideos($trending_content);
                 break;
         }
-
+        // $processor->processContent($trending_content[6]["event"]["content"]);
         $test = $trending_content->transform(function ($note) use ($processor) {
             if (isset($note["event"]["content"])) {
                 $note["event"]["processed_content"] = $processor->processContent($note["event"]["content"]);

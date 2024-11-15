@@ -11,11 +11,12 @@ class ContentProcessor
 
     private function parseContent($content)
     {
-        $pattern = '/<.*?src="(https?:\/\/[^\s"]+?\.(?:mp4|webm|ogg|mov|jpg|jpeg|png|gif|webp))".*?>(?![^<]*<\/\w+>)|https?:\/\/[^\s"]+?\.(?:mp4|webm|ogg|mov|jpg|jpeg|png|gif|webp)\b|(nostr:note[^\s]+)/i';
+        $pattern = '/<.*?src="(https?:\/\/[^\s"]+?\.(?:mp4|webm|ogg|mov|jpg|jpeg|png|gif|webp))".*?>(?![^<]*<\/\w+>)|https?:\/\/[^\s"]+?\.(?:mp4|webm|ogg|mov|jpg|jpeg|png|gif|webp)\b|(nostr:(?:[a-zA-Z0-9]{59}))/i';
 
         $parts = preg_split($pattern, $content, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_OFFSET_CAPTURE);
 
         $elements = [];
+   
         foreach ($parts as $index => $part) {
             $content = $part[0];
             $offset = $part[1];
@@ -23,7 +24,8 @@ class ContentProcessor
             if ($index % 2 == 0) {
                 if (!empty(trim($content))) {
                     $elements[] = [
-                        'type' => 'text',
+                        // 'type' => 'text',
+                        'type' => $this->determineUrlType($content),
                         'content' => trim($content),
                         'offset' => $offset
                     ];
@@ -50,10 +52,11 @@ class ContentProcessor
             return 'video';
         }  else if (preg_match('/https?:\/\/[^\s]+/i', $content)) {
             return 'link';
-        } else if (preg_match('/nostr:note[^\s]+/i', $content)) {
+        } else if (preg_match('/nostr:(?:[a-zA-Z0-9]{59})/i', $content)) {
+            dd($content);
             return 'nostr-note';
         } else {
-            return 'unknown';
+            return 'text';
         }
     }
 

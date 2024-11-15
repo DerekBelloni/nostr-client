@@ -9,6 +9,8 @@ use Inertia\Inertia;
 
 class NotesController extends Controller
 {
+
+    // Dont think I am using this
     public function show(Request $request) 
     {
         $notes = RelayNotesManager::getDefaultNotes($request);
