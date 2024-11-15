@@ -53,11 +53,21 @@ class ContentProcessor
         }  else if (preg_match('/https?:\/\/[^\s]+/i', $content)) {
             return 'link';
         } else if (preg_match('/nostr:(?:[a-zA-Z0-9]{59})/i', $content)) {
-            dd($content);
+            // dd($content);
+            self::decodeBech32($content);
             return 'nostr-note';
         } else {
             return 'text';
         }
+    }
+
+    private function decodeBech32($content)
+    {
+        // need to parse which type of bech encoding it is
+        // dd($content);
+        $parts = explode(':', $content);
+        $identifier = explode('1', $parts[1])[0];
+        dd($identifier);
     }
 
     private function retrieveSmartPreviewData($url)
