@@ -63,13 +63,16 @@ class ContentProcessor
 
     private function decodeBech32($content)
     {
-        // need to parse which type of bech encoding it is
-        // dd($content);
         $key = new Key();
         $parts = explode(':', $content);
         $identifier = explode('1', $parts[1])[0];
+
+        // need to check the identifier
+        // if it is npub, nsec or note there wont be tlv and I can just retrieve it directly
+        // I will need to hand off to another process for tlv
+        // this really makes me think I want to implement something where I deliver the content up to client and retrieve everything 
+        // else behind the scenes
         $bech32Key = $parts[1];
-        // dd($bech32Key);
         $hex = $key->convertToHex($bech32Key);
         dd('flotilla', $parts[1], $hex); 
 
