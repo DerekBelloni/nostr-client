@@ -2,6 +2,8 @@
 
 namespace App\Repositories;
 
+use swentel\nostr\Key\Key;
+
 class ContentProcessor
 {
     public function processContent($content)
@@ -11,30 +13,29 @@ class ContentProcessor
 
     private function parseContent($content)
     {
-        $pattern = '/<.*?src="(https?:\/\/[^\s"]+?\.(?:mp4|webm|ogg|mov|jpg|jpeg|png|gif|webp))".*?>(?![^<]*<\/\w+>)|https?:\/\/[^\s"]+?\.(?:mp4|webm|ogg|mov|jpg|jpeg|png|gif|webp)\b|(nostr:(?:[a-zA-Z0-9]{59}))/i';
+        $pattern = '/<.*?src="(https?:\/\/[^\s"]+?\.(?:mp4|webm|ogg|mov|jpg|jpeg|png|gif|webp))".*?>(?![^<]*<\/\w+>)|https?:\/\/[^\s"]+?\.(?:mp4|webm|ogg|mov|jpg|jpeg|png|gif|webp)\b|(nostr:(?:[a-zA-Z0-9]{63}))/i';
 
         $parts = preg_split($pattern, $content, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_OFFSET_CAPTURE);
-
         $elements = [];
    
         foreach ($parts as $index => $part) {
-            $content = $part[0];
+            $contentt = $part[0];
             $offset = $part[1];
 
             if ($index % 2 == 0) {
-                if (!empty(trim($content))) {
+                if (!empty(trim($contentt))) {
                     $elements[] = [
                         // 'type' => 'text',
-                        'type' => $this->determineUrlType($content),
-                        'content' => trim($content),
+                        'type' => $this->determineUrlType($contentt, $content),
+                        'content' => trim($contentt),
                         'offset' => $offset
                     ];
                 } 
             } else {
                 $url = $part[0];
                 $elements[] = [
-                    'type' => $this->determineUrlType($url),
-                    'content' => $content,
+                    'type' => $this->determineUrlType($url, $content),
+                    'content' => $contentt,
                     'offset' => $offset
                 ];
             }
@@ -52,8 +53,7 @@ class ContentProcessor
             return 'video';
         }  else if (preg_match('/https?:\/\/[^\s]+/i', $content)) {
             return 'link';
-        } else if (preg_match('/nostr:(?:[a-zA-Z0-9]{59})/i', $content)) {
-            // dd($content);
+        } else if (preg_match('/nostr:(?:[a-zA-Z0-9]{63})/i', $content)) {
             self::decodeBech32($content);
             return 'nostr-note';
         } else {
@@ -65,9 +65,14 @@ class ContentProcessor
     {
         // need to parse which type of bech encoding it is
         // dd($content);
+        $key = new Key();
         $parts = explode(':', $content);
         $identifier = explode('1', $parts[1])[0];
-        dd($identifier);
+        $bech32Key = $parts[1];
+        // dd($bech32Key);
+        $hex = $key->convertToHex($bech32Key);
+        dd('flotilla', $parts[1], $hex); 
+
     }
 
     private function retrieveSmartPreviewData($url)
