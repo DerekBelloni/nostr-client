@@ -19,15 +19,15 @@ class ContentProcessor
         $elements = [];
    
         foreach ($parts as $index => $part) {
-            $contentt = $part[0];
+            $content = $part[0];
             $offset = $part[1];
 
             if ($index % 2 == 0) {
-                if (!empty(trim($contentt))) {
+                if (!empty(trim($content))) {
                     $elements[] = [
                         // 'type' => 'text',
-                        'type' => $this->determineUrlType($contentt, $content),
-                        'content' => trim($contentt),
+                        'type' => $this->determineUrlType($content),
+                        'content' => trim($content),
                         'offset' => $offset
                     ];
                 } 
@@ -35,7 +35,7 @@ class ContentProcessor
                 $url = $part[0];
                 $elements[] = [
                     'type' => $this->determineUrlType($url, $content),
-                    'content' => $contentt,
+                    'content' => $content,
                     'offset' => $offset
                 ];
             }
@@ -61,21 +61,43 @@ class ContentProcessor
         }
     }
 
-    private function decodeBech32($content)
+    private function decodeToBase32($bech32Key, $key) {
+        $parts = explode('1', $bech32Key);
+        $char_set = ''
+        $trimmed_part = trim($parts[1]);
+        dd($trimmed_part);
+        $key->convertToBech32
+    }
+
+    private function convertBech32ToBinary(&$content)
+    {
+
+    }
+
+    private function decodeBech32(&$content)
     {
         $key = new Key();
         $parts = explode(':', $content);
-        $identifier = explode('1', $parts[1])[0];
-
+        // $identifier = explode('1', $parts[1])[0];
+        $identifier = 'nprofile';
+        // $bech32Key = $parts[1];
+        $bech32Key = 'nprofile1qqsrhuxx8l9ex335q7he0f09aej04zpazpl0ne2cgukyawd24mayt8gpp4mhxue69uhhytnc9e3k7mgpz4mhxue69uhkg6nzv9ejuumpv34kytnrdaksjlyr9p';
+        $hex = null;
         // need to check the identifier
         // if it is npub, nsec or note there wont be tlv and I can just retrieve it directly
         // I will need to hand off to another process for tlv
+        // In this process I need to convert to binary
         // this really makes me think I want to implement something where I deliver the content up to client and retrieve everything 
         // else behind the scenes
-        $bech32Key = $parts[1];
-        $hex = $key->convertToHex($bech32Key);
-        dd('flotilla', $parts[1], $hex); 
-
+        switch ($identifier) {
+            case 'npub':
+                $hex = $key->convertToHex($bech32Key);
+                break;
+            case 'nprofile':
+                $binary = self::decodeToBase32($bech32Key, $key);
+            default:
+                $hex = null;
+        }
     }
 
     private function retrieveSmartPreviewData($url)
