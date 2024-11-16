@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use swentel\nostr\Key\Key;
+use function BitWasp\Bech32\decodeRaw;
 
 class ContentProcessor
 {
@@ -63,10 +64,9 @@ class ContentProcessor
 
     private function decodeToBase32($bech32Key, $key) {
         $parts = explode('1', $bech32Key);
-        $char_set = ''
-        $trimmed_part = trim($parts[1]);
-        dd($trimmed_part);
-        $key->convertToBech32
+        // $char_set = ''
+        // $trimmed_part = trim($parts[1]);
+        dd(decodeRaw($bech32Key));
     }
 
     private function convertBech32ToBinary(&$content)
