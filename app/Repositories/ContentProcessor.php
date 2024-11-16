@@ -83,12 +83,7 @@ class ContentProcessor
         // $bech32Key = $parts[1];
         $bech32Key = 'nprofile1qqsrhuxx8l9ex335q7he0f09aej04zpazpl0ne2cgukyawd24mayt8gpp4mhxue69uhhytnc9e3k7mgpz4mhxue69uhkg6nzv9ejuumpv34kytnrdaksjlyr9p';
         $hex = null;
-        // need to check the identifier
-        // if it is npub, nsec or note there wont be tlv and I can just retrieve it directly
-        // I will need to hand off to another process for tlv
-        // In this process I need to convert to binary
-        // this really makes me think I want to implement something where I deliver the content up to client and retrieve everything 
-        // else behind the scenes
+     
         switch ($identifier) {
             case 'npub':
                 $hex = $key->convertToHex($bech32Key);
