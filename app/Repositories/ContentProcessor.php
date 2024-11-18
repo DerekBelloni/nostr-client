@@ -64,24 +64,29 @@ class ContentProcessor
 
     private function decimalTo5Bit($decimal)
     {
-        dd(decbin((int)31));
+        $decimal = (int)$decimal;
         $binaryNumber = '';
-        if ($decimal === 0) {
+        if ($decimal == 0) {
+            $binaryNumber = '0';
+        } else {
+            $binaryNumber = self::decimalTo5Bit((int)($decimal / 2)) . ($decimal % 2);
+        }
+       
+        $binaryNumber = ltrim($binaryNumber, '0'); 
+        if ($binaryNumber === '') {
             $binaryNumber = '0';
         }
-        retu
+        return str_pad($binaryNumber, 5, '0', STR_PAD_LEFT);
     }
 
     private function decodeToBase32($bech32Key, $key) {
-        $parts = explode('1', $bech32Key);
-        // $char_set = ''
-        // $trimmed_part = trim($parts[1]);
         $decimal_vals = decodeRaw($bech32Key);
         $five_bit_arr = [];
-        foreach($decimal_vals as $decimal) {
-            return self::decimalTo5Bit($decimal);
+        
+        foreach($decimal_vals[1] as $decimal) {
+            $five_bit_arr[] = self::decimalTo5Bit($decimal);
         }  
-
+        dd($five_bit_arr, $decimal_vals);
     }
 
     private function convertBech32ToBinary(&$content)
