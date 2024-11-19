@@ -86,13 +86,31 @@ class ContentProcessor
         foreach($decimal_vals[1] as $decimal) {
             $five_bit_arr[] = self::decimalTo5Bit($decimal);
         }  
-        dd($five_bit_arr, $decimal_vals);
+        // dd($five_bit_arr, $decimal_vals);
+        return self::fiveBitToByte($five_bit_arr);
     }
 
-    private function convertBech32ToBinary(&$content)
+    private function fiveBitToByte($five_bit_arr) 
     {
-
+        $eight_bit_arr = [];
+        $temp = '';
+        $left_over = '';
+        for($x = 0; $x < count($five_bit_arr); $x++) {
+            for ($y = 0; $y < 5; $y++) {
+                if (strlen($temp) < 8) {
+                    $temp .= $five_bit_arr[$x][$y];
+                    if ($y === 4) {
+                        $eight_bit_arr[] = $temp;
+                    }
+                } else if (strlen($temp) === 5) {
+                    dd($eight_bit_arr);
+                } else if (strlen($temp) >= 8) {
+                    $left_over .= $five_bit_arr[$x][$y];
+                }
+            }
+        }
     }
+
 
     private function decodeBech32(&$content)
     {
