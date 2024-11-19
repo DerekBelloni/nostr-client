@@ -94,21 +94,18 @@ class ContentProcessor
     {
         $eight_bit_arr = [];
         $temp = '';
-        $left_over = '';
         for($x = 0; $x < count($five_bit_arr); $x++) {
             for ($y = 0; $y < 5; $y++) {
                 if (strlen($temp) < 8) {
                     $temp .= $five_bit_arr[$x][$y];
-                    if ($y === 4) {
-                        $eight_bit_arr[] = $temp;
+                    if (strlen($temp) === 8) {
+                        $eight_bit_arr[$x] = $temp;
+                        $temp = '';
                     }
-                } else if (strlen($temp) === 5) {
-                    dd($eight_bit_arr);
-                } else if (strlen($temp) >= 8) {
-                    $left_over .= $five_bit_arr[$x][$y];
                 }
             }
         }
+        dd($five_bit_arr, collect($eight_bit_arr)->values());
     }
 
 
