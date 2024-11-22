@@ -105,7 +105,9 @@ class ContentProcessor
                 }
             }
         }
-        dd($five_bit_arr, collect($eight_bit_arr)->values());
+
+        $structured_byte_arr = collect($eight_bit_arr)->values(); 
+        return $structured_byte_arr;
     }
 
 
@@ -125,9 +127,24 @@ class ContentProcessor
                 break;
             case 'nprofile':
                 $binary = self::decodeToBase32($bech32Key, $key);
+                self::nprofileHex($binary);
             default:
                 $hex = null;
         }
+    }
+
+    private function nprofileHex($binary)
+    {
+        $type = bindec((int)$binary[0]);
+        $length = bindec((int)$binary[1]);
+        $additional = [];
+        dd($type, $length);
+
+
+        // switch ($type) {
+        //     case 0:
+        //         'special'
+        // }
     }
 
     private function retrieveSmartPreviewData($url)
