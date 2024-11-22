@@ -135,10 +135,19 @@ class ContentProcessor
 
     private function nprofileHex($binary)
     {
+        // make a helper function that is called recursively and builds out an array of all the values
+        // the initial value should for the bech32 prefix, i.e. 'nprofile'
         $type = bindec((int)$binary[0]);
         $length = bindec((int)$binary[1]);
+        $value_arr = array_slice($binary->toArray(), 2, 32);
+        $hex = '';
+
+        foreach($value_arr as $byte) {
+            $decimal = bindec((int)$byte);
+            $hex .= str_pad(dechex($decimal), 2, '0', STR_PAD_LEFT);
+        }
         $additional = [];
-        dd($type, $length);
+        dd($type, $length, $hex, $value_arr);
 
 
         // switch ($type) {
