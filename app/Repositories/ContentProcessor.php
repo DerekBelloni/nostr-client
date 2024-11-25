@@ -127,61 +127,78 @@ class ContentProcessor
                 break;
             case 'nprofile':
                 $binary = self::decodeToBase32($bech32Key, $key);
-                self::nprofileHex($binary);
+                $test = self::nprofileHex($binary);
             default:
                 $hex = null;
         }
     }
 
+    private function standardTypeZero($value_arr) 
+    {
+        $hex = '';
+        foreach($value_arr as $byte) {
+            $decimal = bindec((int)$byte);
+            $hex .= str_pad(dechex($decimal), 2, '0', STR_PAD_LEFT);
+        }
+        return $hex;
+    }
+
+    private function standardTypeOne($value_arr) 
+    {
+        // chr converts decimal to ascii
+        // convert to decimal
+        $char = '';
+        foreach($value_arr as $byte) {
+            $decimal = bindec((int)$byte);
+            $char .= chr($decimal);
+        }
+        dd($char);
+    }
+
     private function nprofileHex($binary)
     {
-        // make a helper function that is called recursively and builds out an array of all the values
-        // the initial value should for the bech32 prefix, i.e. 'nprofile'
-
         $built_arr = [];
-        $hex = '';
+        $iteration = 0;
+        $additional = $binary;
+        $total = 0;
         
-        $build_arr = function($binary) {
+        $build_arr = function($binary) use (&$additional, &$built_arr, &$iteration, &$total) {
+            $additional = [];
+            $value = null;
             $type = bindec((int)$binary[0]);
             $length = bindec((int)$binary[1]);
-            $value_arr = array_slice($binary->toArray(), 2, $length);
-            
-            foreach($value_arr as $byte) {
-                if ($index == 0) {}
-                $decimal = bindec((int)$byte);
-                $hex .= str_pad(dechex($decimal), 2, '0', STR_PAD_LEFT);
+         
+            if (!is_array($binary)) {
+                $binary = $binary->toArray();
             }
-            $additional = [];
-            $built_arr[]['type'] = $type;
-            $built_arr[]['value'] = $value;
+         
+            $value_arr = array_slice($binary, 2, $length);
+
+            if ($type == 0) {
+               $value = self::standardTypeZero($value_arr);
+            }
+
+            if ($type == 1) {
+                $value = self::standardTypeOne($value_arr);
+            }
+
+            
+            // foreach($value_arr as $byte) {
+            //     $decimal = bindec((int)$byte);
+            //     $hex .= str_pad(dechex($decimal), 2, '0', STR_PAD_LEFT);
+            // }
+          
+            $built_arr[$iteration]['type'] = $type;
+            $built_arr[$iteration]['value'] = $value;
+            $additional = array_slice($binary, $length + 2);
+            $total += $length + 2;
+        };
+
+        while (!empty($additional)) {
+            $build_arr($additional);
+            $iteration++;
         }
-
-        $build_arr($binary);
-        // $built_arr = [];
-        // // $type = bindec((int)$binary[0]);
-        // $type = null;
-        // // $length = bindec((int)$binary[1]);
-        // $length = null;
-        // $value_arr = array_slice($binary->toArray(), 2, $length);
-        // $hex = '';
-        // foreach($binary as $index => $byte) {
-        //     if ($index === 0) {}
-        // }
-
-
-        // foreach($value_arr as $byte) {
-        //     if ($index == 0) {}
-        //     $decimal = bindec((int)$byte);
-        //     $hex .= str_pad(dechex($decimal), 2, '0', STR_PAD_LEFT);
-        // }
-        // $additional = [];
-        // dd($type, $length, $hex, $value_arr);
-
-
-        // switch ($type) {
-        //     case 0:
-        //         'special'
-        // }
+        dd($built_arr);
     }
 
     private function retrieveSmartPreviewData($url)
