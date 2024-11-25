@@ -87,10 +87,6 @@ class TrendingEventsManager
         return json_decode($body->getContents(), true);
     }
 
-
-
-    // move processing functionality into its own class
-
     private static function _mergeTrendingContent($trending_notes, $trending_images, $trending_videos)
     {
         return $trending_notes->merge($trending_images)->merge($trending_videos);

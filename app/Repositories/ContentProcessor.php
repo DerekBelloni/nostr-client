@@ -115,13 +115,20 @@ class ContentProcessor
         $key = new Key();
         $parts = explode(':', $content);
         $identifier = explode('1', $parts[1])[0];
+        $decodeType = null;
+
+        if ($identifier == 'npub' || $identifier == 'nsec' || $identifier == 'note') {
+            $decodeType = 'bareEncoding';
+        } else if ($identifier == 'nprofile' || $identifier == 'naddr' || $identifier == 'nrealy' || $identifier == 'nrevent') {
+            $decodeType = 'extended';
+        }
+
+
         $bech32Key = $parts[1];
-        $hex = null;
      
-        switch ($identifier) {
-            case 'npub':
-                $hex = $key->convertToHex($bech32Key);
-                break;
+        switch ($decodeType) {
+            case 'bareEncoding':
+                return $key->convertToHex($bech32Key);
             case 'nprofile':
                 $binary = self::decodeToBase32($bech32Key, $key);
                 return self::nprofileHex($binary);
