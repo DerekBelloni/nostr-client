@@ -14,9 +14,10 @@ class ContentProcessor
 
     private function parseContent($content)
     {
-        $pattern = '/<.*?src="(https?:\/\/[^\s"]+?\.(?:mp4|webm|ogg|mov|jpg|jpeg|png|gif|webp))".*?>(?![^<]*<\/\w+>)|https?:\/\/[^\s"]+?\.(?:mp4|webm|ogg|mov|jpg|jpeg|png|gif|webp)\b|(nostr:(?:[a-zA-Z0-9]{63}))/i';
+        $pattern = '/<.*?src="(https?:\/\/[^\s"]+?\.(?:mp4|webm|ogg|mov|jpg|jpeg|png|gif|webp))".*?>(?![^<]*<\/\w+>)|https?:\/\/[^\s"]+?\.(?:mp4|webm|ogg|mov|jpg|jpeg|png|gif|webp)\b|(nostr:(?:[a-zA-Z0-9]+))/i';
 
         $parts = preg_split($pattern, $content, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_OFFSET_CAPTURE);
+
         $elements = [];
    
         foreach ($parts as $index => $part) {
@@ -54,9 +55,8 @@ class ContentProcessor
             return 'video';
         }  else if (preg_match('/https?:\/\/[^\s]+/i', $content)) {
             return 'link';
-        } else if (preg_match('/nostr:(?:[a-zA-Z0-9]{63})/i', $content)) {
-            self::decodeBech32($content);
-            return 'nostr-note';
+        } else if (preg_match('/nostr:(?:[a-zA-Z0-9]+)/i', $content)) {
+            return self::decodeBech32($content);
         } else {
             return 'text';
         }
@@ -86,7 +86,6 @@ class ContentProcessor
         foreach($decimal_vals[1] as $decimal) {
             $five_bit_arr[] = self::decimalTo5Bit($decimal);
         }  
-        // dd($five_bit_arr, $decimal_vals);
         return self::fiveBitToByte($five_bit_arr);
     }
 
@@ -115,10 +114,8 @@ class ContentProcessor
     {
         $key = new Key();
         $parts = explode(':', $content);
-        // $identifier = explode('1', $parts[1])[0];
-        $identifier = 'nprofile';
-        // $bech32Key = $parts[1];
-        $bech32Key = 'nprofile1qqsrhuxx8l9ex335q7he0f09aej04zpazpl0ne2cgukyawd24mayt8gpp4mhxue69uhhytnc9e3k7mgpz4mhxue69uhkg6nzv9ejuumpv34kytnrdaksjlyr9p';
+        $identifier = explode('1', $parts[1])[0];
+        $bech32Key = $parts[1];
         $hex = null;
      
         switch ($identifier) {
@@ -127,7 +124,7 @@ class ContentProcessor
                 break;
             case 'nprofile':
                 $binary = self::decodeToBase32($bech32Key, $key);
-                $test = self::nprofileHex($binary);
+                return self::nprofileHex($binary);
             default:
                 $hex = null;
         }
@@ -145,14 +142,17 @@ class ContentProcessor
 
     private function standardTypeOne($value_arr) 
     {
-        // chr converts decimal to ascii
-        // convert to decimal
-        $char = '';
+        $ascii_string = '';
         foreach($value_arr as $byte) {
             $decimal = bindec((int)$byte);
-            $char .= chr($decimal);
+            $ascii_string .= chr($decimal);
         }
-        dd($char);
+        return $ascii_string;
+    }
+
+    private function standardTypeTwo($value_arr, $identifier) 
+    {
+
     }
 
     private function nprofileHex($binary)
@@ -160,9 +160,8 @@ class ContentProcessor
         $built_arr = [];
         $iteration = 0;
         $additional = $binary;
-        $total = 0;
         
-        $build_arr = function($binary) use (&$additional, &$built_arr, &$iteration, &$total) {
+        $build_arr = function($binary) use (&$additional, &$built_arr, &$iteration) {
             $additional = [];
             $value = null;
             $type = bindec((int)$binary[0]);
@@ -182,23 +181,24 @@ class ContentProcessor
                 $value = self::standardTypeOne($value_arr);
             }
 
-            
-            // foreach($value_arr as $byte) {
-            //     $decimal = bindec((int)$byte);
-            //     $hex .= str_pad(dechex($decimal), 2, '0', STR_PAD_LEFT);
-            // }
+            if ($type == 2) {
+                $value = self::standardTypeTwo($value_arr, $type);
+            }
+
+            if ($type == 3) {
+                $value = self::standardTypeThree($value_arr);
+            }
           
             $built_arr[$iteration]['type'] = $type;
             $built_arr[$iteration]['value'] = $value;
             $additional = array_slice($binary, $length + 2);
-            $total += $length + 2;
         };
 
         while (!empty($additional)) {
             $build_arr($additional);
             $iteration++;
         }
-        dd($built_arr);
+        return $build_arr;
     }
 
     private function retrieveSmartPreviewData($url)

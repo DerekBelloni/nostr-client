@@ -186,17 +186,6 @@ class TrendingEventsManager
         });
 
         return $test;
-
-        // return $trending_content->transform(function ($note) use ($processor) {
-        //     if (isset($note["event"]["content"])) {
-        //         $note["event"]["processed_content"] = $processor->processContent($note["event"]["content"]);
-        //     }
-        //     if (isset($note["author"])) {
-        //         $note["author"]["content"] = json_decode($note["author"]["content"], true);
-        //     }
-        //     $note["event"]["utc_timestamp"] = Carbon::createFromTimestampUTC($note["event"]["created_at"])->format('Y-m-d H:i:s');
-        //     return $note;
-        // });
     }
 
     
