@@ -27,7 +27,6 @@ class ContentProcessor
             if ($index % 2 == 0) {
                 if (!empty(trim($content))) {
                     $elements[] = [
-                        // 'type' => 'text',
                         'type' => $this->determineUrlType($content),
                         'content' => trim($content),
                         'offset' => $offset

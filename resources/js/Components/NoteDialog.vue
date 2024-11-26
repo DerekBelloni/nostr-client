@@ -1,11 +1,11 @@
 <template>
-    <Dialog v-model:visible="noteDialog" modal header="Say something" :style="{ width: '25rem' }">
+    <Dialog v-model:visible="noteDialog" modal header="Compose a note" :style="{ width: '40rem' }" >
         <div class="flex flex-col space-y-4">        
             <div class="card flex justify-center">
-                <Textarea v-model="note" variant="filled" rows="5" cols="30" />
+                <Textarea v-model="note" variant="filled" rows="5" cols="50" />
             </div>
             <div class="flex justify-end">
-                <Button @click="submitNote" label="Submit"></Button>
+                <Button @click="submitNote" label="Submit" raised rounded size="small" class="font-bold"></Button>
             </div>
         </div>
     </Dialog>

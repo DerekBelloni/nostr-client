@@ -60,7 +60,6 @@ class RabbitMQManager
         $channel = $connection->channel();
         $channel->queue_declare('new_note', false, false, false, false,);
 
-        // $formatted_body = $pub_hex_key . ':' . $note_content;
         $params = [
             'privHexKey' => $priv_hex_key,
             'pubHexKey' => $pub_hex_key,
