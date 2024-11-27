@@ -12,13 +12,12 @@ class NotesController extends Controller
     public function show(Request $request) 
     {
         $notes = RelayNotesManager::getDefaultNotes($request);
-        
         return Inertia::render('Home', ['notes' => $notes]);
     }
 
     public function create(Request $request) 
     {
-        $test = RabbitMQManager::newNoteQueue($request);
+        RabbitMQManager::newNoteQueue($request);
         return Inertia::render('Home');
     }
 }
