@@ -29,7 +29,7 @@
                                 </video>
                             </div>
                         </div>
-                        <div v-if="content.type === 'text'" class="nostr-content">
+                        <div v-if="content.type === 'text' || content.type === 'link'" class="nostr-content">
                             <div class="text-wrap break-words">
                                 <span class="font-medium" v-html="content.content"></span>
                             </div>
