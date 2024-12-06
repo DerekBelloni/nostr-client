@@ -51,9 +51,14 @@ class RabbitMQManager
         return 'complete';
     }
 
+    private static function formatNote($note_content)
+    {
+        return str_replace("\n", '\n', $note_content);
+    }
+
     public static function newNoteQueue(Request $request)
     {
-        $note_content = $request->input('noteContent');
+        $note_content = self::formatNote($request->input('noteContent'));
         $pub_hex_key = $request->input('pubHexKey');
         $priv_hex_key = $request->input('hexPriv');
         $uuid = Str::uuid();
