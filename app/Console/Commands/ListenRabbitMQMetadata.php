@@ -33,7 +33,7 @@ class ListenRabbitMQMetadata extends Command
                 $this->consumeMessages();
             } catch (\Exception $e) {
                 $this->error("Error occurred: " . $e->getMessage());
-                Log::error("RabbitMQ Listener Error Banana: " . $e->getMessage());
+                Log::error("RabbitMQ Listener Error for Metadata: " . $e->getMessage());
                 $this->closeConnection();
                 sleep(5);
             }

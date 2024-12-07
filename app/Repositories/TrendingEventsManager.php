@@ -169,7 +169,6 @@ class TrendingEventsManager
                 self::_processVideos($trending_content);
                 break;
         }
-        // $processor->processContent($trending_content[6]["event"]["content"]);
         $test = $trending_content->transform(function ($note) use ($processor) {
             if (isset($note["event"]["content"])) {
                 $note["event"]["processed_content"] = $processor->processContent($note["event"]["content"]);
@@ -184,5 +183,4 @@ class TrendingEventsManager
         return $test;
     }
 
-    
 }

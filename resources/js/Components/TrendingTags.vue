@@ -27,7 +27,8 @@
 
     const retrieveHashTagNotes = (hashTag) => {
         console.log('hashTag: ', hashTag);
-        return axios.get('/trending-hashtags')
+        const params = { hashTag: hashTag };
+        return axios.post('/trending-hashtags', params)
             .then((response) => {
                 console.log('response: ', response);
             })

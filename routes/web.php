@@ -31,5 +31,5 @@ Route::post('/redis/follows-metadata', [RedisController::class, 'followsMetadata
 
 // Trending Events Controller
 Route::get('/trending-events', [TrendingEventsController::class, 'index']);
+Route::post('/trending-hashtags', [TrendingEventsController::class, 'show']);
 
-// require __DIR__.'/auth.php';
