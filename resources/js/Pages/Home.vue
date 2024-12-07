@@ -17,7 +17,6 @@ import { Head, Link } from '@inertiajs/vue3';
 import { onBeforeUnmount ,onMounted, ref, reactive, watch } from "vue";
 import { router } from '@inertiajs/vue3'
 import { useNostrStore } from '@/stores/useNostrStore';
-import { useToast } from 'primevue/usetoast';
 import Account from '../Components/Account.vue'
 import Feed from '../Components/Feed.vue'
 import Profile from '../Components/Profile.vue'
@@ -33,7 +32,6 @@ const mqVerified = ref(false);
 const metadataContent = ref(null);
 const nostrStore = useNostrStore();
 const reactions = ref([]);
-const toast = useToast();
 const trendingContent = ref([]);
 const trendingHashtags = ref([]);
 

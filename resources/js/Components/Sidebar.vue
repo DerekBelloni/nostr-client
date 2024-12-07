@@ -34,7 +34,6 @@
         </div>
         <AccountDialog ref="accountDialog" @setActiveView="setActiveView"></AccountDialog>
         <NoteDialog ref="noteDialog"></NoteDialog>
-        <Toast />
     </div>
 </template>
 

@@ -39,7 +39,7 @@ export const useNostrStore = defineStore('nostr', () => {
             }
         
             existingNote = existingUserNotes?.value.some((existing) => {
-                return existing?.id == parsedNote[2]['id'];
+                return existing?.content == parsedNote[2]['content'];
             });
         
             if (!existingNote) userNotes.value.push(parsedNote[2]);

@@ -9,6 +9,7 @@
             </div>
         </div>
     </Dialog>
+    <Toast position="top-right"/>
 </template>
 
 <script setup>
@@ -16,11 +17,13 @@ import Dialog from 'primevue/dialog';
 import { ref, defineEmits } from 'vue';
 import { router } from '@inertiajs/vue3';
 import { useNostrStore } from '@/stores/useNostrStore';
+import { useToast } from 'primevue/usetoast';
 
 const noteDialog = ref(false);
 const note = ref(null);
 
 const nostrStore = useNostrStore();
+const toast = useToast();
 
 const emit = defineEmits(['submitNote']);
 
@@ -45,12 +48,11 @@ const submitNote = () => {
             data: params,
             preserveState: true,
             onSuccess: () => {
-                console.log("success!");
+                toast.add({ severity: 'success', summary: 'Note published! 🚀', detail: 'Successfully shared with the Nostr network', life: 2500 });
+                close();
             }
         })
     }
-    // provide some type of warning, maybe a toast
-    // about a note must have content
 }
 
 defineExpose({ open });
