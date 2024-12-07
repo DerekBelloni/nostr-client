@@ -11,4 +11,9 @@ class RabbitMQController extends Controller
     {
         return RabbitMQManager::followMetadataQueue($request);
     }
+
+    public function getSearchResults(Request $request)
+    {
+        return RabbitMQManager::searchResults($request);
+    }
 }

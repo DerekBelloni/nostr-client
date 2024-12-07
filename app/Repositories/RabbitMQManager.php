@@ -84,4 +84,22 @@ class RabbitMQManager
         $connection->close();
         return 'complete';
     }
+
+    public static function searchResults(Request $request) 
+    {
+        $search = $request->input('search');
+        $uuid = Str::uuid();
+        $search_uuid = $search . ':' . $uuid;
+
+        $connection = new AMQPStreamConnection('localhost', 5672, 'guest', 'guest');
+        $channel = $connection->channel();
+        $channel->queue_declare('search', false, false, false, false,);
+
+        $message = new AMQPMessage($search_uuid);
+        $channel->basic_publish($message, '', 'search');
+
+        $channel->close();
+        $connection->close();
+        return 'complete';
+    }
 }

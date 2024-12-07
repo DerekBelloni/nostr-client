@@ -5,6 +5,7 @@ use App\Http\Controllers\NotesController;
 use App\Http\Controllers\RabbitMQController;
 use App\Http\Controllers\RedisController;
 use App\Http\Controllers\Trending\TrendingEventsController;
+use App\Repositories\RabbitMQManager;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -23,6 +24,7 @@ Route::post('/npub', [NostrKeyController::class, 'login']);
 
 // RabbitMQ Controller
 Route::post('/rabbit-mq/follows-metadata', [RabbitMQController::class, 'getFollowsMetadata']);
+Route::post('/rabbit-mq/search-results', [RabbitMQController::class, 'getSearchResults']);
 
 // Redis Controller
 Route::post('/redis/user-metadata', [RedisController::class, 'userMetadata']);

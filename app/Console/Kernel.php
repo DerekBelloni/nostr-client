@@ -16,6 +16,7 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\ListenRabbitMQMetadata::class,
         \App\Console\Commands\ListenUserNotes::class,
         \App\Console\Commands\ListenFollowList::class,
+        \App\Console\Commands\ListenSearchResults::class
     ];
 
 

@@ -8,7 +8,7 @@
                         <div v-if="!startsWithHashtag(hashTag.hashtag)">
                             <span class="font-semibold text-gray-500 text-lg cursor-pointer hover:text-amber-500">#</span>
                         </div>
-                        <span @click="retrieveHashTagNotes(hashTag.hashtag)" class="text-gray-500 font-semibold cursor-pointer hover:text-amber-500">{{hashTag.hashtag}}</span>
+                        <span @click="selectTag(hashTag.hashtag)" class="text-gray-500 font-semibold cursor-pointer hover:text-amber-500">{{hashTag.hashtag}}</span>
                     </div>
                 </li>
             </ul>
@@ -17,20 +17,19 @@
 </template>
 
 <script setup>
+    import { ref, defineEmits } from "vue";
+    const selectedTag = ref(null);
+
     const props = defineProps(['trendingHashtags']);
-    const emit = defineEmits(['hashTagNotesRetrieved']);
+    const emit = defineEmits(['tagSelected']);
 
     const startsWithHashtag = (hashTag) => {
         if (hashTag.charAt(0) === '#') return true;
         else return false;
     }
 
-    const retrieveHashTagNotes = (hashTag) => {
-        console.log('hashTag: ', hashTag);
-        const params = { hashTag: hashTag };
-        return axios.post('/trending-hashtags', params)
-            .then((response) => {
-                console.log('response: ', response);
-            })
+    const selectTag = (hashTag) => {
+        selectedTag.value = `#${hashTag}`;
+        emit('tagSelected', selectedTag.value);
     }
 </script>

@@ -7,7 +7,7 @@
             <Profile v-if="activeView == 'profile'"></Profile>
         </div>
         <div class="right-sidebar">
-            <TrendingTags :trendingHashtags="trendingHashtags"></TrendingTags>
+            <TrendingTags :trendingHashtags="trendingHashtags" @tagSelected="retrieveSearchResults"></TrendingTags>
         </div>
     </div>
 </template>
@@ -85,6 +85,10 @@ const listenForFollowsList = () => {
         });
 }
 
+const listenForSearchResults = () => {
+    echo.channel()
+}
+
 const listenForFollowsMetadata = () => {
     echo.channel('follows_metadata')
         .listen('.follows_metadata_set', (event) => {
@@ -96,6 +100,13 @@ const verifyNIP05 = () => {
     return axios.post('/nip05-verification', {metadataContent: nostrStore.metadataContent, publicKeyHex: nostrStore.hexPub})
         .then((response) => {
             nostrStore.verified = response.data.verified;
+        })
+}
+
+const retrieveSearchResults = (search) => {
+    return axios.post('/rabbit-mq/search-results', {search: search})
+        .then((response) => {
+            console.log('search response: ', response);
         })
 }
 
