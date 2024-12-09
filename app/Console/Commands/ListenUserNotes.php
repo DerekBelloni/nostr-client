@@ -57,6 +57,11 @@ class ListenUserNotes extends Command
         }
     }
 
+    private static function checkExistingPubkey($redis_key) 
+    {
+        return Redis::exists("{$redis_key}");
+    }
+
     public function processMessage(AMQPMessage $msg) 
     {
         $user_notes = $msg->getBody();
@@ -70,6 +75,9 @@ class ListenUserNotes extends Command
         $pubkey = $decoded_note[2]["pubkey"];
         $note_id = $decoded_note[2]["id"];
         $redis_key = "{$pubkey}:user-notes";
+
+        if (!self::)
+
         $note_added = false;
         $note_exists = false;
         $existing_notes = Redis::sMembers($redis_key);

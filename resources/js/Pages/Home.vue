@@ -104,7 +104,8 @@ const verifyNIP05 = () => {
 }
 
 const retrieveSearchResults = (search) => {
-    return axios.post('/rabbit-mq/search-results', {search: search})
+    let publicKeyHex = nostrStore.hexPub ?? null;
+    return axios.post('/rabbit-mq/search-results', {search: search, publicKeyHex: nostrStore.hexPub})
         .then((response) => {
             console.log('search response: ', response);
         })

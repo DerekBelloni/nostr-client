@@ -88,8 +88,11 @@ class RabbitMQManager
     public static function searchResults(Request $request) 
     {
         $search = $request->input('search');
+        $pub_hex_key = $request->input('publicKeyHex');
         $uuid = Str::uuid();
         $search_uuid = $search . ':' . $uuid;
+
+        if (!is_null($pub_hex_key)) $search_uuid .= ":{$pub_hex_key}";
 
         $connection = new AMQPStreamConnection('localhost', 5672, 'guest', 'guest');
         $channel = $connection->channel();
