@@ -76,7 +76,7 @@ class ListenUserNotes extends Command
         $note_id = $decoded_note[2]["id"];
         $redis_key = "{$pubkey}:user-notes";
 
-        if (!self::)
+        // if (!self::)
 
         $note_added = false;
         $note_exists = false;
