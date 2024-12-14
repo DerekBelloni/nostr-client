@@ -3,7 +3,9 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PhpAmqpLib\Message\AMQPMessage;
 
 class ListenSearchResults extends Command
 {
@@ -46,15 +48,16 @@ class ListenSearchResults extends Command
     {
         $this->info('Waiting for search results. To exit press CTRL+C');
         $this->channel->basic_consume('search_results', '', false, true, false, false, [$this, 'processSearchResults']);
+
         while($this->channel->is_consuming()) {
             $this->channel->wait();
         }
     }
 
-    public function processSearchResults(AMQP $msg) 
+    public function processSearchResults(AMQPMessage $msg) 
     {
         $received_search_results = $msg->getBody();
-        dd(json_decode($received_search_results, true));
+        Log::info(json_decode($received_search_results, true));
     }
 
     private function closeConnection()

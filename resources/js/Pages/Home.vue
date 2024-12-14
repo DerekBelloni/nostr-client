@@ -48,6 +48,7 @@ onMounted(() => {
     listenForMetadata();
     listenForUserNotes();
     listenForFollowsMetadata();
+    listenForSearchResults();
 });
 
 watch(metadataContent, async(newValue, oldValue) => {
@@ -86,7 +87,7 @@ const listenForFollowsList = () => {
 }
 
 const listenForSearchResults = () => {
-    echo.channel()
+    // echo.channel('search_results')
 }
 
 const listenForFollowsMetadata = () => {
@@ -104,7 +105,6 @@ const verifyNIP05 = () => {
 }
 
 const retrieveSearchResults = (search) => {
-    console.log('search');
     let publicKeyHex = nostrStore.hexPub ?? 'notLoggedIn';
     return axios.post('/rabbit-mq/search-results', {search: search, publicKeyHex: nostrStore.hexPub})
         .then((response) => {
