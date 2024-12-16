@@ -1,6 +1,6 @@
 <template>
-    <div v-for="follow in followsMetadata">
-        <div class="flex flex-row cursor-pointer w-full pt-2 hover:bg-gray-100">
+    <div v-for="follow in followsMetadataList">
+        <div @click="setActiveFollow(follow)" class="flex flex-row cursor-pointer w-full pt-2 hover:bg-gray-100">
             <div class="profile-picture-container ml-4 flex-shrink-0">
                 <img v-if="follow.picture" class="profile-picture" :src="follow.picture" alt="" @error="handleImageError" @load="handleImageLoad">
                 <Avatar v-else size="large"></Avatar>
@@ -23,11 +23,16 @@
     import Avatar from 'primevue/avatar';
 
     const nostrStore = useNostrStore();
-    const followsMetadata = ref(nostrStore.userFollowsContent);
+    const followsMetadataList = ref(nostrStore.userFollowsContent);
     
     const setDisplayName = (follow) => {
         return follow.display_name || follow.name;
     }
+
+    const setActiveFollow = (follow) => {
+        nostrStore.followMetadataContent = follow;
+    }
+
 </script>
 
 <style scoped>

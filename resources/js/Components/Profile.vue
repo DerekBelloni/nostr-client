@@ -35,7 +35,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { computed, ref, onMounted, onUnmounted } from 'vue';
 import { useNostrStore } from '@/stores/useNostrStore';
 import UserNote from './UserNotes.vue';
 import FollowsMetadata from './FollowsMetadata.vue';
@@ -43,6 +43,7 @@ import FollowsMetadata from './FollowsMetadata.vue';
 const nostrStore = useNostrStore();
 const userMetadata = ref(nostrStore.metadataContent);
 const activeTab = ref(null);
+let followMetadataContent = ref(null);
 
 
 onMounted(() => {
@@ -67,7 +68,13 @@ const selectTab = (tabType) => {
     }
 }
 
+const activeMetadata = computed(() => {
+    return !followMetadataContent ? userMetadata : followMetadataContent;
+})
 
+
+     // set a computed for the v-for
+    // set a watcher for the follows metadata content
 </script>
 
 <style scoped>
