@@ -32,39 +32,6 @@
             </div>
         </div>
     </div>
-    <!-- <div class="overflow-y-auto h-full">
-        <div class="banner-container pt-12">
-            <img class="banner" :src="userMetadata.banner" />
-        </div>
-        <div class="flex flex-row justify-between">
-            <div class="profile-picture-container px-6">
-                <img class="profile-picture" :src="userMetadata.picture"/>
-            </div>
-            <div class="mt-6 mx-10">
-                <div class="rounded-full bg-amber-500 py-1 px-3">
-                    <span class="text-white">Edit</span>
-                </div>
-            </div>
-        </div>
-        <div class="px-6 username-container">
-            <span class="text-3xl font-semibold text-gray-700">{{userMetadata.display_name}}</span>
-            <i class="pi pi-check text-emerald-500 pl-4 text-lg"></i>
-        </div>
-        <div class="pl-4 pt-4 space-x-2">
-            <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium cursor-pointer hover:bg-gray-300" @click="selectTab('notes')">Notes</span>
-            <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium cursor-pointer hover:bg-gray-300" @click="selectTab('reactions')">Reactions</span>
-            <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium cursor-pointer hover:bg-gray-300" @click="selectTab('followers')">Followers</span>
-            <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium cursor-pointer hover:bg-gray-300" @click="selectTab('followed')">Followed</span>
-        </div>
-        <div class="mt-4 overflow-y-auto">
-            <div v-if="activeTab == 'notes'">
-                <UserNote></UserNote>
-            </div>
-            <div v-if="activeTab == 'followed'">
-                <FollowsMetadata></FollowsMetadata>
-            </div>
-        </div>
-    </div> -->
 </template>
 
 <script setup>
@@ -74,26 +41,24 @@ import UserNote from './UserNotes.vue';
 import FollowsMetadata from './FollowsMetadata.vue';
 
 const nostrStore = useNostrStore();
-const userMetadata = ref(nostrStore.metadataContent);
-const activeTab = ref(null);
-let followMetadataContent = ref(null);
+const userMetadata = nostrStore.metadataContent;
+const activeTab = ref('notes');
 
-
-onMounted(() => {
-    activeTab.value = "notes";
-});
+// onMounted(() => {
+//     activeTab.value = "notes";
+//     console.log('followMetadataContent', !followMetadataContent.value); 
+// });
 
 onUnmounted(() => {
     activeTab.value = null;
 });
 
-watch(() => nostrStore.followMetadataContent, (newValue) => {
-    console.log('new value: ', newValue);
-    console.log('followMetadataContent', followMetadataContent)
-    console.log('user metadata: ', userMetadata)
-    if (newValue) followMetadataContent.value = newValue;
-    else followMetadataContent.value = null;
-})
+// watch(() => nostrStore.followMetadataContent, (newValue) => {
+//     console.log('new value: ', newValue);
+//     console.log('followMetadataContent', followMetadataContent)
+//     console.log('user metadata: ', userMetadata)
+//     if (newValue) activeMetadata();
+// })
 
 const selectTab = (tabType) => {
     switch(tabType) {
@@ -110,7 +75,7 @@ const selectTab = (tabType) => {
 }
 
 const activeMetadata = computed(() => {
-    return !followMetadataContent ? userMetadata : followMetadataContent;
+    return nostrStore.followMetadataContent || nostrStore.metadataContent;
 })
 
 
