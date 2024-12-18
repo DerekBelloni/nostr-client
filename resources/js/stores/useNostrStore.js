@@ -3,6 +3,7 @@ import { ref } from 'vue';
 
 export const useNostrStore = defineStore('nostr', () => {
     const followMetadataContent = ref(null);
+    const followNotes = ref([]);
     const hexPub = ref(null);
     const hexPriv = ref(null);
     const metadataContent = ref(null);
@@ -48,5 +49,5 @@ export const useNostrStore = defineStore('nostr', () => {
         })
     }
     
-    return { addFollows, addNotes, followMetadataContent, hexPub, hexPriv, metadataContent, npub, searchUUID, trendingHashtags, userFollowsContent, userFollowsContent, userNotes, verified };
+    return { addFollows, addNotes, followMetadataContent, followNotes, hexPub, hexPriv, metadataContent, npub, searchUUID, trendingHashtags, userFollowsContent, userFollowsContent, userNotes, verified };
 })

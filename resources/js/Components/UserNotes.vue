@@ -23,11 +23,19 @@
 </template>
 
 <script setup>
+import { computed, ref, onMounted, onUnmounted, watch, toRef } from 'vue';
 import { useNostrStore } from '@/stores/useNostrStore';
+
+const props = defineProps(['followNotesLoading']);
+const followNotesLoading = toRef(props, 'followNotesLoading');
 
 const nostrStore = useNostrStore();
 const profilePic = nostrStore.metadataContent.picture;
 const displayName = nostrStore.metadataContent.displayName;
+
+watch(() => followNotesLoading, (newValue) => {
+    console.log('new value in user notes: ', newValue);
+})
 
 </script>
 

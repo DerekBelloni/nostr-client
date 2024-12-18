@@ -75,8 +75,8 @@ const noteDate = (utcDate) => {
     :root {
         --main-bg-color: #f0f0f0;
         --main-text-color: #333333;
-        --border-color: 55, 65, 81; /* Define the RGB values */
-        --border-opacity: 1; /* Default opacity */
+        --border-color: 55, 65, 81; 
+        --border-opacity: 1; 
     }
     .center-feature {
         width: 50%;
@@ -92,10 +92,10 @@ const noteDate = (utcDate) => {
        
     }
     .rounded-video {
-        border-radius: 15px; /* Adjust the value to your preference */
-        overflow: hidden; /* Ensures the rounded corners are applied */
-        border: none !important; /* Removes any border */
-        outline: none !important; /* Removes any outline */
-        box-shadow: none !important; /* Removes any box shadow */
+        border-radius: 15px;
+        overflow: hidden; 
+        border: none !important;
+        outline: none !important;
+        box-shadow: none !important; 
     }
 </style>

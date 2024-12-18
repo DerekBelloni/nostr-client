@@ -25,7 +25,7 @@
         </div>
         <div class="mt-4 overflow-y-auto">
             <div v-if="activeTab == 'notes'">
-                <UserNote></UserNote>
+                <UserNote :followNotesLoading="followNotesLoading"></UserNote>
             </div>
             <div v-if="activeTab == 'followed'">
                 <FollowsMetadata></FollowsMetadata>
@@ -40,25 +40,18 @@ import { useNostrStore } from '@/stores/useNostrStore';
 import UserNote from './UserNotes.vue';
 import FollowsMetadata from './FollowsMetadata.vue';
 
+const followNotesLoading = ref(false);
 const nostrStore = useNostrStore();
 const userMetadata = nostrStore.metadataContent;
-const activeTab = ref('notes');
+const activeTab = ref(null);
 
-// onMounted(() => {
-//     activeTab.value = "notes";
-//     console.log('followMetadataContent', !followMetadataContent.value); 
-// });
+onMounted(() => {
+    activeTab.value = "notes";
+});
 
 onUnmounted(() => {
     activeTab.value = null;
 });
-
-// watch(() => nostrStore.followMetadataContent, (newValue) => {
-//     console.log('new value: ', newValue);
-//     console.log('followMetadataContent', followMetadataContent)
-//     console.log('user metadata: ', userMetadata)
-//     if (newValue) activeMetadata();
-// })
 
 const selectTab = (tabType) => {
     switch(tabType) {
@@ -76,11 +69,11 @@ const selectTab = (tabType) => {
 
 const activeMetadata = computed(() => {
     return nostrStore.followMetadataContent || nostrStore.metadataContent;
+});
+
+watch(() => nostrStore.followMetadataContent, (newValue) => {
+    if (newValue) activeTab.value = "notes";
 })
-
-
-     // set a computed for the v-for
-    // set a watcher for the follows metadata content
 </script>
 
 <style scoped>
@@ -92,10 +85,10 @@ const activeMetadata = computed(() => {
     }
 
     .banner {
-        width: 100%; /* Ensure the image covers the full width */
-        height: auto; /* Maintain aspect ratio */
-        object-fit: cover; /* Cover the container */
-        display: block; /* Remove any unwanted whitespace */
+        width: 100%; 
+        height: auto; 
+        object-fit: cover; 
+        display: block; 
     }
 
     .profile-picture-container {
@@ -104,12 +97,12 @@ const activeMetadata = computed(() => {
     }
 
     .profile-picture {
-        width: 150px; /* Set a fixed width */
-        height: 150px; /* Set a fixed height to match the width */
+        width: 150px;
+        height: 150px; 
         border-radius: 50%;
-        transform: translateY(-64px); /* Adjust the value as needed to position the image */
-        object-fit: cover; /* Ensure the image covers the area */
-        border: 2px solid white; /* Optional: Add a border to enhance the circular look */
+        transform: translateY(-64px); 
+        object-fit: cover; 
+        border: 2px solid white; 
     }
 
     .edit-button {
