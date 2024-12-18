@@ -68,6 +68,7 @@ const openNoteDialog = () => {
 function setActiveView(item) {
     activeView.value = item;
     nostrStore.followMetadataContent = null;
+    nostrStore.userActiveProfile = true;
     emit('setActiveView', activeView.value);
 }
 

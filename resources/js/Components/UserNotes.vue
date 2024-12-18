@@ -1,7 +1,7 @@
 <template>
-    <div>
+    <div v-if="!notesLoading">
         <div class="divide-y divide-gray-300 border-t border-gray-300 overflow-auto">
-            <div v-for="note in nostrStore.userNotes">
+            <div v-for="note in activeNotes">
                 <div class="grid grid-cols-12 space-y-4">
                     <div class="col-span-12 mt-2 ml-2">
                         <div class="flex flex-row items-center space-x-2">
@@ -20,6 +20,9 @@
             </div>
         </div>
     </div>
+    <div v-else class="flex justify-center ml-8">
+        <ProgressSpinner></ProgressSpinner>
+    </div>
 </template>
 
 <script setup>
@@ -27,15 +30,31 @@ import { computed, ref, onMounted, onUnmounted, watch, toRef } from 'vue';
 import { useNostrStore } from '@/stores/useNostrStore';
 
 const props = defineProps(['followNotesLoading']);
-const followNotesLoading = toRef(props, 'followNotesLoading');
+let notesLoading = toRef(props, 'followNotesLoading');
 
 const nostrStore = useNostrStore();
 const profilePic = nostrStore.metadataContent.picture;
 const displayName = nostrStore.metadataContent.displayName;
 
-watch(() => followNotesLoading, (newValue) => {
-    console.log('new value in user notes: ', newValue);
+const activeNotes = computed(() => {
+    if (nostrStore.userActiveProfile) {
+        return nostrStore.userNotes;
+    } else if (!nostrStore.userActiveProfile && nostrStore.followNotes) {
+        return nostrStore.followNotes;
+    }
 })
+
+const handleNotesLoading = () => {
+    if (!nostrStore.userNotes && !nostrStore.followNotes) notesLoading.value = true;
+    else notesLoading.value = false;
+    console.log('notes loading', notesLoading.value)
+}
+
+watch(notesLoading, (newValue) => {
+    console.log('new value in user notes: ', newValue);
+    handleNotesLoading();
+
+}, {immediate: true});
 
 </script>
 

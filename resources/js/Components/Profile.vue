@@ -40,13 +40,14 @@ import { useNostrStore } from '@/stores/useNostrStore';
 import UserNote from './UserNotes.vue';
 import FollowsMetadata from './FollowsMetadata.vue';
 
-const followNotesLoading = ref(false);
+let followNotesLoading = ref(false);
 const nostrStore = useNostrStore();
 const userMetadata = nostrStore.metadataContent;
 const activeTab = ref(null);
 
 onMounted(() => {
     activeTab.value = "notes";
+    nostrStore.userActiveProfile = true;
 });
 
 onUnmounted(() => {
@@ -72,7 +73,11 @@ const activeMetadata = computed(() => {
 });
 
 watch(() => nostrStore.followMetadataContent, (newValue) => {
-    if (newValue) activeTab.value = "notes";
+    if (newValue) {
+        activeTab.value = "notes";
+        followNotesLoading.value = true;
+        nostrStore.userActiveProfile = false;
+    };
 })
 </script>
 
