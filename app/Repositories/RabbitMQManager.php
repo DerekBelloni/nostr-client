@@ -85,6 +85,11 @@ class RabbitMQManager
         return 'complete';
     }
 
+    public static function getFollowNotes(Request $request)
+    {
+        dd($request->all());
+    }
+
     public static function searchResults(Request $request) 
     {
         $search = $request->input('search');

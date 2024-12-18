@@ -25,6 +25,7 @@ Route::post('/npub', [NostrKeyController::class, 'login']);
 // RabbitMQ Controller
 Route::post('/rabbit-mq/follows-metadata', [RabbitMQController::class, 'getFollowsMetadata']);
 Route::post('/rabbit-mq/search-results', [RabbitMQController::class, 'getSearchResults']);
+Route::post('/rabbit-mq/follow-notes', [RabbitMQController::class, 'getFollowNotes']);
 
 // Redis Controller
 Route::post('/redis/user-metadata', [RedisController::class, 'userMetadata']);

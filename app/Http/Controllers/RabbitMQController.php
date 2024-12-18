@@ -16,4 +16,9 @@ class RabbitMQController extends Controller
     {
         return RabbitMQManager::searchResults($request);
     }
+
+    public function getFollowNotes(Request $request)
+    {
+        return RabbitMQManager::getFollowNotes($request);
+    }
 }

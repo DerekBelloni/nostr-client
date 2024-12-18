@@ -24,13 +24,30 @@
 
     const nostrStore = useNostrStore();
     const followsMetadataList = ref(nostrStore.userFollowsContent);
-    
+   
+    const retrieveFollowsNotes = () => {
+        console.log('follow data:  ', nostrStore.followMetadataContent.pubkey);
+        return axios.post('/rabbit-mq/follow-notes', {publicKeyHex: nostrStore.followMetadataContent.pubkey})
+            .then((response) => {
+                console.log('response: ', response);
+            })
+        // const followPubkey =
+    }
+
+    const retrieveUserNotes = () => {
+        return axios.post('/redis/user-notes', {publicKeyHex: nostrStore.hexPub})
+            .then((response) => {
+                nostrStore.addNotes(response.data);
+            })
+    }
+
     const setDisplayName = (follow) => {
         return follow.display_name || follow.name;
     }
 
     const setActiveFollow = (follow) => {
         nostrStore.followMetadataContent = follow;
+        retrieveFollowsNotes();
     }
 
 </script>
