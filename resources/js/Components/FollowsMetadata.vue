@@ -31,15 +31,7 @@
             .then((response) => {
                 console.log('response: ', response);
             })
-        // const followPubkey =
-    }
-
-    const retrieveUserNotes = () => {
-        return axios.post('/redis/user-notes', {publicKeyHex: nostrStore.hexPub})
-            .then((response) => {
-                nostrStore.addNotes(response.data);
-            })
-    }
+    }   
 
     const setDisplayName = (follow) => {
         return follow.display_name || follow.name;

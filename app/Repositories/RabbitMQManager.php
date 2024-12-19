@@ -87,7 +87,21 @@ class RabbitMQManager
 
     public static function getFollowNotes(Request $request)
     {
-        dd($request->all());
+       $pub_hex_key = $request->input('publicKeyHex');
+       $uuid = Str::uuid();
+       $pub_key_UUID = $pub_hex_key . ':' . $uuid;
+
+       $connection = new AMQPStreamConnection('localhost', 5672, 'guest', 'guest');
+       $channel = $connection->channel();
+       $channel->queue_declare('follow_notes', false, false, false, false,);
+
+       $message = new AMQPMessage(json_encode($pub_key_UUID), true);
+
+       $channel->basic_publish($message, '', 'follow_notes');
+
+       $channel->close();
+       $connection->close();
+       return 'complete';
     }
 
     public static function searchResults(Request $request) 
