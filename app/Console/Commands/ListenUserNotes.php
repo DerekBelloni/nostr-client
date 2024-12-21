@@ -61,7 +61,11 @@ class ListenUserNotes extends Command
     {
         $user_notes = $msg->getBody();
         $decoded_note = json_decode($user_notes, true);
-      
+
+        if (is_array($decoded_note) && array_key_exists('FollowsEvent', $decoded_note)) {
+            $decoded_note = $decoded_note["FollowsEvent"];
+        } 
+        
         if (!isset($decoded_note[2]["pubkey"]) || !isset($decoded_note[2]["id"])) {
             $this->error("Invalid note structure");
             return;
