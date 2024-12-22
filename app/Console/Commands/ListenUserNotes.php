@@ -61,16 +61,15 @@ class ListenUserNotes extends Command
     {
         $user_notes = $msg->getBody();
         $decoded_note = json_decode($user_notes, true);
+        $event_type = null;
+        $receiving_user_pubkey = null;
 
         if (is_array($decoded_note) && array_key_exists('Event', $decoded_note)) {
-            Log::info('[DECODED NOTE]: ', [$decoded_note]);
             $event_type = key($decoded_note['Event']);
         
-            Log::info('Event type is: ', [$decoded_note['Event'][$event_type]]);
-
             if ($event_type === "follows") {
+                $receiving_user_pubkey = trim($decoded_note["UserPubkey"], '"');
                 $decoded_note = $decoded_note['Event']['follows'];
-                Log::info("event data: ", [$decoded_note]);
             }
         }
 
@@ -82,7 +81,7 @@ class ListenUserNotes extends Command
 
         $pubkey = $decoded_note[2]["pubkey"];
         $note_id = $decoded_note[2]["id"];
-        $redis_key = "{$pubkey}:user-notes";
+        $redis_key = is_null($event_type) ? "{$pubkey}:user-notes" : "{$pubkey}:follow-notes";
 
         $note_added = false;
         $note_exists = false;
@@ -103,10 +102,22 @@ class ListenUserNotes extends Command
         } else {
             $this->info("Note {$note_id} already exists for user {$pubkey}");
         }
+
+        if ($event_type === 'follows') {
+            try {
+                Log::info('BANANA: ', [$event_type]);
+                event(new UserNotes(true, $pubkey, $receiving_user_pubkey));
+                $note_added = false;
+            } catch (\Exception $e) {
+                $this->error('Error firing UserNotes event for Follows: ', $e->getMessage());
+            }
+        } else {
+            $this->warn('No follows notes received');
+        }
     
         if ($note_added || $note_exists) {
             try {
-                event(new UserNotes(true, $pubkey));
+                event(new UserNotes(true, $pubkey, null));
                 $note_added = false;
             } catch (\Exception $e) {
                 $this->error('Error firing UserNotes event: ', $e->getMessage());

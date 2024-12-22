@@ -70,9 +70,9 @@ const listenForMetadata = () => {
 const listenForUserNotes = () => {
     echo.channel('user_notes')
         .listen('.user_notes_set', (event) => {
+            console.log("event for user notes: ", event);
             if (event.userPubKey === nostrStore.hexPub) {
                 retrieveUserNotes(nostrStore.hexPub);
-                console.log('banana', event)
             }
         });
 }
@@ -129,6 +129,7 @@ const retrieveSetFollowsMetadata = () => {
 const retrieveUserNotes = () => {
     return axios.post('/redis/user-notes', {publicKeyHex: nostrStore.hexPub})
         .then((response) => {
+            // console.log('retrieve notes response: ', response);
             nostrStore.addNotes(response.data);
         })
 }
