@@ -61,20 +61,20 @@ class ListenUserNotes extends Command
     {
         $user_notes = $msg->getBody();
         $decoded_note = json_decode($user_notes, true);
-        $event_type = null;
+
         if (is_array($decoded_note) && array_key_exists('Event', $decoded_note)) {
-            $event_data = $decoded_note["Event"];
-            // Log::info('Decoded event type: ', [$event_type]);
-            // Log::info('Decoded event: ', [$decoded_note]);
-            Log::info('Array contents:', $decoded_note);
-            // Let's see what's at each index
-            foreach ($decoded_note as $key => $value) {
-                Log::info("Index {$key}:", [$value]);
+            Log::info('[DECODED NOTE]: ', [$decoded_note]);
+            $event_type = key($decoded_note['Event']);
+        
+            Log::info('Event type is: ', [$decoded_note['Event'][$event_type]]);
+
+            if ($event_type === "follows") {
+                $decoded_note = $decoded_note['Event']['follows'];
+                Log::info("event data: ", [$decoded_note]);
             }
         }
 
-        Log::info('[DECODED NOTE]: ', $decoded_note);
-
+        
         if (!isset($decoded_note[2]["pubkey"]) || !isset($decoded_note[2]["id"])) {
             $this->error("Invalid note structure");
             return;
