@@ -14,7 +14,7 @@
 
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
-import { onBeforeUnmount ,onMounted, ref, reactive, watch } from "vue";
+import { onBeforeUnmount, onMounted, ref, reactive, watch } from "vue";
 import { router } from '@inertiajs/vue3'
 import { useNostrStore } from '@/stores/useNostrStore';
 import Account from '../Components/Account.vue'
@@ -125,8 +125,6 @@ const retrieveFollowsMetadata = () => {
 }
 
 const retrieveFollowsNotes = (followsPubkey) => {
-    noteCount.value ++;
-    console.log('note count: ', noteCount.value);
     return axios.post('/redis/follows-notes', {publicKeyHex: followsPubkey})
         .then((response) => {
             nostrStore.addFollowsNotes(response.data)
@@ -151,6 +149,7 @@ const retrieveUserMetadata = () => {
     return axios.post('/redis/user-metadata', {publicKeyHex: nostrStore.hexPub})
         .then((response) => {
             nostrStore.metadataContent = response.data.userMetadata;
+            nostrStore.setActiveProfileMetadata(response.data.userMetadata);
             metadataContent.value = nostrStore.metadataContent;
         })
 }

@@ -2,6 +2,12 @@ import { defineStore } from "pinia";
 import { ref } from 'vue';
 
 export const useNostrStore = defineStore('nostr', () => {
+    const activeProfile = ref({
+        follows: [],
+        metadata: [],
+        notes: []
+    });
+
     const followMetadataContent = ref(null);
     const followNotes = ref([]);
     const hexPub = ref(null);
@@ -66,6 +72,38 @@ export const useNostrStore = defineStore('nostr', () => {
             if (!existingNote) userNotes.value.push(parsedNote[2]);
         })
     }
+    const clearActiveProfile = () => {
+        // iterate through the active profile object
+        // set each array to empty
+    }
+
+
+    const setActiveProfileMetadata = (metadata) => {
+        activeProfile.value.metadata = metadata;
+    }
+
+    const setActiveProfileNotes = (notes) => {
+        const existingProfileNotes = activeProfile.value.notes;
+
+        notes.forEach((note) => {
+            let parsedNote = JSON.parse(note);
+            let existingNote = null;
+
+            if (existingProfileNotes.length <= 0) {
+                activeProfile.value.notes.push(parsedNote);
+            }
+
+            existingNote = existingProfileNotes?.some((existingNote) => {
+                return existingNote.content == parsedNote[2]["content"];
+            });
+
+            if (!existingNote) activeProfile.value.notes.push(parsedNote[2]);
+        });
+    }
+
+    const setActiveProfileFollows = (follows) => {
+        activeProfile.value.follows = follows;
+    }
     
-    return { addFollows, addFollowsNotes, addNotes, followMetadataContent, followNotes, hexPub, hexPriv, metadataContent, npub, searchUUID, trendingHashtags, userActiveProfile, userFollowsContent, userFollowsContent, userNotes, verified };
+    return { addFollows, addFollowsNotes, addNotes, followMetadataContent, followNotes, hexPub, hexPriv, metadataContent, npub, searchUUID, setActiveProfileMetadata, trendingHashtags, userActiveProfile, userFollowsContent, userFollowsContent, userNotes, verified };
 })
