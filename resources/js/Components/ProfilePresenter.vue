@@ -28,9 +28,10 @@
                 <!-- <UserNote :followNotesLoading="followNotesLoading"></UserNote> -->
                 <NotesContainer />
             </div>
-            <!-- <div v-if="activeTab == 'followed'">
-                <FollowsMetadata></FollowsMetadata>
-            </div> -->
+            <div v-if="activeTab == 'followed'">
+                <!-- <FollowsMetadata></FollowsMetadata> -->
+                <FollowListContainer />
+            </div>
         </div>
     </div>
 </template>
@@ -39,11 +40,12 @@
 <script setup>
 import { inject } from 'vue';
 import NotesContainer from './NotesContainer.vue';
+import FollowListContainer from './FollowListContainer.vue';
 
 // need to inject the active tab
 // this means I can provide/inject the functionality around switching the tab as well
 const activeMetadata = inject('profileMetadata');
-const { activeTab, switchTab} = inject('profileState');
+const { activeTab, switchTab } = inject('profileState');
 
 </script>
 

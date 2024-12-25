@@ -129,7 +129,7 @@ const retrieveFollowsMetadata = () => {
 const retrieveFollowsNotes = (followsPubkey) => {
     return axios.post('/redis/follows-notes', {publicKeyHex: followsPubkey})
         .then((response) => {
-            nostrStore.addFollowsNotes(response.data)
+            // nostrStore.addFollowsNotes(response.data)
         })
 }
 
@@ -144,7 +144,7 @@ const retrieveSetFollowsMetadata = () => {
 const retrieveUserNotes = () => {
     return axios.post('/redis/user-notes', {publicKeyHex: nostrStore.hexPub})
         .then((response) => {
-            nostrStore.addNotes(response.data);
+            nostrStore.addUserNotes(response.data);
             nostrStore.setActiveProfileNotes(response.data);
         })
 }

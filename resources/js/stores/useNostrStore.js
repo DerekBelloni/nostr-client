@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ref } from 'vue';
+import { isProxy, ref, toRaw } from 'vue';
 
 export const useNostrStore = defineStore('nostr', () => {
     const activeProfile = ref({
@@ -7,17 +7,14 @@ export const useNostrStore = defineStore('nostr', () => {
         metadata: [],
         notes: []
     });
-
-    const followMetadataContent = ref(null);
-    const followNotes = ref([]);
     const hexPub = ref(null);
     const hexPriv = ref(null);
     const metadataContent = ref(null);
     const npub = ref(null);
     const searchUUID = ref(null);
     const trendingHashtags = ref([]);
-    const userActiveProfile = ref(false);
     const userFollowsContent = ref([]);
+    const userActive = ref(false);
     const userNotes = ref([]);
     const verified = ref(false);
 
@@ -38,23 +35,23 @@ export const useNostrStore = defineStore('nostr', () => {
     }
 
     // actions regarding setting the user as active profile, setting an active follows, etc should be handled through functionality in here
-    const addFollowsNotes = (notes) => {
-        const existingFollowNotes = followNotes;
+    // const addFollowsNotes = (notes) => {
+    //     const existingFollowNotes = followNotes;
 
-        notes.forEach((note) => {
-            let existingNote = null;
-            const parsedNote = JSON.parse(note);
-            if (followNotes.length <= 0) followNotes.push(parsedNote[2]);
+    //     notes.forEach((note) => {
+    //         let existingNote = null;
+    //         const parsedNote = JSON.parse(note);
+    //         if (followNotes.length <= 0) followNotes.push(parsedNote[2]);
 
-            existingNote = existingFollowNotes?.value.some((existing) => {
-                return existing?.content == parsedNote[2]['content'];
-            });
+    //         existingNote = existingFollowNotes?.value.some((existing) => {
+    //             return existing?.content == parsedNote[2]['content'];
+    //         });
 
-            if (!existingNote) followNotes.value.push(parsedNote[2]);
-        });
-    }
+    //         if (!existingNote) followNotes.value.push(parsedNote[2]);
+    //     });
+    // }
 
-    const addNotes = (notes) => {
+    const addUserNotes = (notes) => {
         const existingUserNotes = userNotes;
 
         notes.forEach((note) => {
@@ -72,14 +69,30 @@ export const useNostrStore = defineStore('nostr', () => {
             if (!existingNote) userNotes.value.push(parsedNote[2]);
         })
     }
+    
+
     const clearActiveProfile = () => {
-        // iterate through the active profile object
-        // set each array to empty
+        for (const key in activeProfile.value) {
+            activeProfile.value[key] = [];
+        }
     }
 
-
     const setActiveProfileMetadata = (metadata) => {
-        activeProfile.value.metadata = metadata;
+        const unwrappedMeta = isProxy(metadata) ? toRaw(metadata) : metadata;
+
+        if (activeProfile.value.metadata.pubkey != metadata.pubkey) {
+            clearActiveProfile();
+        }
+
+        // need to get the hex value for this to work
+        if (metadata.pubkey === hexPub.value) {
+            userActive.value = true;
+            if (userNotes.value.length > 0) activeProfile.value.notes = userNotes.value;
+            if (userFollowsContent.value.length > 0) activeProfile.value.follows = userFollowsContent.value;
+            console.log('active profile notes: ', activeProfile.value)
+        }
+
+        activeProfile.value.metadata = unwrappedMeta;
     }
 
     const setActiveProfileNotes = (notes) => {
@@ -105,5 +118,5 @@ export const useNostrStore = defineStore('nostr', () => {
         activeProfile.value.follows = follows;
     }
     
-    return { activeProfile, addFollows, addFollowsNotes, addNotes, followMetadataContent, followNotes, hexPub, hexPriv, metadataContent, npub, searchUUID, setActiveProfileFollows, setActiveProfileMetadata, setActiveProfileNotes, trendingHashtags, userActiveProfile, userFollowsContent, userFollowsContent, userNotes, verified };
+    return { activeProfile, addFollows, addUserNotes, clearActiveProfile, hexPub, hexPriv, metadataContent, npub, searchUUID, setActiveProfileFollows, setActiveProfileMetadata, setActiveProfileNotes, trendingHashtags, userActive, userFollowsContent, userFollowsContent, userNotes, verified };
 })
