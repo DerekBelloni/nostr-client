@@ -35,6 +35,8 @@ const reactions = ref([]);
 const trendingContent = ref([]);
 const trendingHashtags = ref([]);
 
+const noteCount = ref(0);
+
 
 onBeforeUnmount(() => {
     if (eventSource.value) {
@@ -43,7 +45,7 @@ onBeforeUnmount(() => {
 });
 
 onMounted(() => {
-    // retrieveTrendingContent();
+    retrieveTrendingContent();
     listenForFollowsList();
     listenForMetadata();
     listenForUserNotes();
@@ -123,9 +125,11 @@ const retrieveFollowsMetadata = () => {
 }
 
 const retrieveFollowsNotes = (followsPubkey) => {
+    noteCount.value ++;
+    console.log('note count: ', noteCount.value);
     return axios.post('/redis/follows-notes', {publicKeyHex: followsPubkey})
         .then((response) => {
-            console.log('response follows notes: ', response);
+            nostrStore.addFollowsNotes(response.data)
         })
 }
 
@@ -139,7 +143,6 @@ const retrieveSetFollowsMetadata = () => {
 const retrieveUserNotes = () => {
     return axios.post('/redis/user-notes', {publicKeyHex: nostrStore.hexPub})
         .then((response) => {
-            // console.log('retrieve notes response: ', response);
             nostrStore.addNotes(response.data);
         })
 }

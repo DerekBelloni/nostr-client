@@ -1,5 +1,6 @@
 <template>
-    <div v-if="!notesLoading">
+    <!-- <div v-if="!notesLoading"> -->
+    <div>
         <div class="divide-y divide-gray-300 border-t border-gray-300 overflow-auto">
             <div v-for="note in activeNotes">
                 <div class="grid grid-cols-12 space-y-4">
@@ -20,9 +21,9 @@
             </div>
         </div>
     </div>
-    <div v-else class="flex justify-center ml-8">
+    <!-- <div v-else class="flex justify-center ml-8">
         <ProgressSpinner></ProgressSpinner>
-    </div>
+    </div> -->
 </template>
 
 <script setup>
@@ -33,14 +34,28 @@ const props = defineProps(['followNotesLoading']);
 let notesLoading = toRef(props, 'followNotesLoading');
 
 const nostrStore = useNostrStore();
-const profilePic = nostrStore.metadataContent.picture;
-const displayName = nostrStore.metadataContent.displayName;
 
 const activeNotes = computed(() => {
     if (nostrStore.userActiveProfile) {
         return nostrStore.userNotes;
     } else if (!nostrStore.userActiveProfile && nostrStore.followNotes) {
         return nostrStore.followNotes;
+    }
+});
+
+const profilePic = computed(() => {
+    if (nostrStore.userActiveProfile) {
+        return nostrStore.metadataContent.picture;
+    } else if (!nostrStore.userActiveProfile && nostrStore.followNotes) {
+        return nostrStore.followMetadataContent.picture;
+    }
+});
+
+const displayName = computed(() => {
+    if (nostrStore.userActiveProfile) {
+        return nostrStore.metadataContent.displayName;
+    } else if (!nostrStore.userActiveProfile && nostrStore.followNotes) {
+        return nostrStore.followMetadataContent.displayName;
     }
 })
 
@@ -55,6 +70,8 @@ watch(notesLoading, (newValue) => {
     handleNotesLoading();
 
 }, {immediate: true});
+
+
 
 </script>
 

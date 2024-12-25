@@ -50,7 +50,7 @@ class ListenUserNotes extends Command
     private function consumeMessages()
     {
         $this->info("Waiting for messages. To exit press CTRL+C");
-        $this->channel->basic_consume('user_notes', '', false, true, false, false, [$this, 'processMessage']);
+        $this->channel->basic_consume('user_notes', '', false, false, false, false, [$this, 'processMessage']);
 
         while ($this->channel->is_consuming()) {
             $this->channel->wait();
@@ -63,6 +63,7 @@ class ListenUserNotes extends Command
         $decoded_note = json_decode($user_notes, true);
         $event_type = null;
         $receiving_user_pubkey = null;
+        $this->channel->basic_ack($msg->getDeliveryTag());
 
         if (is_array($decoded_note) && array_key_exists('Event', $decoded_note)) {
             $event_type = key($decoded_note['Event']);
@@ -105,7 +106,6 @@ class ListenUserNotes extends Command
 
         if ($event_type === 'follows') {
             try {
-                Log::info('BANANA: ', [$event_type]);
                 event(new UserNotes(true, $pubkey, $receiving_user_pubkey));
                 $note_added = false;
             } catch (\Exception $e) {

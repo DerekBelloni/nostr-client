@@ -78,7 +78,8 @@ watch(() => nostrStore.followMetadataContent, (newValue) => {
         followNotesLoading.value = true;
         nostrStore.userActiveProfile = false;
     };
-})
+});
+
 </script>
 
 <style scoped>

@@ -26,7 +26,6 @@
     const followsMetadataList = ref(nostrStore.userFollowsContent);
    
     const retrieveFollowsNotes = () => {
-        console.log('follow data:  ', nostrStore.followMetadataContent.pubkey);
         return axios.post('/rabbit-mq/follow-notes', {userPubkey: nostrStore.hexPub, followPubkey: nostrStore.followMetadataContent.pubkey})
             .then((response) => {
                 console.log('response: ', response);

@@ -31,8 +31,21 @@ export const useNostrStore = defineStore('nostr', () => {
         })
     }
 
+    // actions regarding setting the user as active profile, setting an active follows, etc should be handled through functionality in here
     const addFollowsNotes = (notes) => {
-        console.log('notes in add follows notes in pinia store: ', notes);
+        const existingFollowNotes = followNotes;
+
+        notes.forEach((note) => {
+            let existingNote = null;
+            const parsedNote = JSON.parse(note);
+            if (followNotes.length <= 0) followNotes.push(parsedNote[2]);
+
+            existingNote = existingFollowNotes?.value.some((existing) => {
+                return existing?.content == parsedNote[2]['content'];
+            });
+
+            if (!existingNote) followNotes.value.push(parsedNote[2]);
+        });
     }
 
     const addNotes = (notes) => {
@@ -54,5 +67,5 @@ export const useNostrStore = defineStore('nostr', () => {
         })
     }
     
-    return { addFollows, addNotes, followMetadataContent, followNotes, hexPub, hexPriv, metadataContent, npub, searchUUID, trendingHashtags, userActiveProfile, userFollowsContent, userFollowsContent, userNotes, verified };
+    return { addFollows, addFollowsNotes, addNotes, followMetadataContent, followNotes, hexPub, hexPriv, metadataContent, npub, searchUUID, trendingHashtags, userActiveProfile, userFollowsContent, userFollowsContent, userNotes, verified };
 })
