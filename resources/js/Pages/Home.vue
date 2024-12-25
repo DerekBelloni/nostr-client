@@ -4,7 +4,6 @@
         <div class="center-feature border-r">
             <Feed v-if="activeView == 'Home'" :trendingContent="trendingContent"></Feed>
             <Account v-if="activeView == 'account'"></Account>
-            <!-- <Profile v-if="activeView == 'profile'"></Profile> -->
              <ProfileContainer v-if="activeView == 'profile'"></ProfileContainer>
         </div>
         <div class="right-sidebar">
@@ -20,7 +19,6 @@ import { router } from '@inertiajs/vue3'
 import { useNostrStore } from '@/stores/useNostrStore';
 import Account from '../Components/Account.vue'
 import Feed from '../Components/Feed.vue'
-import Profile from '../Components/Profile.vue'
 import Sidebar from '../Components/Sidebar.vue'
 import TrendingTags from '../Components/TrendingTags.vue'
 import echo from '../echo.js';
@@ -61,7 +59,6 @@ watch(metadataContent, async(newValue, oldValue) => {
     }
 }, { once: true });
 
-// put listeners in their own file and then initialize it here
 const listenForMetadata = () => {
     echo.channel('user_metadata')
         .listen('.metadata_set', (event) => {

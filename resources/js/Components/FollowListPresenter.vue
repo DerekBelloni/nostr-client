@@ -4,7 +4,6 @@
             <div class="profile-picture-container ml-4 flex-shrink-0">
                 <!-- <img v-if="follow.picture" class="profile-picture" :src="follow.picture" alt="" @error="handleImageError" @load="handleImageLoad"> -->
                 <img v-if="follow.picture" class="profile-picture" :src="follow.picture" alt="">
-                <!-- <Avatar v-else size="large"></Avatar> -->
             </div>
             <div class="flex flex-col ml-2 mt-1 flex-1 min-w-0">
                 <div>

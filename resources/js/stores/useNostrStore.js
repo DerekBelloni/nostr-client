@@ -34,23 +34,6 @@ export const useNostrStore = defineStore('nostr', () => {
         })
     }
 
-    // actions regarding setting the user as active profile, setting an active follows, etc should be handled through functionality in here
-    // const addFollowsNotes = (notes) => {
-    //     const existingFollowNotes = followNotes;
-
-    //     notes.forEach((note) => {
-    //         let existingNote = null;
-    //         const parsedNote = JSON.parse(note);
-    //         if (followNotes.length <= 0) followNotes.push(parsedNote[2]);
-
-    //         existingNote = existingFollowNotes?.value.some((existing) => {
-    //             return existing?.content == parsedNote[2]['content'];
-    //         });
-
-    //         if (!existingNote) followNotes.value.push(parsedNote[2]);
-    //     });
-    // }
-
     const addUserNotes = (notes) => {
         const existingUserNotes = userNotes;
 
@@ -84,12 +67,10 @@ export const useNostrStore = defineStore('nostr', () => {
             clearActiveProfile();
         }
 
-        // need to get the hex value for this to work
         if (metadata.pubkey === hexPub.value) {
             userActive.value = true;
             if (userNotes.value.length > 0) activeProfile.value.notes = userNotes.value;
             if (userFollowsContent.value.length > 0) activeProfile.value.follows = userFollowsContent.value;
-            console.log('active profile notes: ', activeProfile.value)
         }
 
         activeProfile.value.metadata = unwrappedMeta;
