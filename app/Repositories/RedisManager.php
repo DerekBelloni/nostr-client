@@ -34,6 +34,14 @@ class RedisManager
         return $event[2]["content"] ?? null;
     }
 
+    public static function retrieveFollowsNotes(Request $request)
+    {
+        $follows_pubkey = $request->input('publicKeyHex');
+        $redis_key = "{$follows_pubkey}:follow-notes";
+        $follow_notes = Redis::sMembers($redis_key);
+        return $follow_notes;
+    }
+
     public static function retrieveUserNotes(Request $request)
     {
         $user_pubkey = $request->input('publicKeyHex');

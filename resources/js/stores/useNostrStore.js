@@ -31,6 +31,10 @@ export const useNostrStore = defineStore('nostr', () => {
         })
     }
 
+    const addFollowsNotes = (notes) => {
+        console.log('notes in add follows notes in pinia store: ', notes);
+    }
+
     const addNotes = (notes) => {
         const existingUserNotes = userNotes;
 

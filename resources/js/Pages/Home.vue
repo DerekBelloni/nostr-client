@@ -70,11 +70,14 @@ const listenForMetadata = () => {
 const listenForUserNotes = () => {
     echo.channel('user_notes')
         .listen('.user_notes_set', (event) => {
-            console.log("event for user notes: ", event);
             if (event.userPubKey === nostrStore.hexPub) {
                 retrieveUserNotes(nostrStore.hexPub);
+            } else if (event.receiving_users_pubkey === nostrStore.hexPub) {
+                const followsPubkey = event.userPubKey;
+                const receivingUserPubkey = event.receiving_users_pubkey;
+                retrieveFollowsNotes(followsPubkey);
             }
-        });
+        })
 }
 
 const listenForFollowsList = () => {
@@ -116,6 +119,13 @@ const retrieveFollowsMetadata = () => {
     return axios.post('/rabbit-mq/follows-metadata', {publicKeyHex: nostrStore.hexPub})
         .then((response) => {
             console.log('response: ', response);
+        })
+}
+
+const retrieveFollowsNotes = (followsPubkey) => {
+    return axios.post('/redis/follows-notes', {publicKeyHex: followsPubkey})
+        .then((response) => {
+            console.log('response follows notes: ', response);
         })
 }
 

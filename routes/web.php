@@ -31,6 +31,7 @@ Route::post('/rabbit-mq/follow-notes', [RabbitMQController::class, 'getFollowNot
 Route::post('/redis/user-metadata', [RedisController::class, 'userMetadata']);
 Route::post('/redis/user-notes', [RedisController::class, 'userNotes']);
 Route::post('/redis/follows-metadata', [RedisController::class, 'followsMetadata']);
+Route::post('/redis/follows-notes', [RedisController::class, 'followsNotes']);
 
 // Trending Events Controller
 Route::get('/trending-events', [TrendingEventsController::class, 'index']);
