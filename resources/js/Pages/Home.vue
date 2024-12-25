@@ -4,7 +4,8 @@
         <div class="center-feature border-r">
             <Feed v-if="activeView == 'Home'" :trendingContent="trendingContent"></Feed>
             <Account v-if="activeView == 'account'"></Account>
-            <Profile v-if="activeView == 'profile'"></Profile>
+            <!-- <Profile v-if="activeView == 'profile'"></Profile> -->
+             <ProfileContainer v-if="activeView == 'profile'"></ProfileContainer>
         </div>
         <div class="right-sidebar">
             <TrendingTags :trendingHashtags="trendingHashtags" @tagSelected="retrieveSearchResults"></TrendingTags>
@@ -24,6 +25,7 @@ import Sidebar from '../Components/Sidebar.vue'
 import TrendingTags from '../Components/TrendingTags.vue'
 import echo from '../echo.js';
 import axios from 'axios';
+import ProfileContainer from '@/Components/ProfileContainer.vue';
 
 const activeView = ref('');
 const eventSource = ref(null);
@@ -135,6 +137,7 @@ const retrieveSetFollowsMetadata = () => {
     return axios.post('/redis/follows-metadata', {publicKeyHex: nostrStore.hexPub})
         .then((response) => {
             nostrStore.addFollows(response.data);
+            nostrStore.setActiveProfileFollows(response.data);
         })
 }
 
@@ -142,6 +145,7 @@ const retrieveUserNotes = () => {
     return axios.post('/redis/user-notes', {publicKeyHex: nostrStore.hexPub})
         .then((response) => {
             nostrStore.addNotes(response.data);
+            nostrStore.setActiveProfileNotes(response.data);
         })
 }
 

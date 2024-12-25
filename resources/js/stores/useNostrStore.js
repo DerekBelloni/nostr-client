@@ -90,7 +90,7 @@ export const useNostrStore = defineStore('nostr', () => {
             let existingNote = null;
 
             if (existingProfileNotes.length <= 0) {
-                activeProfile.value.notes.push(parsedNote);
+                activeProfile.value.notes.push(parsedNote[2]);
             }
 
             existingNote = existingProfileNotes?.some((existingNote) => {
@@ -105,5 +105,5 @@ export const useNostrStore = defineStore('nostr', () => {
         activeProfile.value.follows = follows;
     }
     
-    return { addFollows, addFollowsNotes, addNotes, followMetadataContent, followNotes, hexPub, hexPriv, metadataContent, npub, searchUUID, setActiveProfileMetadata, trendingHashtags, userActiveProfile, userFollowsContent, userFollowsContent, userNotes, verified };
+    return { activeProfile, addFollows, addFollowsNotes, addNotes, followMetadataContent, followNotes, hexPub, hexPriv, metadataContent, npub, searchUUID, setActiveProfileFollows, setActiveProfileMetadata, setActiveProfileNotes, trendingHashtags, userActiveProfile, userFollowsContent, userFollowsContent, userNotes, verified };
 })
