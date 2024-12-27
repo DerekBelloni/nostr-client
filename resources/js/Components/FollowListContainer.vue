@@ -14,17 +14,25 @@ const setActiveFollow = (follow) => {
     store.clearActiveProfile();
     // at somepoint during this process I do want to set the active tab to 'notes'
     store.setActiveProfileMetadata(follow);
-    retrieveFollowsNotes();
+    requestFollowsNotes();
 }
 
-const retrieveFollowsNotes = () => {
+const requestFollowsNotes = () => {
     return axios.post('/rabbit-mq/follow-notes', {userPubkey: store.hexPub, followPubkey: store.activeProfile.metadata.pubkey})
         .then((response) => {
-            console.log('response banana: ', response);
+            if (response.data === "complete") retrieveFollowsNotes();
         });
 }   
 
+const retrieveFollowsNotes = () => {
+    return axios.post('/redis/follows-notes', {publicKeyHex: store.activeProfile.metadata.pubkey})
+        .then((response) => {
+            store.setActiveProfileNotes(response.data);
+        })
+}
+
 const setDisplayName = (follow) => {
+    console.log('follow in set display name: ', follow);
     return follow.display_name || follow.name;
 }
 
