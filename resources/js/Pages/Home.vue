@@ -4,7 +4,7 @@
         <div class="center-feature border-r">
             <Feed v-if="activeView == 'Home'" :trendingContent="trendingContent"></Feed>
             <Account v-if="activeView == 'account'"></Account>
-             <ProfileContainer v-if="activeView == 'profile'"></ProfileContainer>
+            <ProfileContainer v-if="activeView == 'profile'"></ProfileContainer>
         </div>
         <div class="right-sidebar">
             <TrendingTags :trendingHashtags="trendingHashtags" @tagSelected="retrieveSearchResults"></TrendingTags>
@@ -109,8 +109,13 @@ const verifyNIP05 = () => {
 }
 
 const retrieveSearchResults = (search) => {
-    let publicKeyHex = nostrStore.hexPub ?? 'notLoggedIn';
-    return axios.post('/rabbit-mq/search-results', {search: search, publicKeyHex: nostrStore.hexPub})
+    let searchUUID = null;
+    if (!nostrStore.hexPub) {
+        searchUUID = crypto.randomUUID;
+        nostrStore.searchUUID = searchUUID;
+    }
+    console.log('search uuid: ', searchUUID);
+    return axios.post('/rabbit-mq/search-results', {search: search, publicKeyHex: nostrStore.hexPub, searchUUID: searchUUID})
         .then((response) => {
             console.log('search response: ', response);
         })

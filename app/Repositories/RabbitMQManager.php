@@ -109,10 +109,12 @@ class RabbitMQManager
     {
         $search = $request->input('search');
         $pub_hex_key = $request->input('publicKeyHex');
-        $uuid = Str::uuid();
+        $uuid = $request->input('searchUUID');
+        dd($uuid);
         $search_uuid = $search . ':' . $uuid;
 
         if (!is_null($pub_hex_key)) $search_uuid .= ":{$pub_hex_key}";
+        dd($search_uuid);
 
         $connection = new AMQPStreamConnection('localhost', 5672, 'guest', 'guest');
         $channel = $connection->channel();

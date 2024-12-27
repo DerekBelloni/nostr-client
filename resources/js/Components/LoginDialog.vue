@@ -26,7 +26,7 @@
     
     const nostrStore = useNostrStore();
 
-=    const emit = defineEmits(['pubKeyRetrieved']);
+    const emit = defineEmits(['pubKeyRetrieved']);
 
     const open = () => {
         loginDialog.value = true;

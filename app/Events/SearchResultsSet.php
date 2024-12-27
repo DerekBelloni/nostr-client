@@ -9,9 +9,10 @@ class SearchResultsSet implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets;
 
-    public function __construct($search_results_set)
+    public function __construct($search_results_set, $user_pubkey)
     {
         $this->search_results_set = $search_results_set;
+        $this->user_pubkey = $user_pubkey;
     }
 
     public function broadcastOn()
@@ -28,6 +29,6 @@ class SearchResultsSet implements ShouldBroadcastNow
 
     public function broadcastWith()
     {
-        
+        return ['search_results_set' => $this->search_results_set];
     }
 }
