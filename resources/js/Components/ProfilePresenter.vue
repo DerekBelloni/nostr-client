@@ -21,15 +21,15 @@
             <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium cursor-pointer hover:bg-gray-300" @click="switchTab('notes')">Notes</span>
             <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium cursor-pointer hover:bg-gray-300" @click="switchTab('reactions')">Reactions</span>
             <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium cursor-pointer hover:bg-gray-300" @click="switchTab('followers')">Followers</span>
-            <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium cursor-pointer hover:bg-gray-300" @click="switchTab('followed')">Followed</span>
+            <template v-if="userActive">
+                <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium cursor-pointer hover:bg-gray-300" @click="switchTab('followed')">Followed</span>
+            </template>
         </div>
         <div class="mt-4 overflow-y-auto">
             <div v-if="activeTab == 'notes'">
-                <!-- <UserNote :followNotesLoading="followNotesLoading"></UserNote> -->
                 <NotesContainer />
             </div>
             <div v-if="activeTab == 'followed'">
-                <!-- <FollowsMetadata></FollowsMetadata> -->
                 <FollowListContainer />
             </div>
         </div>
@@ -42,10 +42,10 @@ import { inject } from 'vue';
 import NotesContainer from './NotesContainer.vue';
 import FollowListContainer from './FollowListContainer.vue';
 
-// need to inject the active tab
-// this means I can provide/inject the functionality around switching the tab as well
+
 const activeMetadata = inject('profileMetadata');
 const { activeTab, switchTab } = inject('profileState');
+const userActive = inject('userActive');
 
 </script>
 

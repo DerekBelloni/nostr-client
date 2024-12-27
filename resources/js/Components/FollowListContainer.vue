@@ -5,14 +5,13 @@
 <script setup>
 import { useNostrStore } from '@/stores/useNostrStore';
 import FollowListPresenter from './FollowListPresenter.vue';
-import { computed, provide } from 'vue';
+import { computed, inject, provide } from 'vue';
 
 const store = useNostrStore();
 const profileFollowsList = computed(() => store.activeProfile.follows);
 
 const setActiveFollow = (follow) => {
     store.clearActiveProfile();
-    // at somepoint during this process I do want to set the active tab to 'notes'
     store.setActiveProfileMetadata(follow);
     requestFollowsNotes();
 }
@@ -29,10 +28,12 @@ const retrieveFollowsNotes = () => {
         .then((response) => {
             store.setActiveProfileNotes(response.data);
         })
+        .finally(() => {
+            switchTab('notes');
+        })
 }
 
 const setDisplayName = (follow) => {
-    console.log('follow in set display name: ', follow);
     return follow.display_name || follow.name;
 }
 
@@ -41,5 +42,5 @@ provide('followState', {
     setActiveFollow,
     setDisplayName
 });
-
+const { activeTab, switchTab } = inject('profileState');
 </script>

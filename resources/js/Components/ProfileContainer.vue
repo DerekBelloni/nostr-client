@@ -12,6 +12,8 @@ const store = useNostrStore();
 
 
 const profileMetadata = computed(() => store.activeProfile.metadata);
+const userActive = computed(() => store.userActive);
+
 const switchTab = (tab) => {
     activeTab.value = tab;
 }
@@ -21,6 +23,7 @@ provide('profileState', {
     activeTab,
     switchTab
 });
+provide('userActive', userActive);
 
 
 

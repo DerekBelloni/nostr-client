@@ -64,6 +64,7 @@ export const useNostrStore = defineStore('nostr', () => {
         const unwrappedMeta = isProxy(metadata) ? toRaw(metadata) : metadata;
 
         if (activeProfile.value.metadata.pubkey != metadata.pubkey) {
+            userActive.value = false;
             clearActiveProfile();
         }
 

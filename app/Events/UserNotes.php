@@ -18,7 +18,6 @@ class UserNotes implements ShouldBroadcastNow
         $this->user_notes_set = $user_notes_set;
         $this->user_pubkey = $user_pubkey;
         $this->receiving_users_pubkey = $receiving_users_pubkey;
-        Log::info("in event, receiving pubkey: ", [$this->receiving_users_pubkey]);
     }
 
     public function broadcastOn(): array
