@@ -17,6 +17,7 @@ import { Head, Link } from '@inertiajs/vue3';
 import { onBeforeUnmount, onMounted, ref, reactive, watch } from "vue";
 import { router } from '@inertiajs/vue3'
 import { useNostrStore } from '@/stores/useNostrStore';
+import { useSearchStore } from '@/stores/useSearchStore';
 import Account from '../Components/Account.vue'
 import Feed from '../Components/Feed.vue'
 import Sidebar from '../Components/Sidebar.vue'
@@ -30,12 +31,12 @@ const eventSource = ref(null);
 const isSet = ref(false);
 const mqVerified = ref(false);
 const metadataContent = ref(null);
-const nostrStore = useNostrStore();
 const reactions = ref([]);
 const trendingContent = ref([]);
 const trendingHashtags = ref([]);
 
-const noteCount = ref(0);
+const nostrStore = useNostrStore();
+const searchStore = useSearchStore();
 
 
 onBeforeUnmount(() => {
@@ -93,10 +94,9 @@ const listenForFollowsList = () => {
 const listenForSearchResults = () => {
     echo.channel('search_results')
         .listen('.search_results_set', (event) => {
-            console.log("search event: ", event);
             let searchKey = null;
-            if (nostrStore.userActive && nostrStore.hexPub == event.pubkey) {
-                searchKey = event.pubkey;
+            if (nostrStore.userActive && nostrStore.hexPub == event.user_pubkey) {
+                searchKey = event.user_pubkey;
             } else if (event.uuid === nostrStore.searchUUID) {
                  searchKey = event.uuid;
              }
@@ -124,6 +124,7 @@ const retrieveSearchCache = (searchKey) => {
     return axios.post('/redis/search-results', {redisSearchKey: searchKey})
         .then((response) => {
             console.log("response from retrieving search cache: ", response);
+            searchStore.addSearchResults(response.data);
         })
 }
 

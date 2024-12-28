@@ -106,7 +106,7 @@ class RedisManager
     public static function retrieveSearchCache(Request $request) 
     {
         $search_key = $request->input('redisSearchKey');
-        $redis_key = "{$search_key}:search";
+        $redis_key = "search:{$search_key}";
 
         $search_results = Redis::sMembers($redis_key);
         $formatted_results = [];

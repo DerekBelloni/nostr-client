@@ -70,7 +70,7 @@ class ListenSearchResults extends Command
             $uuid = $search_key;
         }
 
-        $redis_key = "{$search_key}:search";
+        $redis_key = "search:{$search_key}";
         $search_results_set = Redis::sAdd($redis_key, $received_search_results);
 
         if ($search_results_set) {
