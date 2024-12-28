@@ -2,7 +2,8 @@
     <div class="flex h-screen overflow-hidden">
         <Sidebar class="sidebar border border-r border-gray-200" @setActiveView="setActiveView" :mq-verified="mqVerified"></Sidebar>
         <div class="center-feature border-r">
-            <Feed v-if="activeView == 'Home'" :trendingContent="trendingContent"></Feed>
+            <!-- <Feed v-if="activeView == 'Home'" :trendingContent="trendingContent"></Feed> -->
+            <FeedContainer v-if="activeView == 'Home'" :trendingContent="trendingContent"></FeedContainer>
             <Account v-if="activeView == 'account'"></Account>
             <ProfileContainer v-if="activeView == 'profile'"></ProfileContainer>
         </div>
@@ -25,6 +26,7 @@ import TrendingTags from '../Components/TrendingTags.vue'
 import echo from '../echo.js';
 import axios from 'axios';
 import ProfileContainer from '@/Components/ProfileContainer.vue';
+import FeedContainer from '@/Components/FeedContainer.vue';
 
 const activeView = ref('');
 const eventSource = ref(null);
@@ -184,6 +186,7 @@ const retrieveTrendingContent = () => {
     return axios.get('/trending-events')
         .then((response) => {
             trendingContent.value = response.data.trending_content;
+            searchStore.trendingContent = response.data.trending_content;
             trendingHashtags.value = response.data.trending_hashtags.hashtags;
             nostrStore.trendingHashtags = trendingHashtags.value;
         })
