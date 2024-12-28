@@ -79,7 +79,6 @@ watch(() => props.mqVerified, (newValue) => {
       nostrStore.verified = true;
   }
 });
-
 </script>
 
 <style scoped>

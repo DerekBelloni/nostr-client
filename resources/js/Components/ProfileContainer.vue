@@ -24,13 +24,4 @@ provide('profileState', {
     switchTab
 });
 provide('userActive', userActive);
-
-
-
-// Or if you need to transform the store data: - use as reference
-// const formattedProfile = computed(() => ({
-//     ...store.activeProfile,
-//     displayName: store.activeProfile.metadata?.display_name || 'Anonymous'
-//     // any other transformations
-// }))
 </script>

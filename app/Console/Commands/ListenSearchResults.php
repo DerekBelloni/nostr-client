@@ -59,7 +59,6 @@ class ListenSearchResults extends Command
     public function processSearchResults(AMQPMessage $msg) 
     {
         $received_search_results = $msg->getBody();
-        // Log::info('received search results: ', [$received_search_results]);
         $decoded_search_results = json_decode($received_search_results, true);
         $search_key = $decoded_search_results["SearchKey"];
         $pubkey = null;
@@ -73,7 +72,7 @@ class ListenSearchResults extends Command
 
         $redis_key = "{$search_key}:search";
         $search_results_set = Redis::sAdd($redis_key, $received_search_results);
-        // Log::info('search results set: ', [$search_results_set]);
+
         if ($search_results_set) {
             try {
                 event(new SearchResultsSet(true, $pubkey, $uuid));

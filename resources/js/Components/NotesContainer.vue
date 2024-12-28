@@ -16,5 +16,4 @@ const profilePic = computed(() => store.activeProfile.metadata.picture);
 provide('displayName', displayName);
 provide('profileNotes', profileNotes);
 provide('profilePic', profilePic);
-provide('')
 </script>

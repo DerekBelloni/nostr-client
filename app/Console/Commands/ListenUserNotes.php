@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Events\UserNotes;
-use App\Repositories\UserNotesManager;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;

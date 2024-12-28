@@ -28,5 +28,4 @@ import { inject } from 'vue';
 const displayName = inject('displayName');
 const profileNotes = inject('profileNotes');
 const profilePic = inject('profilePic');
-
 </script>

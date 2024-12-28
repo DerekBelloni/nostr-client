@@ -56,19 +56,16 @@ const userActive = inject('userActive');
         margin: 0 auto;
         overflow: hidden;
     }
-
     .banner {
         width: 100%; 
         height: auto; 
         object-fit: cover; 
         display: block; 
     }
-
     .profile-picture-container {
         position: relative;
         display: flex;
     }
-
     .profile-picture {
         width: 150px;
         height: 150px; 
@@ -77,11 +74,9 @@ const userActive = inject('userActive');
         object-fit: cover; 
         border: 2px solid white; 
     }
-
     .edit-button {
         margin-top: -32px;
     }
-
     .username-container {
         margin-top: -48px;
     }

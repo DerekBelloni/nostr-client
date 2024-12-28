@@ -16,12 +16,12 @@
 
 <style scoped>
 .icon-border {
-    width: 2.5rem; /* Set the width of the container */
-    height: 2.5rem; /* Set the height of the container */
-    border-radius: 50%; /* Make the container circular */
-    border: 2px solid rgba(55, 65, 81, 0.8); /* Set the border properties */
-    display: flex; /* Use flexbox for centering the icon */
-    justify-content: center; /* Center the icon horizontally */
+    width: 2.5rem; 
+    height: 2.5rem;
+    border-radius: 50%; 
+    border: 2px solid rgba(55, 65, 81, 0.8); 
+    display: flex; 
+    justify-content: center; 
     align-items: center; 
 }
 .icon-color {

@@ -20,7 +20,6 @@
 <script setup>
 import { inject } from 'vue';
 
-
 const profileFollowsList = inject('profileFollowsList');
 const {setDisplayName, setActiveFollow} = inject('followState');
 
