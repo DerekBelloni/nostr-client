@@ -91,7 +91,16 @@ const listenForFollowsList = () => {
 }
 
 const listenForSearchResults = () => {
-    // echo.channel('search_results')
+    echo.channel('search_results')
+        .listen('.search_results_set', (event) => {
+            console.log("search event: ", event);
+            let searchKey = null;
+            if (nostrStore.userActive && nostrStore.hexPub == event.pubkey) {
+                searchKey = event.pubkey;
+            } else searchKey = event.uuid;
+
+            retrieveSearchCache(searchKey);
+        })
 }
 
 const listenForFollowsMetadata = () => {
@@ -108,13 +117,17 @@ const verifyNIP05 = () => {
         })
 }
 
+const retrieveSearchCache = (searchKey) => {
+    console.log('search key in retrieve search cache: ', searchKey);
+}
+
 const retrieveSearchResults = (search) => {
     let searchUUID = null;
     if (!nostrStore.hexPub) {
-        searchUUID = crypto.randomUUID;
+        searchUUID = crypto.randomUUID();
         nostrStore.searchUUID = searchUUID;
     }
-    console.log('search uuid: ', searchUUID);
+   
     return axios.post('/rabbit-mq/search-results', {search: search, publicKeyHex: nostrStore.hexPub, searchUUID: searchUUID})
         .then((response) => {
             console.log('search response: ', response);

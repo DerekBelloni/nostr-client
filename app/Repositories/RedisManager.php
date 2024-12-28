@@ -58,10 +58,14 @@ class RedisManager
             }
         }
 
-        $follow_keys = array_column($event[2]['tags'], 1);
-        foreach($follow_keys as $key => $value) {
-            if (!ctype_xdigit($value) && !strlen($value)) {
-                unset($follow_keys[$key]);
+        $follow_keys = null;
+        
+        if (!is_null($event[2]['tags'])) {
+            $follow_keys = array_column($event[2]['tags'], 1);
+            foreach($follow_keys as $key => $value) {
+                if (!ctype_xdigit($value) && !strlen($value)) {
+                    unset($follow_keys[$key]);
+                }
             }
         }
         return $follow_keys;

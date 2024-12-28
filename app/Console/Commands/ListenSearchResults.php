@@ -2,8 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Events\SearchResultsSet;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redis;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
@@ -57,7 +59,29 @@ class ListenSearchResults extends Command
     public function processSearchResults(AMQPMessage $msg) 
     {
         $received_search_results = $msg->getBody();
-        Log::info(json_decode($received_search_results, true));
+        // Log::info('received search results: ', [$received_search_results]);
+        $decoded_search_results = json_decode($received_search_results, true);
+        $search_key = $decoded_search_results["SearchKey"];
+        $pubkey = null;
+        $uuid = null;
+
+        if (ctype_xdigit($search_key)) {
+            $pubkey = $search_key;
+        } else {
+            $uuid = $search_key;
+        }
+
+        $redis_key = "{$search_key}:search";
+        $search_results_set = Redis::sAdd($redis_key, $received_search_results);
+        // Log::info('search results set: ', [$search_results_set]);
+        if ($search_results_set) {
+            try {
+                event(new SearchResultsSet(true, $pubkey, $uuid));
+            } catch (\Exception $e) {
+                $this->error('Error firing Search Results Set event: ' . $e->getMessage());
+            }
+        }
+
     }
 
     private function closeConnection()
