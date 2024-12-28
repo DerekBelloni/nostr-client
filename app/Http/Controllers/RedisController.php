@@ -27,4 +27,8 @@ class RedisController extends Controller
     public function followsNotes(Request $request) {
         return RedisManager::retrieveFollowsNotes($request);
     }
+
+    public function searchResults(Request $request) {
+        return RedisManager::retrieveSearchCache($request);
+    }
 }

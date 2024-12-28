@@ -97,7 +97,9 @@ const listenForSearchResults = () => {
             let searchKey = null;
             if (nostrStore.userActive && nostrStore.hexPub == event.pubkey) {
                 searchKey = event.pubkey;
-            } else searchKey = event.uuid;
+            } else if (event.uuid === nostrStore.searchUUID) {
+                 searchKey = event.uuid;
+             }
 
             retrieveSearchCache(searchKey);
         })
@@ -119,6 +121,10 @@ const verifyNIP05 = () => {
 
 const retrieveSearchCache = (searchKey) => {
     console.log('search key in retrieve search cache: ', searchKey);
+    return axios.post('/redis/search-results', {redisSearchKey: searchKey})
+        .then((response) => {
+            console.log("response from retrieving search cache: ", response);
+        })
 }
 
 const retrieveSearchResults = (search) => {

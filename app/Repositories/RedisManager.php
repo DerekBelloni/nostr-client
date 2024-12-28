@@ -59,7 +59,7 @@ class RedisManager
         }
 
         $follow_keys = null;
-        
+
         if (!is_null($event[2]['tags'])) {
             $follow_keys = array_column($event[2]['tags'], 1);
             foreach($follow_keys as $key => $value) {
@@ -71,6 +71,7 @@ class RedisManager
         return $follow_keys;
     }
 
+    // not sure if I am using everything in here
     public static function retrieveFollowsMetadata(Request $request)
     {
         $user_pubkey = $request->input('publicKeyHex');
@@ -100,5 +101,21 @@ class RedisManager
         }, $valid_follows_metadata));
 
         return $decoded_metadata;
+    }
+
+    public static function retrieveSearchCache(Request $request) 
+    {
+        $search_key = $request->input('redisSearchKey');
+        $redis_key = "{$search_key}:search";
+
+        $search_results = Redis::sMembers($redis_key);
+        $formatted_results = [];
+       
+        foreach($search_results as $result) {
+            $decoded_result = json_decode($result, true);
+            $formatted_results[] = $decoded_result["SearchEvent"][2];
+        }
+       
+        return $formatted_results;
     }
 }
