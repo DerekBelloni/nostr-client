@@ -122,10 +122,8 @@ const verifyNIP05 = () => {
 }
 
 const retrieveSearchCache = (searchKey) => {
-    console.log('search key in retrieve search cache: ', searchKey);
     return axios.post('/redis/search-results', {redisSearchKey: searchKey})
         .then((response) => {
-            console.log("response from retrieving search cache: ", response);
             searchStore.addSearchResults(response.data);
         })
 }

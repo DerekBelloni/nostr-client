@@ -14,6 +14,7 @@ class ContentProcessor
 
     private function parseContent($content)
     {
+        // dd($content);
         $pattern = '/<.*?src="(https?:\/\/[^\s"]+?\.(?:mp4|webm|ogg|mov|jpg|jpeg|png|gif|webp))".*?>(?![^<]*<\/\w+>)|https?:\/\/[^\s"]+?\.(?:mp4|webm|ogg|mov|jpg|jpeg|png|gif|webp)\b|(nostr:(?:[a-zA-Z0-9]+))/i';
 
         $parts = preg_split($pattern, $content, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_OFFSET_CAPTURE);
@@ -78,7 +79,7 @@ class ContentProcessor
         return str_pad($binaryNumber, 5, '0', STR_PAD_LEFT);
     }
 
-    private function decodeToBase32($bech32Key, $key) {
+    private function decodeToBase32($bech32Key) {
         $decimal_vals = decodeRaw($bech32Key);
         $five_bit_arr = [];
         

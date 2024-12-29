@@ -23,7 +23,7 @@ class TrendingEventsManager
         return [self::_mergeTrendingContent($trending_notes, $trending_images, $trending_videos), $trending_hashtags];
     }
 
-    private static function _getTrendingNotes($client)
+    public static function _getTrendingNotes($client)
     {
         $response = $client->request('GET', 'https://api.nostr.band/v0/trending/notes', [
             'headers' => [
@@ -34,13 +34,14 @@ class TrendingEventsManager
         $body = $response->getBody();
    
         $trending_notes = json_decode($body->getContents(), true);
+        dd($trending_notes);
         $trending_notes = collect($trending_notes["notes"]);
 
         $processed_notes = self::_processContent($trending_notes, "notes");
         return $processed_notes;
     }
 
-    private static function _getTrendingVideos($client)
+    public static function _getTrendingVideos($client)
     {
         $response = $client->request('GET', 'https://api.nostr.band/v0/trending/videos', [
             'header' => [
@@ -57,7 +58,7 @@ class TrendingEventsManager
         return $processed_videos;
     }
 
-    private static function _getTrendingImages($client) 
+    public static function _getTrendingImages($client) 
     {
         $response = $client->request('GET', 'https://api.nostr.band/v0/trending/images', [
             'header' => [
@@ -74,7 +75,7 @@ class TrendingEventsManager
         return $processed_images;
     }
 
-    private static function _getTrendingHashtags($client)
+    public static function _getTrendingHashtags($client)
     {
         $response = $client->request('GET', 'https://api.nostr.band/v0/trending/hashtags', [
             'header' => [
@@ -87,12 +88,12 @@ class TrendingEventsManager
         return json_decode($body->getContents(), true);
     }
 
-    private static function _mergeTrendingContent($trending_notes, $trending_images, $trending_videos)
+    public static function _mergeTrendingContent($trending_notes, $trending_images, $trending_videos)
     {
         return $trending_notes->merge($trending_images)->merge($trending_videos);
     }
 
-    private static function _processImages(&$trending_images)
+    public static function _processImages(&$trending_images)
     {
         $pattern = '/https:\/\/[^\s]+(\.(mp4|webm|ogg|mov|jpg|jpeg|png|gif))?/i';
 
@@ -114,7 +115,7 @@ class TrendingEventsManager
         });
     }
 
-    private static function _getUrlMetadata($url) {
+    public static function _getUrlMetadata($url) {
         $client = new Client();
     
         $response = $client->request('GET', $url, [
@@ -134,7 +135,7 @@ class TrendingEventsManager
         $metadata["image"] = $crawler->filterXPath('//meta[@property="og:image"]')->attr('content') ?? '';
     }
 
-    private static function _processVideos(&$trending_videos)
+    public static function _processVideos(&$trending_videos)
     {
         $pattern = '/https:\/\/[^s]+\.(mp4|webm|ogg|mov)/i';
         $trending_videos->transform(function ($item) use ($pattern) {
@@ -151,7 +152,7 @@ class TrendingEventsManager
         });
     }
 
-    private static function _processContent(&$trending_content, $type = null)
+    public static function _processContent(&$trending_content, $type = null)
     {
         $processor = new ContentProcessor();
         // definitely refactor this
