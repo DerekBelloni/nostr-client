@@ -34,7 +34,7 @@ class TrendingEventsManager
         $body = $response->getBody();
    
         $trending_notes = json_decode($body->getContents(), true);
-        dd($trending_notes);
+        // dd($trending_notes);
         $trending_notes = collect($trending_notes["notes"]);
 
         $processed_notes = self::_processContent($trending_notes, "notes");
