@@ -15,49 +15,49 @@ class ListenRabbitMQMetadata extends Command
     protected $signature = 'rabbitmq:listen-metadata';
     protected $description = 'Listen for metadata messages on RabbitMQ queue';
 
-    private $connection;
-    private $channel;
+    // private $connection;
+    // private $channel;
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
+    // public function __construct()
+    // {
+    //     parent::__construct();
+    // }
 
-    public function handle()
-    {
-        $this->info("Starting to listen for metadata messages...");
+    // public function handle()
+    // {
+    //     $this->info("Starting to listen for metadata messages...");
 
-        while (true) {
-            try {
-                $this->connect();
-                $this->consumeMessages();
-            } catch (\Exception $e) {
-                $this->error("Error occurred: " . $e->getMessage());
-                Log::error("RabbitMQ Listener Error for Metadata: " . $e->getMessage());
-                $this->closeConnection();
-                sleep(5);
-            }
-        }
-    }
+    //     while (true) {
+    //         try {
+    //             $this->connect();
+    //             $this->consumeMessages();
+    //         } catch (\Exception $e) {
+    //             $this->error("Error occurred: " . $e->getMessage());
+    //             Log::error("RabbitMQ Listener Error for Metadata: " . $e->getMessage());
+    //             $this->closeConnection();
+    //             sleep(5);
+    //         }
+    //     }
+    // }
 
-    private function connect()
-    {
-        // Move the arguments to a config file and pull in those
-        $this->connection = new AMQPStreamConnection('localhost', 5672, 'guest', 'guest');
-        $this->channel = $this->connection->channel();
-        $this->channel->queue_declare('user_metadata', false, false, false, false);
-    }
+    // private function connect()
+    // {
+    //     // Move the arguments to a config file and pull in those
+    //     $this->connection = new AMQPStreamConnection('localhost', 5672, 'guest', 'guest');
+    //     $this->channel = $this->connection->channel();
+    //     $this->channel->queue_declare('user_metadata', false, false, false, false);
+    // }
 
-    private function consumeMessages()
-    {
-        $this->info("Waiting for messages. To exit press CTRL+C");
+    // private function consumeMessages()
+    // {
+    //     $this->info("Waiting for messages. To exit press CTRL+C");
 
-        $this->channel->basic_consume('user_metadata', '', false, true, false, false, [$this, 'processMessage']);
+    //     $this->channel->basic_consume('user_metadata', '', false, true, false, false, [$this, 'processMessage']);
 
-        while ($this->channel->is_consuming()) {
-            $this->channel->wait();
-        }
-    }
+    //     while ($this->channel->is_consuming()) {
+    //         $this->channel->wait();
+    //     }
+    // }
 
     private static function checkPubkey($pubkey)
     {
