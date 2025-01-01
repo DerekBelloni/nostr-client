@@ -3,15 +3,17 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
 abstract class BaseRabbitMQListener extends Command
 {
-    protected $connectionl;
+    protected $connection;
     protected $channel;
 
     abstract protected function getQueueName(): string;
-    abstract protected function processMessage(AMQPMessage $msg): void;
+    abstract protected function processMessage(AMQPMessage $msg);
 
     public function __construct()
     {
@@ -20,7 +22,7 @@ abstract class BaseRabbitMQListener extends Command
 
     public function handle()
     {
-        $this->info("Starting to listen for metadata messages...");
+        $this->info("Starting to listen for {$this->signature} messages...");
 
         while (true) {
             try {
@@ -47,7 +49,7 @@ abstract class BaseRabbitMQListener extends Command
     {
         $this->info("Waiting for messages. To exit press CTRL+C");
 
-        $this->channel->basic_consume('user_metadata', '', false, true, false, false, [$this, 'processMessage']);
+        $this->channel->basic_consume($this->getQueueName(), '', false, true, false, false, [$this, 'processMessage']);
 
         while ($this->channel->is_consuming()) {
             $this->channel->wait();
@@ -64,7 +66,7 @@ abstract class BaseRabbitMQListener extends Command
         }
     }
 
-    protected function __destruct()
+    public function __destruct()
     {
         $this->closeConnection();
     }

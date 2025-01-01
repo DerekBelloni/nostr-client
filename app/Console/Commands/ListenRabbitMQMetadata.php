@@ -7,79 +7,15 @@ use App\Events\UserMetadataSet;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 use PhpAmqpLib\Message\AMQPMessage;
-use Illuminate\Console\Command;
-use PhpAmqpLib\Connection\AMQPStreamConnection;
 
-class ListenRabbitMQMetadata extends Command
+class ListenRabbitMQMetadata extends BaseRabbitMQListener
 {
     protected $signature = 'rabbitmq:listen-metadata';
     protected $description = 'Listen for metadata messages on RabbitMQ queue';
 
-    // private $connection;
-    // private $channel;
-
-    // public function __construct()
-    // {
-    //     parent::__construct();
-    // }
-
-    // public function handle()
-    // {
-    //     $this->info("Starting to listen for metadata messages...");
-
-    //     while (true) {
-    //         try {
-    //             $this->connect();
-    //             $this->consumeMessages();
-    //         } catch (\Exception $e) {
-    //             $this->error("Error occurred: " . $e->getMessage());
-    //             Log::error("RabbitMQ Listener Error for Metadata: " . $e->getMessage());
-    //             $this->closeConnection();
-    //             sleep(5);
-    //         }
-    //     }
-    // }
-
-    // private function connect()
-    // {
-    //     // Move the arguments to a config file and pull in those
-    //     $this->connection = new AMQPStreamConnection('localhost', 5672, 'guest', 'guest');
-    //     $this->channel = $this->connection->channel();
-    //     $this->channel->queue_declare('user_metadata', false, false, false, false);
-    // }
-
-    // private function consumeMessages()
-    // {
-    //     $this->info("Waiting for messages. To exit press CTRL+C");
-
-    //     $this->channel->basic_consume('user_metadata', '', false, true, false, false, [$this, 'processMessage']);
-
-    //     while ($this->channel->is_consuming()) {
-    //         $this->channel->wait();
-    //     }
-    // }
-
-    private static function checkPubkey($pubkey)
+    protected function getQueueName(): string
     {
-        return Redis::exists("{$pubkey}:follows") || Redis::exists("{$pubkey}:user-notes");
-    }
-
-    private static function checkExistingFollows($redis_key, $pubkey)
-    {
-        $existing_follows_metadata = Redis::sMembers($redis_key);
-        $key_exists = false;
-
-        if ($existing_follows_metadata === false || !is_array($existing_follows_metadata)) {
-            return false;
-        }
-
-        foreach($existing_follows_metadata as $metadata) {
-            $decoded_metadata = json_decode($metadata, true);
-            $metadata_pubkey = $decoded_metadata[2]["pubkey"];
-            $key_exists = $pubkey === $metadata_pubkey;
-        }
-
-        return $key_exists;
+        return 'user_metadata';
     }
 
     public function processMessage(AMQPMessage $msg)
@@ -93,6 +29,7 @@ class ListenRabbitMQMetadata extends Command
 
         $metadata_set = false;
         $follows_set = false;
+
         if ($received_metadata && self::checkPubkey($pubkey)) {
             $redis_key = "{$pubkey}:metadata";
             $metadata_set = Redis::set($redis_key, $received_metadata);
@@ -126,18 +63,26 @@ class ListenRabbitMQMetadata extends Command
         }
     }
 
-    private function closeConnection()
+    private static function checkPubkey($pubkey)
     {
-        if ($this->channel) {
-            $this->channel->close();
-        }
-        if ($this->connection) {
-            $this->connection->close();
-        }
+        return Redis::exists("{$pubkey}:follows") || Redis::exists("{$pubkey}:user-notes");
     }
 
-    public function __destruct()
+    private static function checkExistingFollows($redis_key, $pubkey)
     {
-        $this->closeConnection();
+        $existing_follows_metadata = Redis::sMembers($redis_key);
+        $key_exists = false;
+
+        if ($existing_follows_metadata === false || !is_array($existing_follows_metadata)) {
+            return false;
+        }
+
+        foreach($existing_follows_metadata as $metadata) {
+            $decoded_metadata = json_decode($metadata, true);
+            $metadata_pubkey = $decoded_metadata[2]["pubkey"];
+            $key_exists = $pubkey === $metadata_pubkey;
+        }
+
+        return $key_exists;
     }
 }
