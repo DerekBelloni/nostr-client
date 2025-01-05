@@ -33,7 +33,7 @@ class ListenSearchResults extends BaseRabbitMQListener
             $uuid = $search_key;
         }
 
-        $search_key . ':' . 'search_content';
+        $search_key = 'search_content' . ':' . $search_key;
 
         $redis_key = $search_key;
         $search_results_set = Redis::sAdd($redis_key, $received_search_results);

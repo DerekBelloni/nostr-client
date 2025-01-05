@@ -54,6 +54,7 @@ onMounted(() => {
     listenForUserNotes();
     listenForFollowsMetadata();
     listenForSearchResults();
+    listenForAuthorMetadata();
 });
 
 watch(metadataContent, async(newValue, oldValue) => {
@@ -61,6 +62,13 @@ watch(metadataContent, async(newValue, oldValue) => {
         verifyNIP05();
     }
 }, { once: true });
+
+const listenForAuthorMetadata = () => {
+    echo.channel('author_metadata')
+        .listen('.author_metadata_set', (event) => {
+            console.log("event for author metadata: ", event);
+        });
+}
 
 const listenForMetadata = () => {
     echo.channel('user_metadata')
@@ -103,7 +111,7 @@ const listenForSearchResults = () => {
                  searchKey = event.uuid;
              }
 
-            retrieveSearchCache(searchKey);
+            // retrieveSearchCache(searchKey);
         })
 }
 
