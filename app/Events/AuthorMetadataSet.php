@@ -25,7 +25,7 @@ class AuthorMetadataSet implements ShouldBroadcastNow
         ];
     }
 
-    public function broadcaseAs()
+    public function broadcastAs()
     {
         return 'author_metadata_set';
     } 

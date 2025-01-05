@@ -106,16 +106,26 @@ class RedisManager
     public static function retrieveSearchCache(Request $request) 
     {
         $search_key = $request->input('redisSearchKey');
-        $redis_key = "search:{$search_key}";
+        $redis_search_key = "search_content:{$search_key}";
+        $redis_author_key = "author_content:{$author_key}";
 
-        $search_results = Redis::sMembers($redis_key);
-        $formatted_results = [];
+        $search_results = Redis::sMembers($redis_search_key);
+        $author_metadata = Redis::sMembers($redis_author_key);
+
+        $formatted_results = self::mergeAuthorMetadata($search_results, $author_metadata);
+        // $formatted_results = [];
        
-        foreach($search_results as $result) {
-            $decoded_result = json_decode($result, true);
-            $formatted_results[] = $decoded_result["Event"][2];
-        }
+        // foreach($search_results as $result) {
+        //     $decoded_result = json_decode($result, true);
+        //     $formatted_results[] = $decoded_result["Event"][2];
+        // }
        
         return $formatted_results;
+    }
+
+    public statuc function mergeAuthorMetadata($search_results, $author_metadata)
+    {
+        $decoded_search_results = json_decode($search_results, true);
+        $decoded_author_metadata = json_decode($author_metadata, true);
     }
 }

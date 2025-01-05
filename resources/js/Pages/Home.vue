@@ -66,7 +66,14 @@ watch(metadataContent, async(newValue, oldValue) => {
 const listenForAuthorMetadata = () => {
     echo.channel('author_metadata')
         .listen('.author_metadata_set', (event) => {
-            console.log("event for author metadata: ", event);
+            let searchKey = null;
+            if (nostrStore.userActive && nostrStore.hexPub == event.user_pubkey) {
+                searchKey = event.user_pubkey;
+            } else if (event.uuid === nostrStore.searchUUID) {
+                 searchKey = event.uuid;
+             }
+
+            retrieveSearchCache(searchKey);
         });
 }
 
@@ -130,6 +137,7 @@ const verifyNIP05 = () => {
 }
 
 const retrieveSearchCache = (searchKey) => {
+    // needs to retrieve the author metadata as well the search results
     return axios.post('/redis/search-results', {redisSearchKey: searchKey})
         .then((response) => {
             searchStore.addSearchResults(response.data);
