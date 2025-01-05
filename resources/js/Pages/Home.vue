@@ -172,6 +172,7 @@ const retrieveUserNotes = () => {
 }
 
 const retrieveUserMetadata = () => {
+    console.log('getting user metadata')
     return axios.post('/redis/user-metadata', {publicKeyHex: nostrStore.hexPub})
         .then((response) => {
             nostrStore.metadataContent = response.data.userMetadata;

@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Events\UserFollowList;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 use PhpAmqpLib\Message\AMQPMessage;
 
@@ -21,7 +22,7 @@ class ListenFollowList extends BaseRabbitMQListener
         $received_follows = $msg->getBody();
         $decoded_follows = json_decode($received_follows, true);
         $pubkey = $decoded_follows[2]["pubkey"];
-        
+        Log::info("follows received: ", [$decoded_follows]);
         if ($received_follows) {
             $redis_key = "{$pubkey}:follows";
             $follows_set = Redis::set($redis_key, $received_follows);

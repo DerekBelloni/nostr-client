@@ -18,6 +18,29 @@ class ListenAuthorMetadata extends BaseRabbitMQListener
 
     public function processMessage(AMQPMessage $msg)
     {
-        Log::info('author metadata msg', [$msg->getBody()]);
+        $recieved_author_metadata = $msg->getBody();
+        $decoded_author_metadata = json_decode($recieved_author_metadata, true);
+        Log::info('author metadata msg', [$decoded_author_metadata]);
+
+        $search_key = $decoded_author_metadata["SearchKey"];
+
+        if (ctype_xdigit($search_key)) {
+            $pubkey = $search_key;
+        } else {
+            $uuid = $search_key;
+        }
+        
+        $search_key . ':' . 'author_content';
+
+        $redis_key = $search_key;
+        $author_metadata_set = Redis::sAdd($redis_key, $recieved_author_metadata);
+
+        if ($author_metadata_set) {
+            try {
+
+            } catch (\Exception $e) {
+                $this->error('Error firing Author Metadata Set event: ' . $e->getMessage());
+            }
+        }
     }
 }

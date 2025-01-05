@@ -113,7 +113,7 @@ class RedisManager
        
         foreach($search_results as $result) {
             $decoded_result = json_decode($result, true);
-            $formatted_results[] = $decoded_result["SearchEvent"][2];
+            $formatted_results[] = $decoded_result["Event"][2];
         }
        
         return $formatted_results;
