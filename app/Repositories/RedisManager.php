@@ -107,7 +107,7 @@ class RedisManager
     {
         $search_key = $request->input('redisSearchKey');
         $redis_search_key = "search_content:{$search_key}";
-        $redis_author_key = "author_content:{$author_key}";
+        $redis_author_key = "author_content:{$search_key}";
 
         $search_results = Redis::sMembers($redis_search_key);
         $author_metadata = Redis::sMembers($redis_author_key);
@@ -122,10 +122,24 @@ class RedisManager
        
         return $formatted_results;
     }
-
-    public statuc function mergeAuthorMetadata($search_results, $author_metadata)
+    // e185c2ad0b87b3207ac2b96d6b8fb1ff10fbf25f93eef4d04fb6dbb9039f19fb
+    public static function mergeAuthorMetadata($search_results, $author_metadata)
     {
-        $decoded_search_results = json_decode($search_results, true);
-        $decoded_author_metadata = json_decode($author_metadata, true);
+        $decoded_search_results = [];
+        $decoded_author_metadata = [];
+
+        foreach($search_results as $result) {
+            $decoded_search_results[] = json_decode($result, true);
+        }
+
+        foreach($author_metadata as $result) {
+            $decoded_result = json_decode($result, true);
+            $decoded_result["Event"][2]["content"] = json_decode($decoded_result["Event"][2]["content"], true);
+            $decoded_author_metadata[] = json_decode($result, true);
+        }
+
+        dd(gettype($decoded_search_results));
+        // type is array
+        dd($decoded_search_results, $decoded_author_metadata);
     }
 }
