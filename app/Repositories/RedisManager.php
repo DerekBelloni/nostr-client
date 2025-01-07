@@ -133,11 +133,16 @@ class RedisManager
             $decoded_author_metadata[] = $decoded_result;
         }
 
+        $search_result['event'] = $search_result['Event'];
+        unset($search_result['Event']);
+
         foreach($decoded_search_results as &$search_result) {
             foreach($decoded_author_metadata as $metadata) { 
-                if ($search_result["Event"][2]["pubkey"] === $metadata["Event"][2]["pubkey"]) {
-                    $search_result["Event"]["author"] = $metadata["Event"][2]["content"];
+                if ($search_result["event"][2]["pubkey"] === $metadata["Event"][2]["pubkey"]) {
+                    $search_result["event"]["author"] = $metadata["Event"][2]["content"];
                 }
+                $search_result["id"] = $search_result["event"][2]["id"];
+                $search_result["pubkey"] = $search_result["event"][2]["pubkey"];
             }
         }
 

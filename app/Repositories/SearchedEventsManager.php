@@ -9,6 +9,7 @@ class SearchedEventsManager
 {
     public static function index(Request $request)
     {
-        dd($request->all());
+        $redis_search_cache = $request->input('redisSearchCache');
+        dd($redis_search_cache);
     }
 }

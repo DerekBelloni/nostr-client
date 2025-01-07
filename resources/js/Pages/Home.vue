@@ -137,7 +137,6 @@ const verifyNIP05 = () => {
 }
 
 const retrieveSearchCache = (searchKey) => {
-    // needs to retrieve the author metadata as well the search results
     return axios.post('/redis/search-results', {redisSearchKey: searchKey})
         .then((response) => {
             searchStore.addSearchResults(response.data);

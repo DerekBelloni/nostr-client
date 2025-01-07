@@ -12,10 +12,6 @@ export const useSearchStore = defineStore('search', () => {
             })
     }
 
-    const addAuthorMetadata = (results) => {
-        console.log('results');
-    }
-
     const addSearchResults = (results) => {
         if (searchResults.value.length > 0) searchResults.value = [];
         // results.forEach(result => searchResults.value.push(result));
