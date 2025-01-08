@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
@@ -120,8 +121,9 @@ class RedisManager
 
     public static function mergeAuthorMetadata($search_results, $author_metadata)
     {
-        $decoded_search_results = [];
-        $decoded_author_metadata = [];
+        $processor = new ContentProcessor();
+        $decoded_search_results = array();
+        $decoded_author_metadata = array();
 
         foreach($search_results as $result) {
             $decoded_search_results[] = json_decode($result, true);
@@ -132,20 +134,31 @@ class RedisManager
             $decoded_result["Event"][2]["content"] = json_decode($decoded_result["Event"][2]["content"], true);
             $decoded_author_metadata[] = $decoded_result;
         }
-
-        $search_result['event'] = $search_result['Event'];
-        unset($search_result['Event']);
-
+        
         foreach($decoded_search_results as &$search_result) {
-            foreach($decoded_author_metadata as $metadata) { 
-                if ($search_result["event"][2]["pubkey"] === $metadata["Event"][2]["pubkey"]) {
-                    $search_result["event"]["author"] = $metadata["Event"][2]["content"];
-                }
-                $search_result["id"] = $search_result["event"][2]["id"];
-                $search_result["pubkey"] = $search_result["event"][2]["pubkey"];
+            $search_result['event'] = $search_result['Event'][2];
+            unset($search_result['Event']);
+        
+            $author_lookup = array();
+            foreach ($decoded_author_metadata as $metadata) {
+                $author_lookup[$metadata['Event'][2]['pubkey']] = $metadata['Event'][2]['content'];
             }
+
+            if (isset($author_lookup[$search_result['event']['pubkey']])) {
+                $search_result['event']['author'] = $author_lookup[$search_result['event']['pubkey']];
+            }
+
+            $search_result["id"] = $search_result["event"]["id"];
+            $search_result["pubkey"] = $search_result["event"]["pubkey"];
+
+            if (isset($search_result["event"]["content"])) {
+                $search_result["event"]["processed_content"] = $processor->processContent($search_result["event"]["content"]);
+            }
+
+            $search_result["event"]["utc_timestamp"] = Carbon::createFromTimestampUTC($search_result["event"]["created_at"])->format('Y-m-d H:i:s');
         }
 
         return $decoded_search_results;
+        
     }
 }

@@ -38,7 +38,7 @@ class TrendingEventsManager
         $trending_notes = collect($trending_notes["notes"]);
 
         $processed_notes = self::_processContent($trending_notes, "notes");
-        dd($processed_notes);
+    
         return $processed_notes;
     }
 
