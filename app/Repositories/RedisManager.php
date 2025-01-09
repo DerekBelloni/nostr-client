@@ -60,7 +60,7 @@ class RedisManager
         }
 
         $follow_keys = null;
-        dd($event);
+
         if (!is_null($event[2]['tags'])) {
             $follow_keys = array_column($event[2]['tags'], 1);
             foreach($follow_keys as $key => $value) {

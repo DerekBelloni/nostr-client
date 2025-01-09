@@ -2,10 +2,10 @@
     <div class="flex h-screen overflow-hidden">
         <Sidebar class="sidebar border border-r border-gray-200" @setActiveView="setActiveView" :mq-verified="mqVerified"></Sidebar>
         <div class="center-feature border-r">
-            <!-- <Feed v-if="activeView == 'Home'" :trendingContent="trendingContent"></Feed> -->
             <FeedContainer v-if="activeView == 'Home'" :trendingContent="trendingContent"></FeedContainer>
             <Account v-if="activeView == 'account'"></Account>
             <ProfileContainer v-if="activeView == 'profile'"></ProfileContainer>
+            <RelayContainer v-if="activeView == 'Relays'"></RelayContainer>
         </div>
         <div class="right-sidebar">
             <TrendingTags :trendingHashtags="trendingHashtags" @tagSelected="retrieveSearchResults"></TrendingTags>
@@ -27,6 +27,7 @@ import echo from '../echo.js';
 import axios from 'axios';
 import ProfileContainer from '@/Components/ProfileContainer.vue';
 import FeedContainer from '@/Components/FeedContainer.vue';
+import RelayContainer from '@/Components/RelayContainer.vue';
 
 const activeView = ref('');
 const eventSource = ref(null);
@@ -117,9 +118,7 @@ const listenForSearchResults = () => {
             } else if (event.uuid === nostrStore.searchUUID) {
                  searchKey = event.uuid;
              }
-
-            // retrieveSearchCache(searchKey);
-        })
+        });
 }
 
 const listenForFollowsMetadata = () => {
@@ -150,24 +149,15 @@ const retrieveSearchResults = (search) => {
         nostrStore.searchUUID = searchUUID;
     }
    
-    return axios.post('/rabbit-mq/search-results', {search: search, publicKeyHex: nostrStore.hexPub, searchUUID: searchUUID})
-        .then((response) => {
-            console.log('search response: ', response);
-        })
+    return axios.post('/rabbit-mq/search-results', {search: search, publicKeyHex: nostrStore.hexPub, searchUUID: searchUUID});
 }
 
 const retrieveFollowsMetadata = () => {
-    return axios.post('/rabbit-mq/follows-metadata', {publicKeyHex: nostrStore.hexPub})
-        .then((response) => {
-            console.log('response: ', response);
-        })
+    return axios.post('/rabbit-mq/follows-metadata', {publicKeyHex: nostrStore.hexPub});
 }
 
 const retrieveFollowsNotes = (followsPubkey) => {
-    return axios.post('/redis/follows-notes', {publicKeyHex: followsPubkey})
-        .then((response) => {
-            // nostrStore.addFollowsNotes(response.data)
-        });
+    return axios.post('/redis/follows-notes', {publicKeyHex: followsPubkey});
 }
 
 const retrieveSetFollowsMetadata = () => {
