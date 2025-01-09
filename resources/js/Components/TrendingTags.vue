@@ -17,7 +17,8 @@
 </template>
 
 <script setup>
-    import { ref, defineEmits } from "vue";
+    // import { ref, defineEmits } from "vue";
+    import { ref } from "vue";
     const selectedTag = ref(null);
 
     const props = defineProps(['trendingHashtags']);

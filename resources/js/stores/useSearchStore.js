@@ -7,7 +7,6 @@ export const useSearchStore = defineStore('search', () => {
 
     const addSearchResults = (results) => {
         if (searchResults.value.length > 0) searchResults.value = [];
-        console.log('processed results inside the search store: ', results);
         searchResults.value.push(...results);
     }
 

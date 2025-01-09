@@ -11,7 +11,8 @@
 </template>
 
 <script setup>
-    import { ref, defineEmits } from 'vue';
+    // import { ref, defineEmits } from 'vue';
+    import { ref } from 'vue';
     import { router } from '@inertiajs/vue3';
     import { useNostrStore } from '@/stores/useNostrStore';
     import Dialog from 'primevue/dialog';
@@ -33,6 +34,7 @@
     }
 
     const retrieveNpub = () => {
+        console.log('in retrieve npub');
         router.post('/npub', { nsec: nsec.value }, {
             preserveState: true,
             preserveUrl: true,

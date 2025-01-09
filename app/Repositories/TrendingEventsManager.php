@@ -153,25 +153,14 @@ class TrendingEventsManager
         });
     }
 
-    public static function _processContent(&$trending_content, $type = null)
+    public static function _processContent($trending_content)
     {
         $processor = new ContentProcessor();
-        // definitely refactor this
-        switch ($type) {
-            case "images":
-                self::_processImages($trending_content);
-                self::_processVideos($trending_content);
-                break;
-            case "notes":
-                self::_processImages($trending_content);
-                self::_processVideos($trending_content);
-                break;
-            case "videos":
-                self::_processImages($trending_content);
-                self::_processVideos($trending_content);
-                break;
-        }
-        $test = $trending_content->transform(function ($note) use ($processor) {
+
+        self::_processImages($trending_content);
+        self::_processVideos($trending_content);
+        
+        $formatted_content = $trending_content->transform(function ($note) use ($processor) {
             if (isset($note["event"]["content"])) {
                 $note["event"]["processed_content"] = $processor->processContent($note["event"]["content"]);
             }
@@ -182,7 +171,6 @@ class TrendingEventsManager
             return $note;
         });
 
-        return $test;
+        return $formatted_content;
     }
-
 }

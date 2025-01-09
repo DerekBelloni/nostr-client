@@ -60,7 +60,7 @@ class RedisManager
         }
 
         $follow_keys = null;
-
+        dd($event);
         if (!is_null($event[2]['tags'])) {
             $follow_keys = array_column($event[2]['tags'], 1);
             foreach($follow_keys as $key => $value) {
@@ -72,7 +72,6 @@ class RedisManager
         return $follow_keys;
     }
 
-    // not sure if I am using everything in here
     public static function retrieveFollowsMetadata(Request $request)
     {
         $user_pubkey = $request->input('publicKeyHex');
@@ -87,7 +86,7 @@ class RedisManager
 
         abort_if(empty($decoded_follow_list_keys), 404, 'No follows found for this user');
 
-        $checked_pubkey = [];
+        $checked_pubkey = array();
         $valid_follows_metadata = array_filter($follows_metadata, function($item) use (&$checked_pubkey, $decoded_follow_list_keys) {
             $decoded_item = json_decode($item, true);
             if (!in_array($decoded_item[2]["pubkey"], $checked_pubkey)) {

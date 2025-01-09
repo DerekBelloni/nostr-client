@@ -48,7 +48,7 @@ onBeforeUnmount(() => {
 });
 
 onMounted(() => {
-    retrieveTrendingContent();
+    // retrieveTrendingContent();
     listenForFollowsList();
     listenForMetadata();
     listenForUserNotes();
