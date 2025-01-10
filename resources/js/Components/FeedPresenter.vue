@@ -12,7 +12,12 @@
                     <div class="col-span-11 col-start-2">
                         <div class="flex justify-between">
                             <div>
-                                <span class="text-gray-700 font-semibold">{{note.author?.content.name}}</span>
+                                <template v-if="!isSearchActive">
+                                    <span class="text-gray-700 font-semibold">{{note.author?.content.name}}</span>
+                                </template>
+                                <template>
+                                    <span class="text-gray-700 font-semibold">{{setDisplayName(note.author?.content)}}</span>
+                                </template>
                                 <i class="pi pi-verified pl-1"></i>
                                 <span class="text-amber-600 pl-1">{{note.author?.content.nip05}}</span>
                             </div>
@@ -58,7 +63,9 @@ import { inject } from 'vue';
 import FeedSearch from './FeedSearch.vue';
 
 const feedNotes = inject('feedNotes');
+const isSearchActive = inject('isSearchActive');
 const noteData = inject('noteDate');
+const setDisplayName = inject('setDisplayName');
 </script>
 
 <style>

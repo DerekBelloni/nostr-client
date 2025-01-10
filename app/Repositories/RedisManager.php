@@ -144,7 +144,7 @@ class RedisManager
             }
 
             if (isset($author_lookup[$search_result['event']['pubkey']])) {
-                $search_result['event']['author'] = $author_lookup[$search_result['event']['pubkey']];
+                $search_result['author']['content'] = $author_lookup[$search_result['event']['pubkey']];
             }
 
             $search_result["id"] = $search_result["event"]["id"];
