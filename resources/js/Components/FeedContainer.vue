@@ -20,12 +20,11 @@ const noteDate = (utcDate) => {
 }
 
 const setDisplayName = (authorContent) => {
-    console.log('author content: ', authorContent);
     return authorContent?.name || authorContent?.display_name;
 }
 
 provide('feedNotes', feedNotes);
 provide('isSearchActive', isSearchActive);
-provide('noteData', noteDate);
+provide('noteDate', noteDate);
 provide('setDisplayName', setDisplayName);
 </script>

@@ -17,7 +17,7 @@
             <span class="text-3xl font-semibold text-gray-700">{{activeMetadata.display_name}}</span>
             <i class="pi pi-check text-emerald-500 pl-4 text-lg"></i>
         </div>
-        <div class="pl-4 pt-4 space-x-2">
+    <div class="pl-4 pt-4 space-x-2">
             <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium cursor-pointer hover:bg-gray-300" @click="switchTab('notes')">Notes</span>
             <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium cursor-pointer hover:bg-gray-300" @click="switchTab('reactions')">Reactions</span>
             <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium cursor-pointer hover:bg-gray-300" @click="switchTab('followers')">Followers</span>

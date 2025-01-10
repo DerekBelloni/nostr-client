@@ -38,7 +38,6 @@
 </template>
 
 <script setup>
-// import {  computed, defineEmits, ref, watch, } from "vue";
 import {  computed, ref, watch, } from "vue";
 import { useNostrStore } from '@/stores/useNostrStore';
 import AccountDialog from '../Components/AccountDialog.vue';

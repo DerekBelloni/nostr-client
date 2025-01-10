@@ -21,7 +21,7 @@
                                 <i class="pi pi-verified pl-1"></i>
                                 <span class="text-amber-600 pl-1">{{note.author?.content.nip05}}</span>
                             </div>
-                            <!-- <span class="text-xs font-medium text-gray-600">{{noteDate(note.event.utc_timestamp)}}</span> -->
+                            <span class="text-xs font-medium text-gray-600">{{noteDate(note.event.utc_timestamp)}}</span>
                         </div>
                     </div>
                 </div>
@@ -64,7 +64,7 @@ import FeedSearch from './FeedSearch.vue';
 
 const feedNotes = inject('feedNotes');
 const isSearchActive = inject('isSearchActive');
-const noteData = inject('noteDate');
+const noteDate = inject('noteDate');
 const setDisplayName = inject('setDisplayName');
 </script>
 

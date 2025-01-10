@@ -49,7 +49,7 @@ abstract class BaseRabbitMQListener extends Command
     {
         $this->info("Waiting for messages. To exit press CTRL+C");
 
-        $this->channel->basic_consume($this->getQueueName(), '', false, true, false, false, [$this, 'processMessage']);
+        $this->channel->basic_consume($this->getQueueName(), '', false, false, false, false, [$this, 'processMessage']);
 
         while ($this->channel->is_consuming()) {
             $this->channel->wait();

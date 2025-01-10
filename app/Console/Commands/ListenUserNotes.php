@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Events\UserNotes;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 use PhpAmqpLib\Message\AMQPMessage;
 
@@ -20,9 +21,12 @@ class ListenUserNotes extends BaseRabbitMQListener
     {
         $user_notes = $msg->getBody();
         $decoded_note = json_decode($user_notes, true);
+
+        Log::info("notes in process message: ", [$decoded_note]);
+
         $event_type = null;
         $receiving_user_pubkey = null;
-        $this->channel->basic_ack($msg->getDeliveryTag());
+
 
         if (is_array($decoded_note) && array_key_exists('Event', $decoded_note)) {
             $event_type = key($decoded_note['Event']);
@@ -59,16 +63,20 @@ class ListenUserNotes extends BaseRabbitMQListener
             $encoded_note = json_encode($decoded_note);
             $note_added = Redis::sAdd($redis_key, $encoded_note);
             $this->info("Added new note {$note_id} for user {$pubkey}");
+            $this->channel->basic_ack($msg->getDeliveryTag());
         } else {
             $this->info("Note {$note_id} already exists for user {$pubkey}");
+            $this->channel->basic_nack($msg->getDeliveryTag(), false, false);
         }
 
         if ($event_type === 'follows') {
             try {
                 event(new UserNotes(true, $pubkey, $receiving_user_pubkey));
                 $note_added = false;
+                $this->channel->basic_ack($msg->getDeliveryTag());
             } catch (\Exception $e) {
                 $this->error('Error firing UserNotes event for Follows: ', $e->getMessage());
+                $this->channel->basic_nack($msg->getDeliveryTag(), false, false);
             }
         } else {
             $this->warn('No follows notes received');

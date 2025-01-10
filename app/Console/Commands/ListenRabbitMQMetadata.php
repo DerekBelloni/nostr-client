@@ -33,7 +33,8 @@ class ListenRabbitMQMetadata extends BaseRabbitMQListener
         if ($received_metadata && self::checkPubkey($pubkey)) {
             $redis_key = "{$pubkey}:metadata";
             $metadata_set = Redis::set($redis_key, $received_metadata);
-
+            $this->channel->basic_ack($msg->getDeliveryTag());
+            
             if ($metadata_set) {
                 try {
                     event(new UserMetadataSet(true, $pubkey));
@@ -47,6 +48,7 @@ class ListenRabbitMQMetadata extends BaseRabbitMQListener
             $redis_key = "follows_metadata";
             if (!self::checkExistingFollows($redis_key, $pubkey)) {
                 $follows_set = Redis::sAdd($redis_key, $received_metadata);
+                $this->channel->basic_ack($msg->getDeliveryTag());
             } else {
                 $follows_set = true;
                 $this->info("Follows already set");

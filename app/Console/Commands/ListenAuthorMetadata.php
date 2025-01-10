@@ -43,8 +43,10 @@ class ListenAuthorMetadata extends BaseRabbitMQListener
             try {
                 event(new AuthorMetadataSet(true, $pubkey, $uuid));
                 $this->info('author metadata event fired!');
+                $this->channel->basic_ack($msg->getDeliveryTag());
             } catch (\Exception $e) {
                 $this->error('Error firing Author Metadata Set event: ' . $e->getMessage());
+                $this->channel->basic_nack($msg->getDeliveryTag(), false, false);
             }
         }
     }

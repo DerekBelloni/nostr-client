@@ -10,8 +10,12 @@ export const useSearchStore = defineStore('search', () => {
         if (searchResults.value.length > 0) searchResults.value = [];
         searchResults.value.push(...results);
         searchActive.value = true;
-        console.log('search active: ', searchActive.value);
     }
 
-return { addSearchResults, searchActive, searchResults, trendingContent }
+    const clearSearchResults = () => {
+        searchResults.value = [];
+        searchActive.value = false;
+    }
+
+return { addSearchResults, clearSearchResults, searchActive, searchResults, trendingContent }
 });

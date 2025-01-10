@@ -49,6 +49,7 @@ onBeforeUnmount(() => {
 });
 
 onMounted(() => {
+    activeView.value = "Home";
     retrieveTrendingContent();
     listenForFollowsList();
     listenForMetadata();
@@ -157,7 +158,8 @@ const retrieveFollowsMetadata = () => {
 }
 
 const retrieveFollowsNotes = (followsPubkey) => {
-    return axios.post('/redis/follows-notes', {publicKeyHex: followsPubkey});
+    return axios.post('/redis/follows-notes', {publicKeyHex: followsPubkey})
+        .then((response) => console.log('retrieve follows notes response: ', response));
 }
 
 const retrieveSetFollowsMetadata = () => {
@@ -177,7 +179,6 @@ const retrieveUserNotes = () => {
 }
 
 const retrieveUserMetadata = () => {
-    console.log('getting user metadata')
     return axios.post('/redis/user-metadata', {publicKeyHex: nostrStore.hexPub})
         .then((response) => {
             nostrStore.metadataContent = response.data.userMetadata;
@@ -198,16 +199,19 @@ const retrieveTrendingContent = () => {
 
 const setActiveView = (input) => {
     activeView.value = input;
+    if (activeView.value == 'Home') {
+        searchStore.clearSearchResults();
+    }
 }
 
 </script>
 
 <style scoped>
     .sidebar {
-        width: 25%;
+        width: 20%;
     }
     .center-feature {
-        width: 45%;
+        width: 50%;
     }
     .right-sidebar {
         width: 25%;

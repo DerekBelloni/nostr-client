@@ -22,10 +22,11 @@ class ListenFollowList extends BaseRabbitMQListener
         $received_follows = $msg->getBody();
         $decoded_follows = json_decode($received_follows, true);
         $pubkey = $decoded_follows[2]["pubkey"];
-        Log::info("follows received: ", [$decoded_follows]);
+     
         if ($received_follows) {
             $redis_key = "{$pubkey}:follows";
             $follows_set = Redis::set($redis_key, $received_follows);
+            $this->channel->basic_ack($msg->getDeliveryTag());
         }
 
         if ($follows_set) {
@@ -34,9 +35,11 @@ class ListenFollowList extends BaseRabbitMQListener
                 $this->info("User follows list event fired: " . $follows_set);
             } catch (\Exception $e) {
                 $this->error('Error firing user follows list event: ' . $e->getMessage());
+                $this->channel->basic_nack($msg->getDeliveryTag(), false, false);
             }
         } else {
             $this->warn('No follows received');
+            $this->channel->basic_nack($msg->getDeliveryTag(), false, false);
         } 
     }
 }
