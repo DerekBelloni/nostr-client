@@ -121,8 +121,8 @@ class RedisManager
     public static function mergeAuthorMetadata($search_results, $author_metadata)
     {
         $processor = new ContentProcessor();
-        $decoded_search_results = array();
-        $decoded_author_metadata = array();
+        $decoded_search_results = [];
+        $decoded_author_metadata = [];
 
         foreach($search_results as $result) {
             $decoded_search_results[] = json_decode($result, true);
@@ -138,7 +138,7 @@ class RedisManager
             $search_result['event'] = $search_result['Event'][2];
             unset($search_result['Event']);
         
-            $author_lookup = array();
+            $author_lookup = [];
             foreach ($decoded_author_metadata as $metadata) {
                 $author_lookup[$metadata['Event'][2]['pubkey']] = $metadata['Event'][2]['content'];
             }

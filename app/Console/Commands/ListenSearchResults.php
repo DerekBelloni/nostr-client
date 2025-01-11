@@ -41,7 +41,7 @@ class ListenSearchResults extends BaseRabbitMQListener
         if ($search_results_set) {
             try {
                 event(new SearchResultsSet(true, $pubkey, $uuid));
-                $this->channel->basic_nack($msg->getDeliveryTag(), false, false);
+                $this->channel->basic_ack($msg->getDeliveryTag());
             } catch (\Exception $e) {
                 $this->error('Error firing Search Results Set event: ' . $e->getMessage());
                 $this->channel->basic_nack($msg->getDeliveryTag(), false, false);

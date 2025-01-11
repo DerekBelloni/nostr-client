@@ -94,6 +94,9 @@ const listenForUserNotes = () => {
             if (event.userPubKey === nostrStore.hexPub) {
                 retrieveUserNotes(nostrStore.hexPub);
             } else if (event.receiving_users_pubkey === nostrStore.hexPub) {
+                console.log('nostr store hex pub: ', nostrStore.hexPub);
+                console.log('receiving pubkey: ', event.receiving_users_pubkey)
+                console.log('equals: ', event.receiving_users_pubkey === nostrStore.hexPub)
                 const followsPubkey = event.userPubKey;
                 const receivingUserPubkey = event.receiving_users_pubkey;
                 retrieveFollowsNotes(followsPubkey);
@@ -211,9 +214,9 @@ const setActiveView = (input) => {
         width: 20%;
     }
     .center-feature {
-        width: 50%;
+        width: 55%;
     }
     .right-sidebar {
-        width: 25%;
+        width: 20%;
     }
 </style>
