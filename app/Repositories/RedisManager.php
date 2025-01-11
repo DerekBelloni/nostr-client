@@ -45,6 +45,7 @@ class RedisManager
 
     public static function retrieveUserNotes(Request $request)
     {
+        // dd($request->all());
         $user_pubkey = $request->input('publicKeyHex');
         $redis_key = "{$user_pubkey}:user-notes";
         $user_notes = Redis::sMembers($redis_key);
@@ -61,7 +62,7 @@ class RedisManager
 
         $follow_keys = null;
 
-        if (!is_null($event[2]['tags'])) {
+        if (!empty($event[2]['tags']) && !is_null($event[2]['tags'])) {
             $follow_keys = array_column($event[2]['tags'], 1);
             foreach($follow_keys as $key => $value) {
                 if (!ctype_xdigit($value) && !strlen($value)) {
@@ -74,6 +75,7 @@ class RedisManager
 
     public static function retrieveFollowsMetadata(Request $request)
     {
+        // dd($request->all());
         $user_pubkey = $request->input('publicKeyHex');
 
         $follows_metadata_redis_key = "follows_metadata";
@@ -157,7 +159,7 @@ class RedisManager
             $search_result["event"]["utc_timestamp"] = Carbon::createFromTimestampUTC($search_result["event"]["created_at"])->format('Y-m-d H:i:s');
         }
 
+        dd($decoded_search_results);
         return $decoded_search_results;
-        
     }
 }

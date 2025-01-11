@@ -22,8 +22,6 @@ class ListenUserNotes extends BaseRabbitMQListener
         $user_notes = $msg->getBody();
         $decoded_note = json_decode($user_notes, true);
 
-        Log::info("notes in process message: ", [$decoded_note]);
-
         $event_type = null;
         $receiving_user_pubkey = null;
 
@@ -73,10 +71,8 @@ class ListenUserNotes extends BaseRabbitMQListener
             try {
                 event(new UserNotes(true, $pubkey, $receiving_user_pubkey));
                 $note_added = false;
-                $this->channel->basic_ack($msg->getDeliveryTag());
             } catch (\Exception $e) {
                 $this->error('Error firing UserNotes event for Follows: ', $e->getMessage());
-                $this->channel->basic_nack($msg->getDeliveryTag(), false, false);
             }
         } else {
             $this->warn('No follows notes received');

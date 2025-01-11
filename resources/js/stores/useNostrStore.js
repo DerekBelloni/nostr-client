@@ -18,6 +18,19 @@ export const useNostrStore = defineStore('nostr', () => {
     const userNotes = ref([]);
     const verified = ref(false);
 
+    const resetStore = () => {
+        hexPub.value = null
+        hexPriv.value = null
+        metadataContent.value = null
+        npub.value = null
+        searchUUID.value = null
+        trendingHashtags.value = []
+        userFollowsContent.value = []
+        userActive.value = false
+        userNotes.value = []
+        verified.value = false
+     }
+
     const addFollows = (follows) => {
         const existingFollows = userFollowsContent;
 
@@ -100,5 +113,5 @@ export const useNostrStore = defineStore('nostr', () => {
         activeProfile.value.follows = follows;
     }
     
-    return { activeProfile, addFollows, addUserNotes, clearActiveProfile, hexPub, hexPriv, metadataContent, npub, searchUUID, setActiveProfileFollows, setActiveProfileMetadata, setActiveProfileNotes, trendingHashtags, userActive, userFollowsContent, userFollowsContent, userNotes, verified };
+    return { activeProfile, addFollows, addUserNotes, clearActiveProfile, hexPub, hexPriv, metadataContent, npub, resetStore, searchUUID, setActiveProfileFollows, setActiveProfileMetadata, setActiveProfileNotes, trendingHashtags, userActive, userFollowsContent, userFollowsContent, userNotes, verified };
 })

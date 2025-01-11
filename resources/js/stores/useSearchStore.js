@@ -6,7 +6,13 @@ export const useSearchStore = defineStore('search', () => {
     const searchResults = ref([]);
     const trendingContent = ref([]);
 
+    const resetStore = () => {
+        searchActive.value = false,
+        searchResults.value = [];
+    }
+
     const addSearchResults = (results) => {
+        console.log('search results in nostr store: ', results);
         if (searchResults.value.length > 0) searchResults.value = [];
         searchResults.value.push(...results);
         searchActive.value = true;
@@ -17,5 +23,5 @@ export const useSearchStore = defineStore('search', () => {
         searchActive.value = false;
     }
 
-return { addSearchResults, clearSearchResults, searchActive, searchResults, trendingContent }
+return { addSearchResults, clearSearchResults, resetStore, searchActive, searchResults, trendingContent }
 });

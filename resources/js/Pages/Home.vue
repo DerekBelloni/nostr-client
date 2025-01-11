@@ -43,14 +43,12 @@ const searchStore = useSearchStore();
 
 
 onBeforeUnmount(() => {
-    if (eventSource.value) {
-        eventSource.value.close();
-    }
+    cleanup();
 });
 
 onMounted(() => {
     activeView.value = "Home";
-    retrieveTrendingContent();
+    // retrieveTrendingContent();
     listenForFollowsList();
     listenForMetadata();
     listenForUserNotes();
@@ -64,6 +62,18 @@ watch(metadataContent, async(newValue, oldValue) => {
         verifyNIP05();
     }
 }, { once: true });
+
+const cleanup = () => {
+    echo.leaveChannel('user_metadata');
+    echo.leaveChannel('user_notes');
+    echo.leaveChannel('follow_list');
+    echo.leaveChannel('follows_metadata');
+    echo.leaveChannel('search_results');
+    echo.leaveChannel('author_metadata');
+
+    nostrStore.resetStore();
+    searchStore.resetStore();
+}
 
 const listenForAuthorMetadata = () => {
     echo.channel('author_metadata')
@@ -92,6 +102,7 @@ const listenForUserNotes = () => {
     echo.channel('user_notes')
         .listen('.user_notes_set', (event) => {
             if (event.userPubKey === nostrStore.hexPub) {
+                console.log('user notes event: ', event);
                 retrieveUserNotes(nostrStore.hexPub);
             } else if (event.receiving_users_pubkey === nostrStore.hexPub) {
                 console.log('nostr store hex pub: ', nostrStore.hexPub);
@@ -142,6 +153,7 @@ const verifyNIP05 = () => {
 const retrieveSearchCache = (searchKey) => {
     return axios.post('/redis/search-results', {redisSearchKey: searchKey})
         .then((response) => {
+            console.log('retrieve search cache: ', response.data);
             searchStore.addSearchResults(response.data);
         })
 }
@@ -166,6 +178,7 @@ const retrieveFollowsNotes = (followsPubkey) => {
 }
 
 const retrieveSetFollowsMetadata = () => {
+    console.log('retrieve follows metadata')
     return axios.post('/redis/follows-metadata', {publicKeyHex: nostrStore.hexPub})
         .then((response) => {
             nostrStore.addFollows(response.data);

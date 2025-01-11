@@ -22,10 +22,8 @@ class ListenRabbitMQMetadata extends BaseRabbitMQListener
     {
         $received_metadata = $msg->getBody();
         $decoded_metadata = json_decode($received_metadata, true);
-
+        Log::info("received metadata: ", [$decoded_metadata]);
         $pubkey = $decoded_metadata[2]["pubkey"];
-
-        Log::info('received metadata for pubkey: ', [$pubkey]);
 
         $metadata_set = false;
         $follows_set = false;
@@ -33,22 +31,23 @@ class ListenRabbitMQMetadata extends BaseRabbitMQListener
         if ($received_metadata && self::checkPubkey($pubkey)) {
             $redis_key = "{$pubkey}:metadata";
             $metadata_set = Redis::set($redis_key, $received_metadata);
-            $this->channel->basic_ack($msg->getDeliveryTag());
             
             if ($metadata_set) {
                 try {
                     event(new UserMetadataSet(true, $pubkey));
+                    $this->channel->basic_ack($msg->getDeliveryTag());
                 } catch (\Exception $e) {
                     $this->error('Error firing UserMetadataSet event: ' . $e->getMessage());
+                    $this->channel->basic_nack($msg->getDeliveryTag(), false, false);
                 }
             } else {
                 $this->warn('No metadata received');
+                $this->channel->basic_nack($msg->getDeliveryTag(), false, false);
             }
         } else {
             $redis_key = "follows_metadata";
             if (!self::checkExistingFollows($redis_key, $pubkey)) {
                 $follows_set = Redis::sAdd($redis_key, $received_metadata);
-                $this->channel->basic_ack($msg->getDeliveryTag());
             } else {
                 $follows_set = true;
                 $this->info("Follows already set");
@@ -58,9 +57,14 @@ class ListenRabbitMQMetadata extends BaseRabbitMQListener
                 try {
                     event(new UserFollowsMetadataSet(true));
                     $this->info("UserFollowsMetadataSet event fired");
+                    $this->channel->basic_ack($msg->getDeliveryTag());
                 } catch (\Exception $e) {
                     $this->error('Error firing UserFollowsMetadataSet event: ' . $e->getMessage());
+                    $this->channel->basic_nack($msg->getDeliveryTag(), false, false);
                 }
+            } else {
+                $this->warn('No follows metadata received');
+                $this->channel->basic_nack($msg->getDeliveryTag(), false, false);
             }
         }
     }

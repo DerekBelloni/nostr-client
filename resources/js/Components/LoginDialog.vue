@@ -34,6 +34,7 @@
     }
 
     const retrieveNpub = () => {
+        console.log('in retrieve npub', npub.value)
         router.post('/npub', { nsec: nsec.value }, {
             preserveState: true,
             preserveUrl: true,

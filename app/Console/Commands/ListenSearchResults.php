@@ -23,6 +23,7 @@ class ListenSearchResults extends BaseRabbitMQListener
     {
         $received_search_results = $msg->getBody();
         $decoded_search_results = json_decode($received_search_results, true);
+        Log::info("received search result: ", [$decoded_search_results]);
         $search_key = $decoded_search_results["SearchKey"];
         $pubkey = null;
         $uuid = null;

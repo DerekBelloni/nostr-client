@@ -29,6 +29,7 @@ class NostrKeyManager
                 ]);
             
                 // Start checking for cached metadta, call to its own function
+                // dd("here");
                 RabbitMQManager::userMetadataQueue($user_hex_req);
 
                 return [$publicKeyHex, $publicKeyBech32, $privateKeyHex];
