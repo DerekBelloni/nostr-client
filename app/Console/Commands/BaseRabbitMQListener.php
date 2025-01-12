@@ -42,7 +42,7 @@ abstract class BaseRabbitMQListener extends Command
         // Move the arguments to a config file and pull in those
         $this->connection = new AMQPStreamConnection('localhost', 5672, 'guest', 'guest');
         $this->channel = $this->connection->channel();
-        $this->channel->queue_declare($this->getQueueName(), false, false, false, false);
+        $this->channel->queue_declare($this->getQueueName(), false, false, false, true, false);
     }
 
     protected function consumeMessages()
