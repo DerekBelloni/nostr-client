@@ -75,7 +75,6 @@ class RedisManager
 
     public static function retrieveFollowsMetadata(Request $request)
     {
-        // dd($request->all());
         $user_pubkey = $request->input('publicKeyHex');
 
         $follows_metadata_redis_key = "follows_metadata";
@@ -86,9 +85,9 @@ class RedisManager
 
         $decoded_follow_list_keys = self::extractFollowsListPubkeys($follows_list);
 
-        abort_if(empty($decoded_follow_list_keys), 404, 'No follows found for this user');
+        // abort_if(empty($decoded_follow_list_keys), 404, 'No follows found for this user');
 
-        $checked_pubkey = array();
+        $checked_pubkey = [];
         $valid_follows_metadata = array_filter($follows_metadata, function($item) use (&$checked_pubkey, $decoded_follow_list_keys) {
             $decoded_item = json_decode($item, true);
             if (!in_array($decoded_item[2]["pubkey"], $checked_pubkey)) {
@@ -101,7 +100,7 @@ class RedisManager
         $decoded_metadata = array_values(array_map(function($item) {
             return self::formatEventContent($item);
         }, $valid_follows_metadata));
-
+        Log::info("decoded follows metadata: ", [$decoded_metadata]);
         return $decoded_metadata;
     }
 

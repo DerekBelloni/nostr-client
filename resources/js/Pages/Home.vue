@@ -48,7 +48,7 @@ onBeforeUnmount(() => {
 
 onMounted(() => {
     activeView.value = "Home";
-    // retrieveTrendingContent();
+    retrieveTrendingContent();
     listenForFollowsList();
     listenForMetadata();
     listenForUserNotes();
@@ -92,6 +92,7 @@ const listenForAuthorMetadata = () => {
 const listenForMetadata = () => {
     echo.channel('user_metadata')
         .listen('.metadata_set', (event) => {
+            console.log('event for listen metadata: ', event);
             if (event.userPubKey === nostrStore.hexPub) {
                 retrieveUserMetadata(nostrStore.hexPub);
             }
@@ -102,12 +103,8 @@ const listenForUserNotes = () => {
     echo.channel('user_notes')
         .listen('.user_notes_set', (event) => {
             if (event.userPubKey === nostrStore.hexPub) {
-                console.log('user notes event: ', event);
                 retrieveUserNotes(nostrStore.hexPub);
             } else if (event.receiving_users_pubkey === nostrStore.hexPub) {
-                console.log('nostr store hex pub: ', nostrStore.hexPub);
-                console.log('receiving pubkey: ', event.receiving_users_pubkey)
-                console.log('equals: ', event.receiving_users_pubkey === nostrStore.hexPub)
                 const followsPubkey = event.userPubKey;
                 const receivingUserPubkey = event.receiving_users_pubkey;
                 retrieveFollowsNotes(followsPubkey);

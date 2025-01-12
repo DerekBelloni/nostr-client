@@ -22,6 +22,7 @@ class NostrKeyManager
                 $key = new Key();
                 $privateKeyHex = $key->convertToHex($nsec);
                 $publicKeyHex = $key->getPublicKey($privateKeyHex);
+                Log::info('public hex key on login: ', [$publicKeyHex]);
                 $publicKeyBech32 = $key->convertPublicKeyToBech32($publicKeyHex);
 
                 $user_hex_req = new Request([
