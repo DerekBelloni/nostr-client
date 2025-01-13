@@ -8,6 +8,9 @@
                         <div v-if="note.author?.content.picture">
                             <img class="rounded-full h-10 w-10 border border-amber-500" :src="note.author?.content.picture" alt="">
                         </div>
+                        <div v-else>
+                            <img src="/images/avatar.jpg" class="rounded-full h-10 w-10 border border-amber-500" alt="">
+                        </div>
                     </div>
                     <div class="col-span-11 col-start-2">
                         <div class="flex justify-between">
