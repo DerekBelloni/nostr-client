@@ -27,6 +27,7 @@ class RabbitMQManager
             
             $channel->close();
             $connection->close();
+            Log::info("fired metadata event, pubkey:", [$pub_hex_key]);
             return 'complete';
         } else {
             return 'no pubkey';

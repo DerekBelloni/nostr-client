@@ -22,7 +22,7 @@ class ListenRabbitMQMetadata extends BaseRabbitMQListener
     {
         $received_metadata = $msg->getBody();
         $decoded_metadata = json_decode($received_metadata, true);
-        Log::info("received metadata: ", [$decoded_metadata]);
+        Log::info("received metadata pubkey: ", [$decoded_metadata[2]["pubkey"]]);
         $pubkey = $decoded_metadata[2]["pubkey"];
 
         $metadata_set = false;
