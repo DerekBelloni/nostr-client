@@ -10,11 +10,10 @@ use Illuminate\Support\Str;
 
 class RabbitMQManager 
 {
-    // maybe use a constructor to instantiate the connection and channel
     public static function userMetadataQueue(Request $request)
     {
         $pub_hex_key = $request->input('user_pub_hex');
-        // dd($pub_hex_key);
+
         if (!is_null($pub_hex_key)) {
             $connection = new AMQPStreamConnection('localhost', 5672, 'guest', 'guest');
             $channel = $connection->channel();
