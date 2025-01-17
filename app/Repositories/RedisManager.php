@@ -45,7 +45,6 @@ class RedisManager
 
     public static function retrieveUserNotes(Request $request)
     {
-        // dd($request->all());
         $user_pubkey = $request->input('publicKeyHex');
         $redis_key = "{$user_pubkey}:user-notes";
         $user_notes = Redis::sMembers($redis_key);

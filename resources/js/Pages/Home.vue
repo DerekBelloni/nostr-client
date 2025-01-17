@@ -136,6 +136,7 @@ const listenForSearchResults = () => {
 const listenForFollowsMetadata = () => {
     echo.channel('follows_metadata')
         .listen('.follows_metadata_set', (event) => {
+            console.log("event follows metadata: ", event);
             retrieveSetFollowsMetadata();
         });
 }

@@ -2,7 +2,9 @@
 
 namespace App\Console\Commands;
 
+use App\Events\FollowsMetadataSet;
 use Illuminate\Support\Facades\Log as FacadesLog;
+use Illuminate\Support\Facades\Redis;
 use PhpAmqpLib\Message\AMQPMessage;
 
 class ListenFollowsMetadata extends BaseRabbitMQListener
@@ -19,11 +21,12 @@ class ListenFollowsMetadata extends BaseRabbitMQListener
     {
         $received_follows_metadata = $msg->getBody();
         $decoded_follows_metadata = json_decode($received_follows_metadata, true);
-        FacadesLog::info('follows metadata msg: ', [$decoded_follows_metadata]);
+        $pubkey = $decoded_follows_metadata[2]["pubkey"];
+        FacadesLog::info('follows metadata pubkey: ', [$pubkey]);
 
         $redis_key = "follows_metadata";
         if (!self::checkExistingFollows($redis_key, $pubkey)) {
-            $follows_set = Redis::sAdd($redis_key, $received_metadata);
+            $follows_set = Redis::sAdd($redis_key, $received_follows_metadata);
         } else {
             $follows_set = true;
             $this->info("Follows already set");
@@ -31,7 +34,7 @@ class ListenFollowsMetadata extends BaseRabbitMQListener
         
         if ($follows_set) {
             try {
-                event(new UserFollowsMetadataSet(true));
+                event(new FollowsMetadataSet(true));
                 $this->info("UserFollowsMetadataSet event fired");
                 $this->channel->basic_ack($msg->getDeliveryTag());
             } catch (\Exception $e) {
