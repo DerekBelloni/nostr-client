@@ -92,7 +92,6 @@ const listenForAuthorMetadata = () => {
 const listenForMetadata = () => {
     echo.channel('user_metadata')
         .listen('.metadata_set', (event) => {
-            console.log('event for listen metadata: ', event);
             if (event.userPubKey === nostrStore.hexPub) {
                 retrieveUserMetadata(nostrStore.hexPub);
             }

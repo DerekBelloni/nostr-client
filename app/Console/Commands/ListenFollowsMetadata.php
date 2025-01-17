@@ -26,19 +26,19 @@ class ListenFollowsMetadata extends BaseRabbitMQListener
 
         $redis_key = "follows_metadata";
         if (!self::checkExistingFollows($redis_key, $pubkey)) {
-            $follows_set = Redis::sAdd($redis_key, $received_follows_metadata);
+            $follows_metadata_set = Redis::sAdd($redis_key, $received_follows_metadata);
         } else {
-            $follows_set = true;
+            $follows_metadata_set = true;
             $this->info("Follows already set");
         }
         
-        if ($follows_set) {
+        if ($follows_metadata_set) {
             try {
-                event(new FollowsMetadataSet(true));
-                $this->info("UserFollowsMetadataSet event fired");
+                event(new FollowsMetadataSet($follows_metadata_set));
+                $this->info("FollowsMetadataSet event fired");
                 $this->channel->basic_ack($msg->getDeliveryTag());
             } catch (\Exception $e) {
-                $this->error('Error firing UserFollowsMetadataSet event: ' . $e->getMessage());
+                $this->error('Error firing FollowsMetadataSet event: ' . $e->getMessage());
                 $this->channel->basic_nack($msg->getDeliveryTag(), false, false);
             }
         } else {
