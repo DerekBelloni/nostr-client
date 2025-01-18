@@ -155,7 +155,6 @@ class TrendingEventsManager
 
     public static function _processContent($trending_content)
     {
-        // dd($trending_content);
         $processor = new ContentProcessor();
 
         self::_processImages($trending_content);

@@ -19,11 +19,11 @@ class ContentFormatter
             case 'follows-metadata':
                 return $this->formatMetadataEventContent($content);
             case 'follows-notes':
-                return $this->$formatFollowsContent($content, $metadata);
+                return $this->formatFollowsContent($content);
             case 'search-results':
                 return $this->formatSearchResults($content, $metadata);
             default:
-                throw new \InvalidArgumentException("Unknown content type: ${type}");
+                throw new \InvalidArgumentException("Unknown content type: {$type}");
         }
     }
 
@@ -68,8 +68,14 @@ class ContentFormatter
         return $decoded_search_results;
     }
 
-    private function formatFollowsContent($content, $followsMetadata)
+    private function formatFollowsContent($content)
     {
-
+        // dd($content);
+        $decoded_content = [];
+        foreach ($content as $c) {
+            dd(json_decode($c, true));
+            $decoded_content[]["event"] = $c[2];
+        }
+        dd($decoded_content);
     }
 }
