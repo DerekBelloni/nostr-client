@@ -91,9 +91,11 @@ export const useNostrStore = defineStore('nostr', () => {
     }
 
     const setActiveProfileNotes = (notes) => {
+        console.log('notes response in set active profile: ', notes);
         const existingProfileNotes = activeProfile.value.notes;
 
         notes.forEach((note) => {
+            console.log('note in set active profile notes: ', note);
             let parsedNote = JSON.parse(note);
             let existingNote = null;
 

@@ -101,7 +101,7 @@ const listenForMetadata = () => {
 const listenForUserNotes = () => {
     echo.channel('user_notes')
         .listen('.user_notes_set', (event) => {
-            if (event.userPubKey === nostrStore.hexPub) {
+            if (event.userPubKey === nostrStore.hexPub && nostrStore.userActive) {
                 retrieveUserNotes(nostrStore.hexPub);
             } else if (event.receiving_users_pubkey === nostrStore.hexPub) {
                 const followsPubkey = event.userPubKey;
@@ -135,7 +135,6 @@ const listenForSearchResults = () => {
 const listenForFollowsMetadata = () => {
     echo.channel('follows_metadata')
         .listen('.follows_metadata_set', (event) => {
-            console.log("event follows metadata: ", event);
             retrieveSetFollowsMetadata();
         });
 }
@@ -171,7 +170,10 @@ const retrieveFollowsMetadata = () => {
 
 const retrieveFollowsNotes = (followsPubkey) => {
     return axios.post('/redis/follows-notes', {publicKeyHex: followsPubkey})
-        .then((response) => console.log('retrieve follows notes response: ', response));
+        .then((response) => {
+            console.log('follows notes: ', response.data);
+            nostrStore.setActiveProfileMetadata(response.data);
+        });
 }
 
 const retrieveSetFollowsMetadata = () => {
