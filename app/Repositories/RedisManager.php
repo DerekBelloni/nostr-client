@@ -20,6 +20,7 @@ class RedisManager
         return $formatted_metadata;
     }
 
+    // abstract this to content formatter as well
     private static function formatEventContent($event)
     {
         if (!is_array($event)) {
@@ -100,12 +101,13 @@ class RedisManager
         $decoded_metadata = array_values(array_map(function($item) {
             return self::formatEventContent($item);
         }, $valid_follows_metadata));
-        Log::info("decoded follows metadata: ", [$decoded_metadata]);
+   
         return $decoded_metadata;
     }
 
     public static function retrieveSearchCache(Request $request) 
     {
+        $formatter = new ContentFormatter();
         $search_key = $request->input('redisSearchKey');
         $redis_search_key = "search_content:{$search_key}";
         $redis_author_key = "author_content:{$search_key}";
@@ -113,51 +115,52 @@ class RedisManager
         $search_results = Redis::sMembers($redis_search_key);
         $author_metadata = Redis::sMembers($redis_author_key);
 
-        $formatted_results = self::mergeAuthorMetadata($search_results, $author_metadata);
+        // $formatted_results = self::mergeAuthorMetadata($search_results, $author_metadata);
+        $formatted_results = $formatter->formatContent($search_results, 'search-results', $author_metadata);
 
         return $formatted_results;
     }
 
 
-    public static function mergeAuthorMetadata($search_results, $author_metadata)
-    {
-        $processor = new ContentProcessor();
-        $decoded_search_results = [];
-        $decoded_author_metadata = [];
+    // public static function mergeAuthorMetadata($search_results, $author_metadata)
+    // {
+    //     $processor = new ContentProcessor();
+    //     $decoded_search_results = [];
+    //     $decoded_author_metadata = [];
 
-        foreach($search_results as $result) {
-            $decoded_search_results[] = json_decode($result, true);
-        }
+    //     foreach($search_results as $result) {
+    //         $decoded_search_results[] = json_decode($result, true);
+    //     }
 
-        foreach($author_metadata as &$result) {
-            $decoded_result = json_decode($result, true);
-            $decoded_result["Event"][2]["content"] = json_decode($decoded_result["Event"][2]["content"], true);
-            $decoded_author_metadata[] = $decoded_result;
-        }
+    //     foreach($author_metadata as &$result) {
+    //         $decoded_result = json_decode($result, true);
+    //         $decoded_result["Event"][2]["content"] = json_decode($decoded_result["Event"][2]["content"], true);
+    //         $decoded_author_metadata[] = $decoded_result;
+    //     }
         
-        foreach($decoded_search_results as &$search_result) {
-            $search_result['event'] = $search_result['Event'][2];
-            unset($search_result['Event']);
+    //     foreach($decoded_search_results as &$search_result) {
+    //         $search_result['event'] = $search_result['Event'][2];
+    //         unset($search_result['Event']);
         
-            $author_lookup = [];
-            foreach ($decoded_author_metadata as $metadata) {
-                $author_lookup[$metadata['Event'][2]['pubkey']] = $metadata['Event'][2]['content'];
-            }
+    //         $author_lookup = [];
+    //         foreach ($decoded_author_metadata as $metadata) {
+    //             $author_lookup[$metadata['Event'][2]['pubkey']] = $metadata['Event'][2]['content'];
+    //         }
 
-            if (isset($author_lookup[$search_result['event']['pubkey']])) {
-                $search_result['author']['content'] = $author_lookup[$search_result['event']['pubkey']];
-            }
+    //         if (isset($author_lookup[$search_result['event']['pubkey']])) {
+    //             $search_result['author']['content'] = $author_lookup[$search_result['event']['pubkey']];
+    //         }
 
-            $search_result["id"] = $search_result["event"]["id"];
-            $search_result["pubkey"] = $search_result["event"]["pubkey"];
+    //         $search_result["id"] = $search_result["event"]["id"];
+    //         $search_result["pubkey"] = $search_result["event"]["pubkey"];
 
-            if (isset($search_result["event"]["content"])) {
-                $search_result["event"]["processed_content"] = $processor->processContent($search_result["event"]["content"]);
-            }
+    //         if (isset($search_result["event"]["content"])) {
+    //             $search_result["event"]["processed_content"] = $processor->processContent($search_result["event"]["content"]);
+    //         }
 
-            $search_result["event"]["utc_timestamp"] = Carbon::createFromTimestampUTC($search_result["event"]["created_at"])->format('Y-m-d H:i:s');
-        }
+    //         $search_result["event"]["utc_timestamp"] = Carbon::createFromTimestampUTC($search_result["event"]["created_at"])->format('Y-m-d H:i:s');
+    //     }
 
-        return $decoded_search_results;
-    }
+    //     return $decoded_search_results;
+    // }
 }
