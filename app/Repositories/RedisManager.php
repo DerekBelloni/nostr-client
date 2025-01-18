@@ -40,6 +40,7 @@ class RedisManager
         $follows_pubkey = $request->input('publicKeyHex');
         $redis_key = "{$follows_pubkey}:follow-notes";
         $follow_notes = Redis::sMembers($redis_key);
+        // $formatted_notes = 
         return $follow_notes;
     }
 

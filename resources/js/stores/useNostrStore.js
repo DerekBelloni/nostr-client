@@ -90,8 +90,7 @@ export const useNostrStore = defineStore('nostr', () => {
         activeProfile.value.metadata = unwrappedMeta;
     }
 
-    const setActiveProfileNotes = (notes) => {
-        console.log('notes response in set active profile: ', notes);
+    const setActiveProfileNotes = (notes, follows = false) => {
         const existingProfileNotes = activeProfile.value.notes;
 
         notes.forEach((note) => {

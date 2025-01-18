@@ -8,7 +8,7 @@
                 <img class="profile-picture" :src="activeMetadata.picture"/>
             </div>
             <div class="mt-6 mx-10">
-                <div class="rounded-full bg-amber-500 py-1 px-3">
+                <div class="rounded-full bg-amber-500 py-1 px-3" v-if="userActive">
                     <span class="text-white">Edit</span>
                 </div>
             </div>
@@ -18,11 +18,11 @@
             <i class="pi pi-check text-emerald-500 pl-4 text-lg"></i>
         </div>
     <div class="pl-4 pt-4 space-x-2">
-            <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium cursor-pointer hover:bg-gray-300" @click="switchTab('notes')">Notes</span>
-            <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium cursor-pointer hover:bg-gray-300" @click="switchTab('reactions')">Reactions</span>
-            <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium cursor-pointer hover:bg-gray-300" @click="switchTab('followers')">Followers</span>
+            <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium cursor-pointer hover:bg-gray-300 shadow-lg" @click="switchTab('notes')">Notes</span>
+            <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium cursor-pointer hover:bg-gray-300 shadow-lg" @click="switchTab('reactions')">Reactions</span>
+            <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium cursor-pointer hover:bg-gray-300 shadow-lg" @click="switchTab('followers')">Followers</span>
             <template v-if="userActive">
-                <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium cursor-pointer hover:bg-gray-300" @click="switchTab('followed')">Followed</span>
+                <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium cursor-pointer hover:bg-gray-300 shadow-lg" @click="switchTab('followed')">Followed</span>
             </template>
         </div>
         <div class="mt-4 overflow-y-auto">

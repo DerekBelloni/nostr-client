@@ -172,9 +172,9 @@ const retrieveFollowsNotes = (followsPubkey) => {
     return axios.post('/redis/follows-notes', {publicKeyHex: followsPubkey})
         .then((response) => {
             console.log('follows notes: ', response.data);
-            nostrStore.setActiveProfileMetadata(response.data);
+            nostrStore.setActiveProfileNotes(response.data);
         });
-}
+}   
 
 const retrieveSetFollowsMetadata = () => {
     console.log('retrieve follows metadata')
