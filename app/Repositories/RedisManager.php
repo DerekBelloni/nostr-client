@@ -42,9 +42,8 @@ class RedisManager
         $follows_pubkey = $request->input('publicKeyHex');
         $redis_key = "{$follows_pubkey}:follow-notes";
         $follow_notes = Redis::sMembers($redis_key);
-        // need to send the metadata of the author into this method
         $formatted_notes = $formatter->formatContent($follow_notes, "follows-notes");
-        return $follow_notes;
+        return $formatted_notes;
     }
 
     public static function retrieveUserNotes(Request $request)

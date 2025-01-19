@@ -66,7 +66,6 @@ export const useNostrStore = defineStore('nostr', () => {
         })
     }
     
-
     const clearActiveProfile = () => {
         for (const key in activeProfile.value) {
             activeProfile.value[key] = [];
@@ -93,9 +92,24 @@ export const useNostrStore = defineStore('nostr', () => {
     const setActiveProfileNotes = (notes, follows = false) => {
         const existingProfileNotes = activeProfile.value.notes;
 
-        notes.forEach((note) => {
-            console.log('note in set active profile notes: ', note);
-            let parsedNote = JSON.parse(note);
+        if (!follows) {
+            notes.forEach((note) => {
+                let parsedNote = typeof note === 'string' ? JSON.parse(note) : note;
+                let existingNote = null;
+                
+                if (existingProfileNotes.length <= 0) {
+                    activeProfile.value.notes.push(parsedNote[2]);
+                }
+    
+                existingNote = existingProfileNotes?.some((existingNote) => {
+                    return existingNote.content == parsedNote[2]["content"];
+                });
+    
+                if (!existingNote) activeProfile.value.notes.push(parsedNote[2]);
+            });
+        } else {
+            const note = notes;
+            let parsedNote = typeof note === 'string' ? JSON.parse(note) : note;
             let existingNote = null;
 
             if (existingProfileNotes.length <= 0) {
@@ -107,7 +121,7 @@ export const useNostrStore = defineStore('nostr', () => {
             });
 
             if (!existingNote) activeProfile.value.notes.push(parsedNote[2]);
-        });
+        }
     }
 
     const setActiveProfileFollows = (follows) => {

@@ -70,12 +70,12 @@ class ContentFormatter
 
     private function formatFollowsContent($content)
     {
-        // dd($content);
         $decoded_content = [];
         foreach ($content as $c) {
-            dd(json_decode($c, true));
-            $decoded_content[]["event"] = $c[2];
+            $decoded_c = json_decode($c, true);
+            $decoded_c[2]["processed_content"] = $this->processor->processContent($decoded_c[2]["content"]);
+            $decoded_content[] = $decoded_c;
         }
-        dd($decoded_content);
+        return $decoded_content;
     }
 }
