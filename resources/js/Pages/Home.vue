@@ -149,7 +149,6 @@ const verifyNIP05 = () => {
 const retrieveSearchCache = (searchKey) => {
     return axios.post('/redis/search-results', {redisSearchKey: searchKey})
         .then((response) => {
-            console.log('retrieve search cache: ', response.data);
             searchStore.addSearchResults(response.data);
         })
 }
@@ -171,13 +170,11 @@ const retrieveFollowsMetadata = () => {
 const retrieveFollowsNotes = (followsPubkey) => {
     return axios.post('/redis/follows-notes', {publicKeyHex: followsPubkey})
         .then((response) => {
-            console.log('follows notes: ', response.data);
             nostrStore.setActiveProfileNotes(response.data, true);
         });
 }   
 
 const retrieveSetFollowsMetadata = () => {
-    console.log('retrieve follows metadata')
     return axios.post('/redis/follows-metadata', {publicKeyHex: nostrStore.hexPub})
         .then((response) => {
             nostrStore.addFollows(response.data);
