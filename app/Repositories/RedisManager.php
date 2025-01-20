@@ -9,19 +9,23 @@ use Illuminate\Support\Facades\Redis;
 
 class RedisManager
 {
-    public static function retrieveUsersMetadata(Request $request)
+    public function __construct(
+        private ContentFormatter $formatter
+    ){}
+
+    public function retrieveUsersMetadata(Request $request)
     {
         $user_pubkey = $request->input('publicKeyHex');
         $decoded_metadata = json_decode(Redis::get("{$user_pubkey}:metadata"), true);
 
         abort_if(is_null($decoded_metadata), 404 ,"Metadata could not be found in Redis");
 
-        $formatted_metadata = self::formatEventContent($decoded_metadata);
+        $formatted_metadata = $this->formatEventContent($decoded_metadata);
         return $formatted_metadata;
     }
 
     // abstract this to content formatter as well
-    private static function formatEventContent($event)
+    private function formatEventContent($event)
     {
         if (!is_array($event)) {
             if (json_decode($event) !== null && json_last_error() === JSON_ERROR_NONE) {
@@ -36,25 +40,25 @@ class RedisManager
         return $event[2]["content"] ?? null;
     }
 
-    public static function retrieveFollowsNotes(Request $request)
+    public function retrieveFollowsNotes(Request $request)
     {
-        $formatter = new ContentFormatter();
         $follows_pubkey = $request->input('publicKeyHex');
         $redis_key = "{$follows_pubkey}:follow-notes";
         $follow_notes = Redis::sMembers($redis_key);
-        $formatted_notes = $formatter->formatContent($follow_notes, "follows-notes");
+        $formatted_notes = $this->formatter->formatContent($follow_notes, "follows-notes");
         return $formatted_notes;
     }
 
-    public static function retrieveUserNotes(Request $request)
+    public function retrieveUserNotes(Request $request)
     {
         $user_pubkey = $request->input('publicKeyHex');
         $redis_key = "{$user_pubkey}:user-notes";
         $user_notes = Redis::sMembers($redis_key);
-        return $user_notes;
+        $formatted_user_notes = $this->formatter->formatContent($user_notes, "user-notes");
+        return $formatted_user_notes;
     }
 
-    private static function extractFollowsListPubkeys($event)
+    private function extractFollowsListPubkeys($event)
     {
         if (!is_array($event)) {
             if (json_decode($event) !== null && json_last_error() === JSON_ERROR_NONE) {
@@ -75,7 +79,7 @@ class RedisManager
         return $follow_keys;
     }
 
-    public static function retrieveFollowsMetadata(Request $request)
+    public function retrieveFollowsMetadata(Request $request)
     {
         $user_pubkey = $request->input('publicKeyHex');
 
@@ -85,7 +89,7 @@ class RedisManager
         $follows_metadata = Redis::sMembers($follows_metadata_redis_key);
         $follows_list = Redis::get($follows_list_redis_key);
 
-        $decoded_follow_list_keys = self::extractFollowsListPubkeys($follows_list);
+        $decoded_follow_list_keys = $this->extractFollowsListPubkeys($follows_list);
 
         // abort_if(empty($decoded_follow_list_keys), 404, 'No follows found for this user');
 
@@ -100,15 +104,14 @@ class RedisManager
         });
 
         $decoded_metadata = array_values(array_map(function($item) {
-            return self::formatEventContent($item);
+            return $this->formatEventContent($item);
         }, $valid_follows_metadata));
    
         return $decoded_metadata;
     }
 
-    public static function retrieveSearchCache(Request $request) 
+    public function retrieveSearchCache(Request $request) 
     {
-        $formatter = new ContentFormatter();
         $search_key = $request->input('redisSearchKey');
         $redis_search_key = "search_content:{$search_key}";
         $redis_author_key = "author_content:{$search_key}";
@@ -116,7 +119,7 @@ class RedisManager
         $search_results = Redis::sMembers($redis_search_key);
         $author_metadata = Redis::sMembers($redis_author_key);
 
-        $formatted_results = $formatter->formatContent($search_results, 'search-results', $author_metadata);
+        $formatted_results = $this->formatter->formatContent($search_results, 'search-results', $author_metadata);
 
         return $formatted_results;
     }

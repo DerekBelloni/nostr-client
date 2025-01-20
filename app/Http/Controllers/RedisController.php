@@ -8,27 +8,31 @@ use Inertia\Inertia;
 
 class RedisController extends Controller
 {
+    public function __construct(
+        private RedisManager $redis_manager
+    ){}
+
     public function userMetadata(Request $request)
     {
-        $user_metadata = RedisManager::retrieveUsersMetadata($request);
+        $user_metadata = $this->redis_manager->retrieveUsersMetadata($request);
         return ['userMetadata' => $user_metadata];
     }
 
     public function userNotes(Request $request)
     {
-        $user_notes = RedisManager::retrieveUserNotes($request);
+        $user_notes = $this->redis_manager->retrieveUserNotes($request);
         return $user_notes;
     }
 
     public function followsMetadata(Request $request) {
-         return RedisManager::retrieveFollowsMetadata($request);
+         return $this->redis_manager->retrieveFollowsMetadata($request);
     }
 
     public function followsNotes(Request $request) {
-        return RedisManager::retrieveFollowsNotes($request);
+        return $this->redis_manager->retrieveFollowsNotes($request);
     }
 
     public function searchResults(Request $request) {
-        return RedisManager::retrieveSearchCache($request);
+        return $this->redis_manager->retrieveSearchCache($request);
     }
 }

@@ -185,6 +185,7 @@ const retrieveSetFollowsMetadata = () => {
 const retrieveUserNotes = () => {
     return axios.post('/redis/user-notes', {publicKeyHex: nostrStore.hexPub})
         .then((response) => {
+            console.log('response data for notes: ', response.data);
             nostrStore.addUserNotes(response.data);
             nostrStore.setActiveProfileNotes(response.data);
         })

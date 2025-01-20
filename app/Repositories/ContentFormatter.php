@@ -22,6 +22,8 @@ class ContentFormatter
                 return $this->formatFollowsContent($content);
             case 'search-results':
                 return $this->formatSearchResults($content, $metadata);
+            case 'user-notes':
+                return $this->formatUsersContent($content);
             default:
                 throw new \InvalidArgumentException("Unknown content type: {$type}");
         }
@@ -68,12 +70,25 @@ class ContentFormatter
         return $decoded_search_results;
     }
 
+    private function formatUsersContent($content)
+    {
+        $decoded_content = [];
+        foreach ($content as $c) {
+            $decoded_c = json_decode($c, true);
+            $decoded_c = $decoded_c[2];
+            $decoded_c["processed_content"] = $this->processor->processContent($decoded_c["content"]);
+            $decoded_content[] = $decoded_c;
+        }
+        return $decoded_content;
+    }
+
     private function formatFollowsContent($content)
     {
         $decoded_content = [];
         foreach ($content as $c) {
             $decoded_c = json_decode($c, true);
-            $decoded_c[2]["processed_content"] = $this->processor->processContent($decoded_c[2]["content"]);
+            $decoded_c = $decoded_c[2];
+            $decoded_c["processed_content"] = $this->processor->processContent($decoded_c["content"]);
             $decoded_content[] = $decoded_c;
         }
         return $decoded_content;

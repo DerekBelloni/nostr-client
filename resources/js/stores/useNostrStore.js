@@ -51,18 +51,18 @@ export const useNostrStore = defineStore('nostr', () => {
         const existingUserNotes = userNotes;
 
         notes.forEach((note) => {
-            let parsedNote = JSON.parse(note);
+            let parsedNote = typeof note === 'string' ? JSON.parse(note) : note;
             let existingNote = null;
             
             if (existingUserNotes.length <= 0) {
-                userNotes.push(parsedNote[2]);
+                userNotes.push(parsedNote);
             }
         
             existingNote = existingUserNotes?.value.some((existing) => {
-                return existing?.content == parsedNote[2]['content'];
+                return existing?.content == parsedNote['content'];
             });
         
-            if (!existingNote) userNotes.value.push(parsedNote[2]);
+            if (!existingNote) userNotes.value.push(parsedNote);
         })
     }
     
@@ -92,36 +92,20 @@ export const useNostrStore = defineStore('nostr', () => {
     const setActiveProfileNotes = (notes, follows = false) => {
         const existingProfileNotes = activeProfile.value.notes;
 
-        if (!follows) {
             notes.forEach((note) => {
                 let parsedNote = typeof note === 'string' ? JSON.parse(note) : note;
                 let existingNote = null;
                 
                 if (existingProfileNotes.length <= 0) {
-                    activeProfile.value.notes.push(parsedNote[2]);
+                    activeProfile.value.notes.push(parsedNote);
                 }
     
                 existingNote = existingProfileNotes?.some((existingNote) => {
-                    return existingNote.content == parsedNote[2]["content"];
+                    return existingNote?.content == parsedNote["content"];
                 });
     
-                if (!existingNote) activeProfile.value.notes.push(parsedNote[2]);
+                if (!existingNote) activeProfile.value.notes.push(parsedNote);
             });
-        } else {
-            const note = notes;
-            let parsedNote = typeof note === 'string' ? JSON.parse(note) : note;
-            let existingNote = null;
-
-            if (existingProfileNotes.length <= 0) {
-                activeProfile.value.notes.push(parsedNote[2]);
-            }
-
-            existingNote = existingProfileNotes?.some((existingNote) => {
-                return existingNote.content == parsedNote[2]["content"];
-            });
-
-            if (!existingNote) activeProfile.value.notes.push(parsedNote[2]);
-        }
     }
 
     const setActiveProfileFollows = (follows) => {
