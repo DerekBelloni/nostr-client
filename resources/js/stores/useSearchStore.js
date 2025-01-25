@@ -12,7 +12,6 @@ export const useSearchStore = defineStore('search', () => {
     }
 
     const addSearchResults = (results) => {
-        console.log('search results in nostr store: ', results);
         if (searchResults.value.length > 0) searchResults.value = [];
         searchResults.value.push(...results);
         searchActive.value = true;

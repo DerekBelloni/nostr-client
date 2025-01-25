@@ -48,6 +48,7 @@ onBeforeUnmount(() => {
 
 onMounted(() => {
     activeView.value = "Home";
+    getRelayMetadata();
     retrieveTrendingContent();
     listenForFollowsList();
     listenForMetadata();
@@ -73,6 +74,13 @@ const cleanup = () => {
 
     nostrStore.resetStore();
     searchStore.resetStore();
+}
+
+const getRelayMetadata = () => {
+    return axios.get('/relay-metadata/')
+        .then((response) => {
+            console.log('relay metadata response: ', response)
+        })
 }
 
 const listenForAuthorMetadata = () => {
@@ -149,6 +157,7 @@ const verifyNIP05 = () => {
 const retrieveSearchCache = (searchKey) => {
     return axios.post('/redis/search-results', {redisSearchKey: searchKey})
         .then((response) => {
+            console.log('response retrieve search cache: ', response)
             searchStore.addSearchResults(response.data);
         })
 }
