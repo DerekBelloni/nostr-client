@@ -4,6 +4,7 @@ use App\Http\Controllers\NostrKeyController;
 use App\Http\Controllers\NotesController;
 use App\Http\Controllers\RabbitMQController;
 use App\Http\Controllers\RedisController;
+use App\Http\Controllers\RelayMetadataController;
 use App\Http\Controllers\SearchedEventsController;
 use App\Http\Controllers\Trending\TrendingEventsController;
 use Illuminate\Support\Facades\Route;
@@ -32,6 +33,9 @@ Route::post('/redis/user-notes', [RedisController::class, 'userNotes']);
 Route::post('/redis/follows-metadata', [RedisController::class, 'followsMetadata']);
 Route::post('/redis/follows-notes', [RedisController::class, 'followsNotes']);
 Route::post('/redis/search-results', [RedisController::class, 'searchResults']);
+
+// Relay Metadata Controller
+Route::get('/relay-metadata', [RelayMetadataController::class, 'get']);
 
 // Searched Events Controller
 Route::post('/searched-events', [SearchedEventsController::class, 'index']);

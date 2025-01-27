@@ -11,8 +11,7 @@
 </template>
 
 <script setup>
-    // import { ref, defineEmits } from 'vue';
-    import { ref } from 'vue';
+    import { inject, ref } from 'vue';
     import { router } from '@inertiajs/vue3';
     import { useNostrStore } from '@/stores/useNostrStore';
     import Dialog from 'primevue/dialog';
@@ -26,8 +25,7 @@
     const verified = ref(false);
     
     const nostrStore = useNostrStore();
-
-    const emit = defineEmits(['pubKeyRetrieved']);
+    const setUserMetadata = inject('setUserMetadata');
 
     const open = () => {
         loginDialog.value = true;
@@ -41,6 +39,9 @@
                 nostrStore.npub = page.props.npub;
                 nostrStore.hexPriv = page.props.hexPriv;
                 nostrStore.hexPub = page.props.hexPub;
+                nostrStore.metadataContent = page.props.user_metadata;
+                nostrStore.setActiveProfileMetadata(page.props.user_metadata);
+                setUserMetadata();
                 loginDialog.value = false; 
             },
             onError: errors => {

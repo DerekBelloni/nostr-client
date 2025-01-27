@@ -2,13 +2,13 @@
 
 namespace App\Repositories;
 
-use App\Facades\UserMetada;
-use App\Facades\UserMetadata;
-use App\Jobs\ListenUserMetadata;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
+use App\Repositories\ContentFormatter;
+use App\Repositories\ContentProcessor;
+use App\Repositories\RedisManager;
 use swentel\nostr\Key\Key;
 
 class NostrKeyManager
@@ -22,21 +22,27 @@ class NostrKeyManager
                 $key = new Key();
                 $privateKeyHex = $key->convertToHex($nsec);
                 $publicKeyHex = $key->getPublicKey($privateKeyHex);
-                Log::info('public hex key on login: ', [$publicKeyHex]);
                 $publicKeyBech32 = $key->convertPublicKeyToBech32($publicKeyHex);
+                $user_metadata = null;
 
                 $user_hex_req = new Request([
-                    'user_pub_hex' => $publicKeyHex
+                    'publicKeyHex' => $publicKeyHex
                 ]);
             
-                // Start checking for cached metadta, call to its own function
-                // dd("here");
-                RabbitMQManager::userMetadataQueue($user_hex_req);
+                $decoded_metadata = json_decode(Redis::get("{$publicKeyHex}:metadata"), true);
 
-                return [$publicKeyHex, $publicKeyBech32, $privateKeyHex];
+                if (empty($decoded_metadata)) {
+                    RabbitMQManager::userMetadataQueue($user_hex_req);
+                } else {
+                    $content_processor = new ContentProcessor();
+                    $formatter = new ContentFormatter($content_processor);
+                    $redis_manager = new RedisManager($formatter);
+                    $user_metadata = $redis_manager->formatEventContent($decoded_metadata);
+                }
+
+                return [$publicKeyHex, $publicKeyBech32, $privateKeyHex, $user_metadata];
             } catch (\Exception $e) {
                 Log::error('Error processing Nostr key: ' . $e->getMessage());
-                dd('Error: ' . $e->getMessage());
             }
         } else {
             return response()->json(['error' => 'No nsec provided'], 400);
@@ -71,18 +77,6 @@ class NostrKeyManager
         if (isset($data['names'][$name])) {
             return $data['names'][$name] == $publicKeyHex; 
         } 
-    }
-
-    private static function _checkCachedMetadata($publicKeyHex, $metadata_content)
-    {
-        // $cached_metadata = json_decode(Redis::get($publicKeyHex), true);
-      
-        if (isset($cached_metadata)) {
-            $cached_metadata[2]["content"] = json_decode($cached_metadata[2]["content"], true);
-
-        }
-      
-        return $cached_metadata;
     }
 
     private static function _processUserMetadata($cached_metadata)

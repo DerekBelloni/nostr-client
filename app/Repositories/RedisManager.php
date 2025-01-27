@@ -25,7 +25,7 @@ class RedisManager
     }
 
     // abstract this to content formatter as well
-    private function formatEventContent($event)
+    public function formatEventContent($event)
     {
         if (!is_array($event)) {
             if (json_decode($event) !== null && json_last_error() === JSON_ERROR_NONE) {

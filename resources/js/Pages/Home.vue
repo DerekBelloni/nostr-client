@@ -15,7 +15,7 @@
 
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
-import { onBeforeUnmount, onMounted, ref, reactive, watch } from "vue";
+import { onBeforeUnmount, onMounted, ref, reactive, watch, provide } from "vue";
 import { router } from '@inertiajs/vue3'
 import { useNostrStore } from '@/stores/useNostrStore';
 import { useSearchStore } from '@/stores/useSearchStore';
@@ -48,8 +48,8 @@ onBeforeUnmount(() => {
 
 onMounted(() => {
     activeView.value = "Home";
-    getRelayMetadata();
-    retrieveTrendingContent();
+    // getRelayMetadata();
+    // retrieveTrendingContent();
     listenForFollowsList();
     listenForMetadata();
     listenForUserNotes();
@@ -79,7 +79,7 @@ const cleanup = () => {
 const getRelayMetadata = () => {
     return axios.get('/relay-metadata/')
         .then((response) => {
-            console.log('relay metadata response: ', response)
+            console.log('relay metadata response: ', response);
         })
 }
 
@@ -194,7 +194,6 @@ const retrieveSetFollowsMetadata = () => {
 const retrieveUserNotes = () => {
     return axios.post('/redis/user-notes', {publicKeyHex: nostrStore.hexPub})
         .then((response) => {
-            console.log('response data for notes: ', response.data);
             nostrStore.addUserNotes(response.data);
             nostrStore.setActiveProfileNotes(response.data);
         })
@@ -205,7 +204,7 @@ const retrieveUserMetadata = () => {
         .then((response) => {
             nostrStore.metadataContent = response.data.userMetadata;
             nostrStore.setActiveProfileMetadata(response.data.userMetadata);
-            metadataContent.value = nostrStore.metadataContent;
+            setUserMetadata();
         })
 }
 
@@ -219,12 +218,18 @@ const retrieveTrendingContent = () => {
         })
 }
 
+const setUserMetadata = () => {
+    metadataContent.value = nostrStore.metadataContent;
+}
+
 const setActiveView = (input) => {
     activeView.value = input;
     if (activeView.value == 'Home') {
         searchStore.clearSearchResults();
     }
 }
+
+provide('setUserMetadata', setUserMetadata);
 
 </script>
 

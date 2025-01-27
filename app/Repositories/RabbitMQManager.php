@@ -12,7 +12,7 @@ class RabbitMQManager
 {
     public static function userMetadataQueue(Request $request)
     {
-        $pub_hex_key = $request->input('user_pub_hex');
+        $pub_hex_key = $request->input('publicKeyHex');
 
         if (!is_null($pub_hex_key)) {
             $connection = new AMQPStreamConnection('localhost', 5672, 'guest', 'guest');
