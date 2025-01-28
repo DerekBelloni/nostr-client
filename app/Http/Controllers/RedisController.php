@@ -11,17 +11,9 @@ class RedisController extends Controller
     public function __construct(
         private RedisManager $redis_manager
     ){}
-
-    public function userMetadata(Request $request)
-    {
-        $user_metadata = $this->redis_manager->retrieveUsersMetadata($request);
-        return ['userMetadata' => $user_metadata];
-    }
-
-    public function userNotes(Request $request)
-    {
-        $user_notes = $this->redis_manager->retrieveUserNotes($request);
-        return $user_notes;
+    
+    public function followsList(Request $request) {
+        return $this->redis_manager->checkFollowsList($request);
     }
 
     public function followsMetadata(Request $request) {
@@ -35,4 +27,17 @@ class RedisController extends Controller
     public function searchResults(Request $request) {
         return $this->redis_manager->retrieveSearchCache($request);
     }
+
+    public function userMetadata(Request $request)
+    {
+        $user_metadata = $this->redis_manager->retrieveUsersMetadata($request);
+        return ['userMetadata' => $user_metadata];
+    }
+
+    public function userNotes(Request $request)
+    {
+        $user_notes = $this->redis_manager->retrieveUserNotes($request);
+        return $user_notes;
+    }
+
 }

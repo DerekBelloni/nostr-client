@@ -28,11 +28,12 @@ Route::post('/rabbit-mq/search-results', [RabbitMQController::class, 'getSearchR
 Route::post('/rabbit-mq/follow-notes', [RabbitMQController::class, 'getFollowNotes']);
 
 // Redis Controller
-Route::post('/redis/user-metadata', [RedisController::class, 'userMetadata']);
-Route::post('/redis/user-notes', [RedisController::class, 'userNotes']);
+Route::post('/redis/follows-list', [RedisController::class, 'followsList']);
 Route::post('/redis/follows-metadata', [RedisController::class, 'followsMetadata']);
 Route::post('/redis/follows-notes', [RedisController::class, 'followsNotes']);
 Route::post('/redis/search-results', [RedisController::class, 'searchResults']);
+Route::post('/redis/user-metadata', [RedisController::class, 'userMetadata']);
+Route::post('/redis/user-notes', [RedisController::class, 'userNotes']);
 
 // Relay Metadata Controller
 Route::get('/relay-metadata', [RelayMetadataController::class, 'get']);

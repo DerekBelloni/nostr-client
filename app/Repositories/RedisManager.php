@@ -13,6 +13,13 @@ class RedisManager
         private ContentFormatter $formatter
     ){}
 
+    public function checkFollowsList(Request $request) {
+        dd($request->all());
+        $user_pubkey = $request->input('publicKeyHex');
+        $valid_key = Redis::exist("{$user_pubkey}:follows");
+        dd($valid_key);
+    }
+
     public function retrieveUsersMetadata(Request $request)
     {
         $user_pubkey = $request->input('publicKeyHex');

@@ -64,6 +64,13 @@ watch(metadataContent, async(newValue, oldValue) => {
     }
 }, { once: true });
 
+const checkFollowsList = () => {
+    return axios.post('/redis/follows-list', {publicKeyHex: nostrStore.hexPub})
+        .then((response) => {
+            console.log('response');
+        })
+}
+
 const cleanup = () => {
     echo.leaveChannel('user_metadata');
     echo.leaveChannel('user_notes');
@@ -147,12 +154,7 @@ const listenForFollowsMetadata = () => {
         });
 }
 
-const verifyNIP05 = () => {
-    return axios.post('/nip05-verification', {metadataContent: nostrStore.metadataContent, publicKeyHex: nostrStore.hexPub})
-        .then((response) => {
-            nostrStore.verified = response.data.verified;
-        })
-}
+
 
 const retrieveSearchCache = (searchKey) => {
     return axios.post('/redis/search-results', {redisSearchKey: searchKey})
@@ -220,6 +222,7 @@ const retrieveTrendingContent = () => {
 
 const setUserMetadata = () => {
     metadataContent.value = nostrStore.metadataContent;
+
 }
 
 const setActiveView = (input) => {
@@ -229,7 +232,16 @@ const setActiveView = (input) => {
     }
 }
 
+const verifyNIP05 = () => {
+    return axios.post('/nip05-verification', {metadataContent: nostrStore.metadataContent, publicKeyHex: nostrStore.hexPub})
+        .then((response) => {
+            nostrStore.verified = response.data.verified;
+        })
+}
+
 provide('setUserMetadata', setUserMetadata);
+provide('retrieveUserNotes', retrieveUserNotes);
+provide('checkFollowsList', checkFollowsList);
 
 </script>
 

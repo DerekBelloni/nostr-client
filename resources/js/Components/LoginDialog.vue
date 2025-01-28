@@ -26,6 +26,8 @@
     
     const nostrStore = useNostrStore();
     const setUserMetadata = inject('setUserMetadata');
+    const retrieveUserNotes = inject('retrieveUserNotes');
+    const checkFollowsList = inject('checkFollowsList');
 
     const open = () => {
         loginDialog.value = true;
@@ -40,14 +42,22 @@
                 nostrStore.hexPriv = page.props.hexPriv;
                 nostrStore.hexPub = page.props.hexPub;
                 nostrStore.metadataContent = page.props.user_metadata;
-                nostrStore.setActiveProfileMetadata(page.props.user_metadata);
-                setUserMetadata();
+                if (nostrStore.metadataContent) {
+                   retrieveUserCache();
+                }
                 loginDialog.value = false; 
             },
             onError: errors => {
                 console.error('Error: ', errors);
             }
         });
+    }
+
+    const retrieveUserCache = () => {
+        nostrStore.setActiveProfileMetadata(nostrStore.metadataContent);
+        setUserMetadata();
+        retrieveUserNotes();
+        checkFollowsList();
     }
 
     defineExpose({ open });
