@@ -118,14 +118,11 @@ class RedisManager
     public function retrieveSearchCache(Request $request) 
     {
         $search_key = $request->input('redisSearchKey');
-        dd($search_key);    
         $redis_search_key = "search_content:{$search_key}";
         $redis_author_key = "author_content:{$search_key}";
 
         $search_results = Redis::sMembers($redis_search_key);
         $author_metadata = Redis::sMembers($redis_author_key);
-
-        dd($search_results);
 
         $formatted_results = $this->formatter->formatContent($search_results, 'search-results', $author_metadata);
 

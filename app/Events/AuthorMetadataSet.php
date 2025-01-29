@@ -32,6 +32,6 @@ class AuthorMetadataSet implements ShouldBroadcastNow
 
     public function broadcastWith()
     {
-        return ['author_metadata_set' => $this->author_metadata_set, 'user_publey' => $this->user_pubkey, 'uuid' => $this->uuid];
+        return ['author_metadata_set' => $this->author_metadata_set, 'user_pubkey' => $this->user_pubkey, 'uuid' => $this->uuid];
     }
 }

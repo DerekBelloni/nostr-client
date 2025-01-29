@@ -96,8 +96,10 @@ const listenForAuthorMetadata = () => {
     echo.channel('author_metadata')
         .listen('.author_metadata_set', (event) => {
             let searchKey = null;
-            console.log(nostrStore.userActive && nostrStore.hexPub == event.user_pubkey);
-            if (nostrStore.userActive && nostrStore.hexPub == event.user_pubkey) {
+            console.log("event author: ", event);
+            console.log("user pubkey from event: ", event.user_pubkey);
+            console.log("search key: ", searchStore.searchKey);
+            if (nostrStore.userActive && searchStore.searchKey == event.user_pubkey) {
                 searchKey = event.user_pubkey;
                 console.log('search key inside if: ', searchKey);
             } else if (event.uuid === nostrStore.searchUUID) {

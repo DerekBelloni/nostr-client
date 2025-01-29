@@ -35,10 +35,9 @@ class ListenAuthorMetadata extends BaseRabbitMQListener
         }
         
         $search_key =  'author_content' . ':' . $search_key;
-
         $redis_key = $search_key;
         $author_metadata_set = Redis::sAdd($redis_key, $recieved_author_metadata);
-        Log::info("author metadata set: ", [$author_metadata_set]);
+
         if ($author_metadata_set) {
             try {
                 event(new AuthorMetadataSet(true, $pubkey, $uuid));
