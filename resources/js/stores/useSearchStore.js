@@ -3,6 +3,7 @@ import { ref } from 'vue';
 
 export const useSearchStore = defineStore('search', () => {
     const searchActive = ref(false);
+    const searchKey = ref(null);
     const searchResults = ref([]);
     const trendingContent = ref([]);
 
@@ -22,5 +23,5 @@ export const useSearchStore = defineStore('search', () => {
         searchActive.value = false;
     }
 
-return { addSearchResults, clearSearchResults, resetStore, searchActive, searchResults, trendingContent }
+return { addSearchResults, clearSearchResults, resetStore, searchActive, searchKey, searchResults, trendingContent }
 });

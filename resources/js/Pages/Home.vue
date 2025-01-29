@@ -49,7 +49,7 @@ onBeforeUnmount(() => {
 onMounted(() => {
     activeView.value = "Home";
     // getRelayMetadata();
-    // retrieveTrendingContent();
+    retrieveTrendingContent();
     listenForFollowsList();
     listenForMetadata();
     listenForUserNotes();
@@ -67,7 +67,9 @@ watch(metadataContent, async(newValue, oldValue) => {
 const checkFollowsList = () => {
     return axios.post('/redis/follows-list', {publicKeyHex: nostrStore.hexPub})
         .then((response) => {
-            console.log('response');
+            if (response.data === 1) {
+                retrieveFollowsMetadata();
+            }
         })
 }
 
@@ -94,12 +96,14 @@ const listenForAuthorMetadata = () => {
     echo.channel('author_metadata')
         .listen('.author_metadata_set', (event) => {
             let searchKey = null;
+            console.log(nostrStore.userActive && nostrStore.hexPub == event.user_pubkey);
             if (nostrStore.userActive && nostrStore.hexPub == event.user_pubkey) {
                 searchKey = event.user_pubkey;
+                console.log('search key inside if: ', searchKey);
             } else if (event.uuid === nostrStore.searchUUID) {
                  searchKey = event.uuid;
-             }
-
+            }
+             console.log('search key before function call: ', searchKey);
             retrieveSearchCache(searchKey);
         });
 }
@@ -140,9 +144,9 @@ const listenForSearchResults = () => {
         .listen('.search_results_set', (event) => {
             let searchKey = null;
             if (nostrStore.userActive && nostrStore.hexPub == event.user_pubkey) {
-                searchKey = event.user_pubkey;
+                searchStore.searchKey = event.user_pubkey;
             } else if (event.uuid === nostrStore.searchUUID) {
-                 searchKey = event.uuid;
+                searchStore.searchKey = event.uuid;
              }
         });
 }
@@ -157,6 +161,7 @@ const listenForFollowsMetadata = () => {
 
 
 const retrieveSearchCache = (searchKey) => {
+    console.log('search key: ', searchKey)
     return axios.post('/redis/search-results', {redisSearchKey: searchKey})
         .then((response) => {
             console.log('response retrieve search cache: ', response)
