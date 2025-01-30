@@ -21,8 +21,13 @@
                                 <template>
                                     <span class="text-gray-700 font-semibold">{{setDisplayName(note.author?.content)}}</span>
                                 </template>
-                                <i class="pi pi-verified pl-1"></i>
-                                <span class="text-amber-600 pl-1">{{note.author?.content.nip05}}</span>
+                                <template v-if="note.author?.content.nip05">
+                                    <i class="pi pi-verified pl-1"></i>
+                                    <span class="text-amber-600 pl-1">{{note.author?.content.nip05}}</span>
+                                </template>
+                                <template v-else>
+                                    <span class="text-gray-600">{{note.author?.pubkey}}</span>
+                                </template>
                             </div>
                             <span class="text-xs font-medium text-gray-600">{{noteDate(note.event.utc_timestamp)}}</span>
                         </div>

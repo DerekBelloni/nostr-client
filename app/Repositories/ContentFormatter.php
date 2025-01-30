@@ -54,7 +54,9 @@ class ContentFormatter
             }
 
             if (isset($author_lookup[$search_result['event']['pubkey']])) {
+                $author_pubkey = $search_result['event']['pubkey'];
                 $search_result['author']['content'] = $author_lookup[$search_result['event']['pubkey']];
+                $search_result['author']['content']['pubkey'] = $author_pubkey;
             }
 
             $search_result["id"] = $search_result["event"]["id"];
@@ -66,7 +68,7 @@ class ContentFormatter
 
             $search_result["event"]["utc_timestamp"] = Carbon::createFromTimestampUTC($search_result["event"]["created_at"])->format('Y-m-d H:i:s');
         }
-
+        dd($decoded_search_results);
         return $decoded_search_results;
     }
 
