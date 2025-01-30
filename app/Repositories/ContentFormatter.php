@@ -68,7 +68,7 @@ class ContentFormatter
 
             $search_result["event"]["utc_timestamp"] = Carbon::createFromTimestampUTC($search_result["event"]["created_at"])->format('Y-m-d H:i:s');
         }
-        dd($decoded_search_results);
+
         return $decoded_search_results;
     }
 

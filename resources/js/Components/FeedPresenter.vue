@@ -6,15 +6,15 @@
                 <div class="grid grid-cols-12">
                     <div class="col-span-1">
                         <div v-if="note.author?.content.picture">
-                            <img class="rounded-full h-10 w-10 border border-amber-500" :src="note.author?.content.picture" alt="">
+                            <img class="rounded-full h-14 w-14 border border-amber-500" :src="note.author?.content.picture" alt="">
                         </div>
                         <div v-else>
-                            <img src="/images/avatar.jpg" class="rounded-full h-10 w-10 border border-amber-500" alt="">
+                            <img src="/images/avatar.jpg" class="rounded-full h-14 w-14 border border-amber-500" alt="">
                         </div>
                     </div>
                     <div class="col-span-11 col-start-2">
                         <div class="flex justify-between">
-                            <div>
+                            <div class="mt-2">
                                 <template v-if="!isSearchActive">
                                     <span class="text-gray-700 font-semibold">{{note.author?.content.name}}</span>
                                 </template>
@@ -26,7 +26,7 @@
                                     <span class="text-amber-600 pl-1">{{note.author?.content.nip05}}</span>
                                 </template>
                                 <template v-else>
-                                    <span class="text-gray-600">{{note.author?.pubkey}}</span>
+                                    <span class="text-gray-600">{{note.author?.content.pubkey || note.pubkey}}</span>
                                 </template>
                             </div>
                             <span class="text-xs font-medium text-gray-600">{{noteDate(note.event.utc_timestamp)}}</span>

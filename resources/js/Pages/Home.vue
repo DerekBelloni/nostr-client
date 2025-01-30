@@ -160,8 +160,6 @@ const listenForFollowsMetadata = () => {
         });
 }
 
-
-
 const retrieveSearchCache = (searchKey) => {
     console.log('search key: ', searchKey)
     return axios.post('/redis/search-results', {redisSearchKey: searchKey})
@@ -173,10 +171,9 @@ const retrieveSearchCache = (searchKey) => {
 
 const retrieveSearchResults = (search) => {
     let searchUUID = null;
-    if (!nostrStore.hexPub) {
-        searchUUID = crypto.randomUUID();
-        nostrStore.searchUUID = searchUUID;
-    }
+    
+    searchUUID = crypto.randomUUID();
+    nostrStore.searchUUID = searchUUID;
    
     return axios.post('/rabbit-mq/search-results', {search: search, publicKeyHex: nostrStore.hexPub, searchUUID: searchUUID});
 }
