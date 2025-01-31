@@ -13,9 +13,17 @@ class RedisManager
         private ContentFormatter $formatter
     ){}
 
-    public function checkFollowsList(Request $request) {
+    public function checkFollowsList(Request $request) 
+    {
         $user_pubkey = $request->input('publicKeyHex');
         return Redis::exists("{$user_pubkey}:follows");
+    }
+
+    public function deleteSearchCache(Request $request) 
+    {
+        $search_key = $request->input('searchKey');
+        $redis_key = "search_content:{$search_key}";
+        Redis::del($redis_key);
     }
 
     public function retrieveUsersMetadata(Request $request)

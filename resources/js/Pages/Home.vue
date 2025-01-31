@@ -229,10 +229,16 @@ const setUserMetadata = () => {
 
 }
 
+const clearSearchCache = (searchKey) => {
+
+}
+
 const setActiveView = (input) => {
     activeView.value = input;
     if (activeView.value == 'Home') {
+        const searchKey = searchStore.searchKey;
         searchStore.clearSearchResults();
+        clearSearchCache(searchKey);
     }
 }
 

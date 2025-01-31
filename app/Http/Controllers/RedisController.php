@@ -40,4 +40,8 @@ class RedisController extends Controller
         return $user_notes;
     }
 
+    public function delete(Request $request) 
+    {
+        return $this->redis_manager->deleteSearchCache($request);
+    }
 }

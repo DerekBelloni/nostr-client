@@ -34,6 +34,7 @@ Route::post('/redis/follows-notes', [RedisController::class, 'followsNotes']);
 Route::post('/redis/search-results', [RedisController::class, 'searchResults']);
 Route::post('/redis/user-metadata', [RedisController::class, 'userMetadata']);
 Route::post('/redis/user-notes', [RedisController::class, 'userNotes']);
+Route::post('/redis/clear-search-cachce', [RedisController::class, 'delete']);
 
 // Relay Metadata Controller
 Route::get('/relay-metadata', [RelayMetadataController::class, 'get']);
