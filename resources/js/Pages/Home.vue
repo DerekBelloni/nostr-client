@@ -230,7 +230,10 @@ const setUserMetadata = () => {
 }
 
 const clearSearchCache = (searchKey) => {
-
+    return axios.post('/redis/clear-search-cache', {searchKey: searchKey})
+        .then((response) => {
+            console.log('response from clearing cache: ', response);
+        })
 }
 
 const setActiveView = (input) => {

@@ -22,8 +22,10 @@ class RedisManager
     public function deleteSearchCache(Request $request) 
     {
         $search_key = $request->input('searchKey');
-        $redis_key = "search_content:{$search_key}";
-        Redis::del($redis_key);
+        $redis_search_key = "search_content:{$search_key}";
+        $redis_author_key = "author_content:{$author_key}";
+        Redis::del($redis_search_key);
+        Redis::del($redis_author_key);
     }
 
     public function retrieveUsersMetadata(Request $request)
