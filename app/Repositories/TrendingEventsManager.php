@@ -156,13 +156,15 @@ class TrendingEventsManager
     public static function _processContent($trending_content)
     {
         $processor = new ContentProcessor();
+        $new_processor = new NewContentProcessor();
 
         self::_processImages($trending_content);
         self::_processVideos($trending_content);
         
-        $formatted_content = $trending_content->transform(function ($note) use ($processor) {
+        $formatted_content = $trending_content->transform(function ($note) use ($processor, $new_processor) {
             if (isset($note["event"]["content"])) {
                 $note["event"]["processed_content"] = $processor->processContent($note["event"]["content"]);
+                $new_processor->processContent($note["event"]["content"]);
             }
             if (isset($note["author"])) {
                 $note["author"]["content"] = !is_array($note["author"]["content"]) ? json_decode($note["author"]["content"], true) : [];

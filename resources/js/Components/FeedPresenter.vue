@@ -2,7 +2,7 @@
     <FeedSearch/>
     <div class="notes-container">
         <ul>
-            <li v-for="note in feedNotes" :key="note.pubkey" class="flex flex-col border-b border-gray-300 py-2 px-2 my-2">
+            <li v-for="note in feedNotes" :key="note.pubkey" class="flex flex-col border-b border-gray-300 py-2 px-2 my-1">
                 <div class="grid grid-cols-12">
                     <div class="col-span-1">
                         <div v-if="note.author?.content.picture">
@@ -103,6 +103,9 @@ const setDisplayName = inject('setDisplayName');
         overflow-y: auto;
         padding: 10px;
        
+    }
+    .feed-image {
+        
     }
     .rounded-video {
         border-radius: 15px;

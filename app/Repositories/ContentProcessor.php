@@ -61,54 +61,6 @@ class ContentProcessor
         }
     }
 
-    private function decimalTo5Bit($decimal)
-    {
-        $decimal = (int)$decimal;
-        $binaryNumber = '';
-        if ($decimal == 0) {
-            $binaryNumber = '0';
-        } else {
-            $binaryNumber = self::decimalTo5Bit((int)($decimal / 2)) . ($decimal % 2);
-        }
-       
-        $binaryNumber = ltrim($binaryNumber, '0'); 
-        if ($binaryNumber === '') {
-            $binaryNumber = '0';
-        }
-        return str_pad($binaryNumber, 5, '0', STR_PAD_LEFT);
-    }
-
-    private function decodeToBase32($bech32Key) {
-        $decimal_vals = decodeRaw($bech32Key);
-        $five_bit_arr = [];
-        
-        foreach($decimal_vals[1] as $decimal) {
-            $five_bit_arr[] = self::decimalTo5Bit($decimal);
-        }  
-        return self::fiveBitToByte($five_bit_arr);
-    }
-
-    private function fiveBitToByte($five_bit_arr) 
-    {
-        $eight_bit_arr = [];
-        $temp = '';
-        for($x = 0; $x < count($five_bit_arr); $x++) {
-            for ($y = 0; $y < 5; $y++) {
-                if (strlen($temp) < 8) {
-                    $temp .= $five_bit_arr[$x][$y];
-                    if (strlen($temp) === 8) {
-                        $eight_bit_arr[$x] = $temp;
-                        $temp = '';
-                    }
-                }
-            }
-        }
-
-        $structured_byte_arr = collect($eight_bit_arr)->values(); 
-        return $structured_byte_arr;
-    }
-
-
     private function decodeBech32(&$content)
     {
         $key = new Key();
@@ -136,6 +88,56 @@ class ContentProcessor
         }
     }
 
+    private function decodeToBase32($bech32Key) {
+        $decimal_vals = decodeRaw($bech32Key);
+        $five_bit_arr = [];
+        
+        foreach($decimal_vals[1] as $decimal) {
+            $five_bit_arr[] = self::decimalTo5Bit($decimal);
+        }  
+        return self::fiveBitToByte($five_bit_arr);
+    }
+
+    private function decimalTo5Bit($decimal)
+    {
+        $decimal = (int)$decimal;
+        $binaryNumber = '';
+        if ($decimal == 0) {
+            $binaryNumber = '0';
+        } else {
+            $binaryNumber = self::decimalTo5Bit((int)($decimal / 2)) . ($decimal % 2);
+        }
+       
+        $binaryNumber = ltrim($binaryNumber, '0'); 
+        if ($binaryNumber === '') {
+            $binaryNumber = '0';
+        }
+        return str_pad($binaryNumber, 5, '0', STR_PAD_LEFT);
+    }
+
+    private function fiveBitToByte($five_bit_arr) 
+    {
+        $eight_bit_arr = [];
+        $temp = '';
+        for($x = 0; $x < count($five_bit_arr); $x++) {
+            for ($y = 0; $y < 5; $y++) {
+                if (strlen($temp) < 8) {
+                    $temp .= $five_bit_arr[$x][$y];
+                    if (strlen($temp) === 8) {
+                        $eight_bit_arr[$x] = $temp;
+                        $temp = '';
+                    }
+                }
+            }
+        }
+
+        $structured_byte_arr = collect($eight_bit_arr)->values(); 
+        return $structured_byte_arr;
+    }
+
+
+ 
+
     private function standardTypeZero($value_arr) 
     {
         $hex = '';
@@ -153,6 +155,7 @@ class ContentProcessor
             $decimal = bindec((int)$byte);
             $ascii_string .= chr($decimal);
         }
+   
         return $ascii_string;
     }
 
@@ -166,7 +169,7 @@ class ContentProcessor
         $built_arr = [];
         $iteration = 0;
         $additional = $binary;
-        
+        // dd($binary);
         $build_arr = function($binary) use (&$additional, &$built_arr, &$iteration) {
             $additional = [];
             $value = null;
