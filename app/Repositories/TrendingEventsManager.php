@@ -39,7 +39,7 @@ class TrendingEventsManager
         $trending_notes = collect($trending_notes["notes"]);
 
         $processed_notes = self::_processContent($trending_notes, "notes");
-    
+
         return $processed_notes;
     }
 
@@ -86,7 +86,6 @@ class TrendingEventsManager
         ]);
 
         $body = $response->getBody();
-
         return json_decode($body->getContents(), true);
     }
 
@@ -166,8 +165,7 @@ class TrendingEventsManager
         
         $formatted_content = $trending_content->transform(function ($note) use ($processor, $new_processor) {
             if (isset($note["event"]["content"])) {
-                // $note["event"]["processed_content"] = $processor->processContent($note["event"]["content"]);
-                $note["event"]["processed_content"] = $new_processor->processContent($note["event"]["content"]);
+                $note["event"]["nostr_entities"] = $new_processor->processContent($note["event"]["content"], "initial");
             }
             if (isset($note["author"])) {
                 $note["author"]["content"] = !is_array($note["author"]["content"]) ? json_decode($note["author"]["content"], true) : [];
