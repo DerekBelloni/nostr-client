@@ -16,11 +16,12 @@ class TrendingEventsManager
         RabbitMQManager::userMetadataQueue($request);
        
         $trending_notes = self::_getTrendingNotes($client);
-        $trending_videos = self::_getTrendingVideos($client);
-        $trending_images = self::_getTrendingImages($client);
+        // $trending_videos = self::_getTrendingVideos($client);
+        // $trending_images = self::_getTrendingImages($client);
         $trending_hashtags = self::_getTrendingHashtags($client);
        
-        return [self::_mergeTrendingContent($trending_notes, $trending_images, $trending_videos), $trending_hashtags];
+        // return [self::_mergeTrendingContent($trending_notes, $trending_images, $trending_videos), $trending_hashtags];
+        return [$trending_notes, $trending_hashtags];
     }
 
     public static function _getTrendingNotes($client)
@@ -94,27 +95,29 @@ class TrendingEventsManager
         return $trending_notes->merge($trending_images)->merge($trending_videos);
     }
 
-    public static function _processImages(&$trending_images)
-    {
-        $pattern = '/https:\/\/[^\s]+(\.(mp4|webm|ogg|mov|jpg|jpeg|png|gif))?/i';
+    // public static function _processImages(&$trending_images)
+    // {
 
-        $trending_images->transform(function ($item) use ($pattern) {
-            if (isset($item["event"]["content"])) {
-                $item["event"]["content"] = preg_replace_callback($pattern, function ($matches) {
-                    $url = $matches[0];
-                    $extension = pathinfo($url, PATHINFO_EXTENSION);
-                    if (preg_match('/\.(jpg|jpeg|png|gif|webp)$/i', $url)) {
-                        return '<img src="' . $url . '">';
-                    } else if (in_array($extension, ['mp4', 'webm', 'ogg', 'mov'])) {
-                        return '<video width="600" height="405" controls><source src="' . $url . '" type="video/' . $extension . '">Your browser does not support the video tag.</video>';
-                    } else {
-                        return '<a href="' . $url . '" target="_blank">' . $url . '</a>';
-                    }
-                }, $item["event"]["content"]);
-            }
-            return $item;
-        });
-    }
+    //     // dd($trending_images);
+    //     $pattern = '/https:\/\/[^\s]+(\.(mp4|webm|ogg|mov|jpg|jpeg|png|gif))?/i';
+
+    //     $trending_images->transform(function ($item) use ($pattern) {
+    //         if (isset($item["event"]["content"])) {
+    //             $item["event"]["content"] = preg_replace_callback($pattern, function ($matches) {
+    //                 $url = $matches[0];
+    //                 $extension = pathinfo($url, PATHINFO_EXTENSION);
+    //                 if (preg_match('/\.(jpg|jpeg|png|gif|webp)$/i', $url)) {
+    //                     return '<img src="' . $url . '">';
+    //                 } else if (in_array($extension, ['mp4', 'webm', 'ogg', 'mov'])) {
+    //                     return '<video width="600" height="405" controls><source src="' . $url . '" type="video/' . $extension . '">Your browser does not support the video tag.</video>';
+    //                 } else {
+    //                     return '<a href="' . $url . '" target="_blank">' . $url . '</a>';
+    //                 }
+    //             }, $item["event"]["content"]);
+    //         }
+    //         return $item;
+    //     });
+    // }
 
     public static function _getUrlMetadata($url) {
         $client = new Client();
@@ -136,35 +139,35 @@ class TrendingEventsManager
         $metadata["image"] = $crawler->filterXPath('//meta[@property="og:image"]')->attr('content') ?? '';
     }
 
-    public static function _processVideos(&$trending_videos)
-    {
-        $pattern = '/https:\/\/[^s]+\.(mp4|webm|ogg|mov)/i';
-        $trending_videos->transform(function ($item) use ($pattern) {
-            if (isset($item["event"]["content"])) {
-                $item["event"]["content"] = preg_replace_callback($pattern, function ($matches) {
-                    $url = $matches[0];
-                    $extension = pathinfo($url, PATHINFO_EXTENSION);
-                    if (in_array($extension, ['mp4', 'webm', 'ogg', 'mov'])) {
-                        return '<video width="420" height="340" controls><source src="' . $url . '" type="video/' . $extension . '">Your browser does not support the video tag.</video>';
-                    }
-                }, $item["event"]["content"]);
-            }
-            return $item;
-        });
-    }
+    // public static function _processVideos(&$trending_videos)
+    // {
+    //     $pattern = '/https:\/\/[^s]+\.(mp4|webm|ogg|mov)/i';
+    //     $trending_videos->transform(function ($item) use ($pattern) {
+    //         if (isset($item["event"]["content"])) {
+    //             $item["event"]["content"] = preg_replace_callback($pattern, function ($matches) {
+    //                 $url = $matches[0];
+    //                 $extension = pathinfo($url, PATHINFO_EXTENSION);
+    //                 if (in_array($extension, ['mp4', 'webm', 'ogg', 'mov'])) {
+    //                     return '<video width="420" height="340" controls><source src="' . $url . '" type="video/' . $extension . '">Your browser does not support the video tag.</video>';
+    //                 }
+    //             }, $item["event"]["content"]);
+    //         }
+    //         return $item;
+    //     });
+    // }
 
     public static function _processContent($trending_content)
     {
         $processor = new ContentProcessor();
         $new_processor = new NewContentProcessor();
 
-        self::_processImages($trending_content);
-        self::_processVideos($trending_content);
+        // self::_processImages($trending_content);
+        // self::_processVideos($trending_content);
         
         $formatted_content = $trending_content->transform(function ($note) use ($processor, $new_processor) {
             if (isset($note["event"]["content"])) {
-                $note["event"]["processed_content"] = $processor->processContent($note["event"]["content"]);
-                $new_processor->processContent($note["event"]["content"]);
+                // $note["event"]["processed_content"] = $processor->processContent($note["event"]["content"]);
+                $note["event"]["processed_content"] = $new_processor->processContent($note["event"]["content"]);
             }
             if (isset($note["author"])) {
                 $note["author"]["content"] = !is_array($note["author"]["content"]) ? json_decode($note["author"]["content"], true) : [];
