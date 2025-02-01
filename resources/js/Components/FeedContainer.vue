@@ -6,6 +6,7 @@
 import FeedPresenter from './FeedPresenter.vue';
 import { useNostrStore } from '@/stores/useNostrStore';
 import { useSearchStore } from '@/stores/useSearchStore';
+import { has } from 'lodash';
 import { computed, provide, ref } from 'vue';
 
 const nostrStore = useNostrStore();
@@ -19,9 +20,18 @@ const noteDate = (utcDate) => {
     return formattedDate[0];
 }
 
+const hasNip05 = (authorContent) => {
+    let hasNip = false;
+    if (authorContent?.nip05) {
+        hasNip = true;
+    }
+    return hasNip;
+}
+
 const hasDisplayName = (authorContent) => {
     let hasDisplay = false;
-    if (authorContent?.name || authorContent?.display_name) {
+    if (authorContent?.name || authorContent?.display_name || authorContent?.displayName) {
+        console.log('in has display name?')
         hasDisplay = true;
     }
     return hasDisplay;
@@ -29,10 +39,18 @@ const hasDisplayName = (authorContent) => {
 
 const setDisplayName = (authorContent) => {
     console.log('author content: ', authorContent)
-    return authorContent?.name || authorContent?.display_name || null;
+    if (authorContent?.display_name) {
+        return authorContent?.display_name
+    } else if (authorContent?.displayName) {
+        return authorContent?.displayName
+    } else if (authorContent?.name) {
+        return authorContent?.name;
+    } 
+    return authorContent?.name || authorContent?.display_name;
 }
 
 provide('hasDisplayName', hasDisplayName);
+provide('hasNip05', hasNip05);
 provide('feedNotes', feedNotes);
 provide('isSearchActive', isSearchActive);
 provide('noteDate', noteDate);
