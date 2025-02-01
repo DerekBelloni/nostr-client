@@ -19,10 +19,20 @@ const noteDate = (utcDate) => {
     return formattedDate[0];
 }
 
-const setDisplayName = (authorContent) => {
-    return authorContent?.name || authorContent?.display_name;
+const hasDisplayName = (authorContent) => {
+    let hasDisplay = false;
+    if (authorContent?.name || authorContent?.display_name) {
+        hasDisplay = true;
+    }
+    return hasDisplay;
 }
 
+const setDisplayName = (authorContent) => {
+    console.log('author content: ', authorContent)
+    return authorContent?.name || authorContent?.display_name || null;
+}
+
+provide('hasDisplayName', hasDisplayName);
 provide('feedNotes', feedNotes);
 provide('isSearchActive', isSearchActive);
 provide('noteDate', noteDate);

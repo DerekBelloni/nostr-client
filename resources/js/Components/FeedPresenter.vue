@@ -15,19 +15,42 @@
                     <div class="col-span-11 col-start-2">
                         <div class="flex justify-between">
                             <div class="mt-2">
-                                <template v-if="!isSearchActive">
+                                <template v-if="!isSearchActive">              
+                                    <span class="text-gray-700 font-semibold">{{note.author?.content.name}}</span>
+                                    <template v-if="note.author?.content.nip05">
+                                        <i class="pi pi-verified pl-1"></i>
+                                        <span class="text-amber-600 pl-1">{{note.author?.content.nip05}}</span>
+                                    </template>
+                                </template>
+                                <template v-else>
+                                    <template v-if="hasDisplayName(note.author?.content)">
+                                        <span class="text-gray-700 font-semibold">{{setDisplayName(note.author?.content)}}</span>
+                                    </template>
+                                </template>
+                                <template class="flex flex-row">
+                                        <span>{{setDisplayName(note.author?.content)}}</span>
+                                        <i class="pi pi-verified pl-1"></i>
+                                        <span class="text-gray-600 truncate italic">{{note.author?.content.pubkey || note.pubkey}}</span>
+                                </template>
+                                <!-- <template v-if="!isSearchActive">
                                     <span class="text-gray-700 font-semibold">{{note.author?.content.name}}</span>
                                 </template>
-                                <template>
+                                <template v-else>
                                     <span class="text-gray-700 font-semibold">{{setDisplayName(note.author?.content)}}</span>
                                 </template>
                                 <template v-if="note.author?.content.nip05">
                                     <i class="pi pi-verified pl-1"></i>
                                     <span class="text-amber-600 pl-1">{{note.author?.content.nip05}}</span>
                                 </template>
-                                <template v-else>
-                                    <span class="text-gray-600">{{note.author?.content.pubkey || note.pubkey}}</span>
-                                </template>
+                                <template v-else class="flex flex-row">
+                                    <template v-if="!_.isNull()">
+                                        <span>{{setDisplayName(note.author?.content)}}</span>
+                                        <i class="pi pi-verified pl-1"></i>
+                                    </template>
+                                    <template v-else class="flex flex-row">
+                                        <span class="text-gray-600 truncate italic">{{note.author?.content.pubkey || note.pubkey}}</span>
+                                    </template>
+                                </template> -->
                             </div>
                             <span class="text-xs font-medium text-gray-600">{{noteDate(note.event.utc_timestamp)}}</span>
                         </div>
@@ -70,6 +93,7 @@
 import { inject } from 'vue';
 import FeedSearch from './FeedSearch.vue';
 
+const hasDisplayName = inject('hasDisplayName');
 const feedNotes = inject('feedNotes');
 const isSearchActive = inject('isSearchActive');
 const noteDate = inject('noteDate');
