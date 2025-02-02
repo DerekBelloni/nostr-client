@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BechController;
 use App\Http\Controllers\NostrKeyController;
 use App\Http\Controllers\NotesController;
 use App\Http\Controllers\RabbitMQController;
@@ -35,6 +36,9 @@ Route::post('/redis/search-results', [RedisController::class, 'searchResults']);
 Route::post('/redis/user-metadata', [RedisController::class, 'userMetadata']);
 Route::post('/redis/user-notes', [RedisController::class, 'userNotes']);
 Route::post('/redis/clear-search-cache', [RedisController::class, 'delete']);
+
+// Bech32 Controller
+Route::post('/bech/parse-notes', [BechController::class, 'parseEventContent']);
 
 // Relay Metadata Controller
 Route::get('/relay-metadata', [RelayMetadataController::class, 'get']);
