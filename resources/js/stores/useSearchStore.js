@@ -7,6 +7,7 @@ export const useSearchStore = defineStore('search', () => {
     const searchKey = ref(null);
     const searchResults = ref([]);
     const trendingContent = ref([]);
+    const newContent = ref([]);
 
     const resetStore = () => {
         searchActive.value = false,
@@ -30,5 +31,5 @@ export const useSearchStore = defineStore('search', () => {
         searchActive.value = false;
     }
 
-return {addParsedEntites  ,addSearchResults, clearSearchResults, parsedEntities, resetStore, searchActive, searchKey, searchResults, trendingContent }
+return {addParsedEntites  ,addSearchResults, clearSearchResults, newContent, parsedEntities, resetStore, searchActive, searchKey, searchResults, trendingContent }
 });

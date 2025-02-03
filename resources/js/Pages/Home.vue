@@ -28,6 +28,7 @@ import axios from 'axios';
 import ProfileContainer from '@/Components/ProfileContainer.vue';
 import FeedContainer from '@/Components/FeedContainer.vue';
 import RelayContainer from '@/Components/RelayContainer.vue';
+import { ContentService } from '@/services/content/ContentService';
 
 const activeView = ref('');
 const eventSource = ref(null);
@@ -40,6 +41,7 @@ const trendingHashtags = ref([]);
 
 const nostrStore = useNostrStore();
 const searchStore = useSearchStore();
+const contentService = new ContentService();
 
 
 onBeforeUnmount(() => {
@@ -228,10 +230,19 @@ const retrieveTrendingContent = () => {
         .then((response) => {
             trendingContent.value = response.data.trending_content;
             parseBechContent(trendingContent.value);
-            searchStore.trendingContent = response.data.trending_content;
+            processContent(trendingContent.value);
+            // searchStore.trendingContent = response.data.trending_content;
             trendingHashtags.value = response.data.trending_hashtags.hashtags;
             nostrStore.trendingHashtags = trendingHashtags.value;
         })
+}
+
+const processContent = (trendingContent) => {
+    trendingContent.forEach((c) => {
+        c['blocks'] = contentService.processContent(c);
+        searchStore.trendingContent.push({...c});
+    });
+    console.log("search store new content: ", searchStore.newContent)
 }
 
 const setUserMetadata = () => {
