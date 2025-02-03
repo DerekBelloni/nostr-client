@@ -40,8 +40,29 @@
                     </div>
                 </div>
                 <div class="grid grid-cols-12">
-                    <div v-for="content in note.event.processed_content" class="col-span-11 col-start-2">
-                        <div v-if="content.type === 'video'" class="rounded">
+                    <div v-for="block in note.blocks" class="col-span-11 col-start-2">
+                        <div v-if="block.type === 'text'">
+                            <span>{{block.content}}</span>
+                        </div>
+                        <div v-if="block.type === 'newline'">
+                            <br/>
+                        </div>
+                        <div v-if="block.type === 'video'">
+                            <video class="rounded-video" width="600" height="405" controls>
+                                <source :src="block.url" type="video/mp4">
+                            </video>
+                        </div>
+                        <div v-if="block.type === 'hashtags'">
+                            <div class="flex flex-row"  v-for="content in block.content">
+                                <span class="text-amber-500 hover:text-amber-600 cursor-pointer">{{content}}</span>
+                            </div>
+                        </div>
+                        <div v-if="block.type === 'image'">
+                            <div class="text-wrap image-container">
+                                <img class="rounded responsive-image" :src="block.url" alt="">
+                            </div>
+                        </div>
+                        <!-- <div v-if="content.type === 'video'" class="rounded">
                             <div class="my-2">
                                 <video class="rounded-video" width="600" height="405" controls>
                                     <source :src="content.content" type="video/mp4">
@@ -57,7 +78,7 @@
                             <div class="text-wrap">
                                 <img class="rounded" :src="content.content" alt="">
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
                 <div class="grid grid-cols-12 mt-4 mb-2 mx-4">
@@ -104,8 +125,22 @@ const setDisplayName = inject('setDisplayName');
         padding: 10px;
        
     }
-    .feed-image {
-        
+
+    .image-container {
+        width: 100%;
+        max-width: 48rem;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+        aspect-ratio: 16/9;
+        border-radius: 0.5rem;
+        overflow: hidden;
+    }
+
+    .responsives-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 0.5rem;
     }
     .rounded-video {
         border-radius: 15px;
