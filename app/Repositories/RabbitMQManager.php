@@ -126,4 +126,9 @@ class RabbitMQManager
         $connection->close();
         return 'complete';
     }
+
+    public static function getEmbeddedEntities(Request $request)
+    {
+        
+    }
 }

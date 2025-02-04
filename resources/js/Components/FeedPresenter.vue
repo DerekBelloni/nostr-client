@@ -67,6 +67,11 @@
                                 <img class="rounded responsive-image" :src="block.url" alt="">
                             </div>
                         </div>
+                        <div v-if="block.type === 'nostr'">
+                            <div v-if="block.content.identifier === 'note'" class="border border-gray-200 rounded-lg">
+                                <span>@{{block.content.bech32}}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="grid grid-cols-12 mt-4 mb-2 mx-4">

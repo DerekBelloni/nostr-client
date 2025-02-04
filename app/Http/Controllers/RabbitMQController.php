@@ -21,4 +21,9 @@ class RabbitMQController extends Controller
     {
         return RabbitMQManager::getFollowNotes($request);
     }
+
+    public function getEmbeddedEntities(Request $request) 
+    {
+        return RabbitMQManager::getEmbeddedEntities($request);
+    }
 }

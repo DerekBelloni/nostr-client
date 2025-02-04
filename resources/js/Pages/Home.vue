@@ -229,12 +229,21 @@ const retrieveTrendingContent = () => {
     return axios.get('/trending-events')
         .then((response) => {
             trendingContent.value = response.data.trending_content;
-            parseBechContent(trendingContent.value);
+            parsedEntities = parseBechContent(trendingContent.value);
+            retrieveEmbeddedEntities(parsedEntities);
             processContent(trendingContent.value);
             // searchStore.trendingContent = response.data.trending_content;
             trendingHashtags.value = response.data.trending_hashtags.hashtags;
             nostrStore.trendingHashtags = trendingHashtags.value;
         })
+}
+
+const setEmbeddedEntityIds = () => {
+    
+}
+
+const retrieveEmbeddedEntities = () => {
+
 }
 
 const processContent = (trendingContent) => {

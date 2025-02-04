@@ -1,7 +1,6 @@
 // Main orchestrator
 export class ContentService {
     processContent(item) {
-        console.log('content: ', item);
         const blocks = [];
         const patternGlobal = /(\n+)|(\bhttps?:\/\/[^\s"]+?\.(?:mp4|webm|ogg|mov|jpg|jpeg|png|gif|webp)\b)|<.*?src="(https?:\/\/[^\s"]+?\.(?:mp4|webm|ogg|mov|jpg|jpeg|png|gif|webp))".*?>|(nostr:(?:[a-zA-Z0-9]+))|((?:[^\n])+?)(?=\n|https?:\/\/|$)/gi;
         
@@ -12,7 +11,6 @@ export class ContentService {
         // match[5] - plain text/hashtagss
 
         if (item.event?.content) {
-            
             const matches = [...item.event?.content.matchAll(patternGlobal)];
             
             for (const match of matches) {
@@ -35,9 +33,10 @@ export class ContentService {
                     });
                 }
                 if (match[4]?.trim()) {
+                    const content = match[4].trim();
                     blocks.push({
                         type: 'nostr',
-                        id: match[4].trim()
+                        content: this.processNostrEntities(content) 
                     });
                 }
                 if (match[5]?.trim()) {
@@ -49,10 +48,15 @@ export class ContentService {
                             type: 'hashtags',
                             content: this.processHashtags(content)
                         });
+                    } else if (type === 'nostr') {
+                        blocks.push({
+                            type: 'nostr',
+                            content: this.processNostrEntities(content)        
+                        });
                     } else {
                         blocks.push({
                             type: 'text',
-                            content: content        
+                            content: content
                         });
                     }
            
@@ -89,9 +93,16 @@ export class ContentService {
 
     contentType(content) {
         const hashtagRegex = /^(?:#[\w]+\s*)+$/;
+        const nostrRegex = /nostr:(?:npub|note|nprofile|nevent|naddr)[a-zA-Z0-9]{20,}(?![a-zA-Z0-9])/g;
+
         if (hashtagRegex.test(content)) {
             return 'hashtags';
         }
+
+        if (nostrRegex.test(content)) {
+            return 'nostr';
+        }
+
         return 'text';
     }
     
@@ -99,5 +110,27 @@ export class ContentService {
         const hashtagRegex = /#[\w]+/g;
         const matches = content.match(hashtagRegex);
         return matches || [];
+    }
+
+    processNostrEntities(content) {
+        const nostrRegex = /nostr:(?:npub|note|nprofile|nevent|naddr)[a-zA-Z0-9]{20,}(?![a-zA-Z0-9])/g;
+        const matches = content.match(nostrRegex);
+
+        const structuredEntity = {
+            bech32: null,
+            identifier: null
+        };
+
+        matches.forEach((match) => {
+            let parts = match.split(':');
+            structuredEntity.bech32 = parts[1];
+            structuredEntity.identifier = this.parseIdentifier(parts[1]);
+        })
+        return structuredEntity || [];
+    }
+
+    parseIdentifier(bech32) {
+        const match = bech32.match(/^(npub|note|nprofile|nevent|naddr)/);
+        return match ? match[1] : null;
     }
 }
