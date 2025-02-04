@@ -242,7 +242,6 @@ const processContent = (trendingContent) => {
         c['blocks'] = contentService.processContent(c);
         searchStore.trendingContent.push({...c});
     });
-    console.log("search store new content: ", searchStore.newContent)
 }
 
 const setUserMetadata = () => {

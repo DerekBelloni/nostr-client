@@ -45,7 +45,12 @@
                             <span>{{block.content}}</span>
                         </div>
                         <div v-if="block.type === 'newline'">
-                            <br/>
+                            <div v-if="block.count === 1">
+                                <br/>
+                            </div>
+                            <div v-else>
+                                <br/><br/>
+                            </div>
                         </div>
                         <div v-if="block.type === 'video'">
                             <video class="rounded-video" width="600" height="405" controls>
@@ -62,23 +67,6 @@
                                 <img class="rounded responsive-image" :src="block.url" alt="">
                             </div>
                         </div>
-                        <!-- <div v-if="content.type === 'video'" class="rounded">
-                            <div class="my-2">
-                                <video class="rounded-video" width="600" height="405" controls>
-                                    <source :src="content.content" type="video/mp4">
-                                </video>
-                            </div>
-                        </div>
-                        <div v-if="content.type === 'text' || content.type === 'link'" class="nostr-content">
-                            <div class="text-wrap break-words">
-                                <span class="font-medium" v-html="content.content"></span>
-                            </div>
-                        </div>
-                        <div v-if="content.type === 'image'" class="my-4">
-                            <div class="text-wrap">
-                                <img class="rounded" :src="content.content" alt="">
-                            </div>
-                        </div> -->
                     </div>
                 </div>
                 <div class="grid grid-cols-12 mt-4 mb-2 mx-4">

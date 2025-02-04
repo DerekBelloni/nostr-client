@@ -7,16 +7,15 @@ export class ContentService {
         
         // match[1] - new line
         // match[2] - media
-        // match[2] - direct urls
-        // match[3] - nsotr identifiers
-        // match[4] - plain text
+        // match[3] - direct urls
+        // match[4] - nostr identifiers
+        // match[5] - plain text/hashtagss
 
         if (item.event?.content) {
             
             const matches = [...item.event?.content.matchAll(patternGlobal)];
             
             for (const match of matches) {
-                console.log('matches: ', matches);
                 if (match[1]) {
                     blocks.push({
                         type: 'newline',
@@ -26,7 +25,6 @@ export class ContentService {
                 if (match[2]?.trim()) {
                     blocks.push({
                         type: this.mediaType(match[2]),
-                        // type: 'media',
                         url: match[2].trim()
                     });
                 }
@@ -61,16 +59,12 @@ export class ContentService {
                 }
             }
         }
-        // const parts = content.match(pattern);
-        console.log('content after processing: ', blocks);
         return blocks;
     }
 
     mediaType(url) {
         const extension = url.split('.').pop().toLowerCase();
-        console.log("extension: ", extension)
 
-        // Check for special platforms
         if (url.includes('youtube.com') || url.includes('youtu.be')) {
             return 'youtube';
         }
