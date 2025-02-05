@@ -19,12 +19,12 @@
     width: 2.5rem; 
     height: 2.5rem;
     border-radius: 50%; 
-    border: 2px solid rgba(55, 65, 81, 0.8); 
+    border: 2px solid rgb(255, 255, 255); 
     display: flex; 
     justify-content: center; 
     align-items: center; 
 }
 .icon-color {
-    color: rgba(55, 65, 81, 0.8);
+    color: rgba(251, 252, 255, 0.8);
 }
 </style>

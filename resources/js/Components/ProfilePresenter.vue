@@ -18,7 +18,7 @@
             <i class="pi pi-check text-emerald-500 pl-4 text-lg"></i>
         </div>
     <div class="pl-4 pt-4 space-x-2">
-            <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium cursor-pointer hover:bg-gray-300 shadow-lg" @click="switchTab('notes')">Notes</span>
+            <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium cursor-pointer hover:bg-gray-300 shadow-lg text-gray-100" @click="switchTab('notes')">Notes</span>
             <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium cursor-pointer hover:bg-gray-300 shadow-lg" @click="switchTab('reactions')">Reactions</span>
             <template v-if="userActive">
                 <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium cursor-pointer hover:bg-gray-300 shadow-lg" @click="switchTab('followers')">Followers</span>

@@ -7,7 +7,7 @@
             <ul class="ml-20 space-y-5">
                 <div v-for="item in sidebarItems">
                     <div class="hover:border-b-2 hover:border-amber-500 border-b-2 border-transparent hover:inline-flex">
-                        <li @click="setActiveView(item.text)" class="cursor-pointer font-semibold text-lg"><i :class="item.icon" class="mr-2"></i>{{item.text}}</li>
+                        <li @click="setActiveView(item.text)" class="cursor-pointer font-semibold text-lg text-white"><i :class="item.icon" class="mr-2"></i>{{item.text}}</li>
                     </div>
                 </div>
             </ul>
@@ -24,9 +24,9 @@
             </a>
         </div>
         <div class="mx-16" v-else-if="npub && nip05Verified">
-            <a @click="setActiveView('profile')" class="items-center space-x-2 cursor-pointer profile-container hover:bg-gray-200 hover:rounded-full hover:shadow-lg">
+            <a @click="setActiveView('profile')" class="items-center space-x-2 cursor-pointer profile-container  hover:rounded-full hover:shadow-lg">
                 <img :src="nostrStore.metadataContent.picture" class="profile-picture">
-                <span class="font-semibold">{{nostrStore.metadataContent.name}}</span>
+                <span class="font-semibold text-gray-100 hover:text-amber-400 hover:underline">{{nostrStore.metadataContent.name}}</span>
             </a>
         </div>
         <div class="mx-16">

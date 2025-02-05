@@ -2,7 +2,7 @@
     <FeedSearch/>
     <div class="notes-container">
         <ul>
-            <li v-for="note in feedNotes" :key="note.pubkey" class="flex flex-col border-b border-gray-300 py-2 px-2 my-1">
+            <li v-for="note in feedNotes" :key="note.pubkey" class="flex flex-col border-b border-gray-700 py-2 px-2 my-1">
                 <div class="grid grid-cols-12">
                     <div class="col-span-1">
                         <div v-if="note.author?.content.picture">
@@ -16,9 +16,9 @@
                         <div class="flex justify-between">
                             <div class="mt-2">
                                 <template v-if="!isSearchActive">              
-                                    <span class="text-gray-700 font-semibold">{{note.author?.content.name}}</span>
+                                    <span class="text-gray-700 font-semibold text-white">{{note.author?.content.name}}</span>
                                     <template v-if="note.author?.content.nip05">
-                                        <i class="pi pi-verified pl-1"></i>
+                                        <i class="pi pi-verified pl-1 text-amber-500"></i>
                                         <span class="text-amber-600 pl-1">{{note.author?.content.nip05}}</span>
                                     </template>
                                 </template>
@@ -30,7 +30,7 @@
                                             <span class="text-amber-600 pl-1">{{note.author?.content.nip05}}</span>
                                         </template>
                                         <template v-else class="block">
-                                            <span class="text-gray-600 truncate italic ml-2">{{note.author?.content.pubkey || note.pubkey}}</span>
+                                            <span class="text-gray-600 truncate italic ml-2 text-white">{{note.author?.content.pubkey || note.pubkey}}</span>
                                         </template>
                                     </template>
                                 </template>
@@ -42,18 +42,15 @@
                 <div class="grid grid-cols-12">
                     <div v-for="block in note.blocks" class="col-span-11 col-start-2">
                         <div v-if="block.type === 'text'">
-                            <span>{{block.content}}</span>
+                            <span class="text-white">{{block.content}}</span>
                         </div>
                         <div v-if="block.type === 'newline'">
-                            <div v-if="block.count === 1">
+                            <div v-if="block.count > 1">
                                 <br/>
-                            </div>
-                            <div v-else>
-                                <br/><br/>
                             </div>
                         </div>
                         <div v-if="block.type === 'video'">
-                            <video class="rounded-video" width="600" height="405" controls>
+                            <video class="rounded-video"  controls>
                                 <source :src="block.url" type="video/mp4">
                             </video>
                         </div>
@@ -63,7 +60,7 @@
                             </div>
                         </div>
                         <div v-if="block.type === 'image'">
-                            <div class="text-wrap image-container">
+                            <div class="text-wrap image-container flex justify-center border border-gray-100">
                                 <img class="rounded responsive-image" :src="block.url" alt="">
                             </div>
                         </div>
@@ -121,19 +118,30 @@ const setDisplayName = inject('setDisplayName');
 
     .image-container {
         width: 100%;
-        max-width: 48rem;
-        padding-top: 1rem;
-        padding-bottom: 1rem;
-        aspect-ratio: 16/9;
-        border-radius: 0.5rem;
+        max-width: 100%;
+        height: auto;
+        margin: 1rem 0;
+        position: relative;
         overflow: hidden;
     }
-
-    .responsives-image {
+    
+    .responsive-image {
         width: 100%;
-        height: 100%;
-        object-fit: cover;
+        height: auto;
+        max-height: 100vh;
+        margin: 1rem auto;  /* Changed from 1rem 0 to auto for horizontal centering */
+        object-fit: contain;
         border-radius: 0.5rem;
+        display: block;
+        display: flex;     /* Added flex display */
+        justify-content: center; /* Center horizontally */
+        align-items: center;  
+    }
+    
+    @media (min-width: 48rem) {
+        .image-container {
+            max-width: 75%;
+        }
     }
     .rounded-video {
         border-radius: 15px;
