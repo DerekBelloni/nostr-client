@@ -14,15 +14,15 @@
             </div>
         </div>
         <div class="px-6 username-container">
-            <span class="text-3xl font-semibold text-gray-700">{{activeMetadata.display_name}}</span>
+            <span class="text-3xl font-semibold text-gray-100">{{activeMetadata.display_name}}</span>
             <i class="pi pi-check text-emerald-500 pl-4 text-lg"></i>
         </div>
     <div class="pl-4 pt-4 space-x-2">
-            <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium cursor-pointer hover:bg-gray-300 shadow-lg text-gray-100" @click="switchTab('notes')">Notes</span>
-            <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium cursor-pointer hover:bg-gray-300 shadow-lg" @click="switchTab('reactions')">Reactions</span>
+            <span class="inline-block rounded-full bg-gray-600 px-4 py-1 font-medium cursor-pointer hover:bg-gray-300 shadow-lg text-gray-100" @click="switchTab('notes')">Notes</span>
+            <span class="inline-block rounded-full bg-gray-600 px-4 py-1 font-medium cursor-pointer hover:bg-gray-300 shadow-lg text-gray-100" @click="switchTab('reactions')">Reactions</span>
             <template v-if="userActive">
-                <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium cursor-pointer hover:bg-gray-300 shadow-lg" @click="switchTab('followers')">Followers</span>
-                <span class="inline-block rounded-full bg-gray-200 px-4 py-1 font-medium cursor-pointer hover:bg-gray-300 shadow-lg" @click="switchTab('followed')">Followed</span>
+                <span class="inline-block rounded-full bg-gray-600 px-4 py-1 font-medium cursor-pointer hover:bg-gray-300 shadow-lg text-gray-100" @click="switchTab('followers')">Followers</span>
+                <span class="inline-block rounded-full bg-gray-600 px-4 py-1 font-medium cursor-pointer hover:bg-gray-300 shadow-lg text-gray-100" @click="switchTab('followed')">Followed</span>
             </template>
         </div>
         <div class="mt-4 overflow-y-auto">
@@ -72,7 +72,7 @@ const userActive = inject('userActive');
         border-radius: 50%;
         transform: translateY(-64px); 
         object-fit: cover; 
-        border: 2px solid white; 
+        border: 2px solid rgb(66, 65, 65); 
     }
     .edit-button {
         margin-top: -32px;

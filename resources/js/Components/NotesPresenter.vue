@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="divide-y divide-gray-300 border-t border-gray-300 overflow-auto">
+        <div class="divide-y divide-gray-700 border-t border-gray-700 overflow-auto">
             <div v-for="note in profileNotes">
                 <div class="grid grid-cols-12 space-y-4">
                     <div class="col-span-12 mt-2 ml-2">
@@ -19,7 +19,7 @@
                         </div>
                         <div v-if="content.type === 'text' || content.type === 'link'" class="nostr-content">
                             <div class="text-wrap break-words">
-                                <span class="font-medium" v-html="content.content"></span>
+                                <span class="font-medium text-gray-100" v-html="content.content"></span>
                             </div>
                         </div>
                         <div v-if="content.type === 'image'" class="my-4">
@@ -29,8 +29,8 @@
                         </div>
                     </div>
                     <div class="col-span-12 flex space-x-12 ml-2 pb-4">
-                        <i class="pi pi-comment text-gray-500 hover:text-emerald-500 cursor-pointer" style="font-size: 1.1rem"></i>
-                        <i class="pi pi-heart text-gray-500 hover:text-red-500 cursor-pointer" style="font-size: 1.1rem"></i>
+                        <i class="pi pi-comment text-gray-200 hover:text-emerald-500 cursor-pointer" style="font-size: 1.1rem"></i>
+                        <i class="pi pi-heart text-gray-200 hover:text-red-500 cursor-pointer" style="font-size: 1.1rem"></i>
                     </div>
                 </div>
             </div>

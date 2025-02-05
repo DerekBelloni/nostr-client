@@ -1,6 +1,6 @@
 <template>
     <div v-for="follow in profileFollowsList">
-        <div @click="setActiveFollow(follow)" class="flex flex-row cursor-pointer w-full pt-2 hover:bg-gray-100">
+        <div @click="setActiveFollow(follow)" class="flex flex-row cursor-pointer w-full pt-2 hover:bg-gray-700">
             <div class="profile-picture-container ml-4 flex-shrink-0">
                 <!-- <img v-if="follow.picture" class="profile-picture" :src="follow.picture" alt="" @error="handleImageError" @load="handleImageLoad"> -->
                 <img v-if="follow.picture" class="profile-picture" :src="follow.picture" alt="">
