@@ -60,7 +60,7 @@
                             </div>
                         </div>
                         <div v-if="block.type === 'image'">
-                            <div class="text-wrap image-container flex justify-center border border-gray-100">
+                            <div class="text-wrap image-container flex justify-center border border-gray-700 rounded">
                                 <img class="rounded responsive-image" :src="block.url" alt="">
                             </div>
                         </div>
@@ -125,19 +125,7 @@ const setDisplayName = inject('setDisplayName');
         overflow: hidden;
     }
     
-    .responsive-image {
-        width: 100%;
-        height: auto;
-        max-height: 100vh;
-        margin: 1rem auto;  /* Changed from 1rem 0 to auto for horizontal centering */
-        object-fit: contain;
-        border-radius: 0.5rem;
-        display: block;
-        display: flex;     /* Added flex display */
-        justify-content: center; /* Center horizontally */
-        align-items: center;  
-    }
-    
+
     @media (min-width: 48rem) {
         .image-container {
             max-width: 75%;

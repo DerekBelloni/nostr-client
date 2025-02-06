@@ -1,14 +1,14 @@
 <template>
     <div class="mt-12 m-4">
-        <span class="font-semibold text-gray-100 text-md">Trending Hashtags</span>
+        <span class="font-semibold text-gray-200 text-md">Trending Hashtags</span>
         <div>
             <ul v-for="hashTag in props.trendingHashtags">
                 <li class="ml-2">
                     <div class="flex flex-row items-center">
                         <div v-if="!startsWithHashtag(hashTag.hashtag)">
-                            <span class="font-semibold text-gray-100 text-lg cursor-pointer hover:text-amber-500">#</span>
+                            <span class="font-semibold text-gray-200 text-lg cursor-pointer hover:text-amber-500">#</span>
                         </div>
-                        <span @click="selectTag(hashTag.hashtag)" class="text-gray-100 font-semibold cursor-pointer hover:text-amber-500">{{hashTag.hashtag}}</span>
+                        <span @click="selectTag(hashTag.hashtag)" class="text-gray-200 font-semibold cursor-pointer hover:text-amber-500">{{hashTag.hashtag}}</span>
                     </div>
                 </li>
             </ul>

@@ -93,7 +93,7 @@ export class ContentService {
 
     contentType(content) {
         const hashtagRegex = /^(?:#[\w]+\s*)+$/;
-        const nostrRegex = /nostr:(?:npub|note|nprofile|nevent|naddr)[a-zA-Z0-9]{20,}(?![a-zA-Z0-9])/g;
+        const nostrRegex = /nostr:(?:npub|note|nprofile|nevent|naddr|nrelay)[a-zA-Z0-9]{20,}(?![a-zA-Z0-9])/g;
 
         if (hashtagRegex.test(content)) {
             return 'hashtags';
@@ -113,7 +113,7 @@ export class ContentService {
     }
 
     processNostrEntities(content) {
-        const nostrRegex = /nostr:(?:npub|note|nprofile|nevent|naddr)[a-zA-Z0-9]{20,}(?![a-zA-Z0-9])/g;
+        const nostrRegex = /nostr:(?:npub|note|nprofile|nevent|naddr|nrelay)[a-zA-Z0-9]{20,}(?![a-zA-Z0-9])/g;
         const matches = content.match(nostrRegex);
 
         const structuredEntity = {

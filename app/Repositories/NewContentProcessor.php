@@ -47,7 +47,7 @@ class NewContentProcessor
 
         if ($identifier == 'npub' || $identifier == 'nsec' || $identifier == 'note') {
             $decodeType = 'bareEncoding';
-        } else if ($identifier == 'nprofile' || $identifier == 'naddr' || $identifier == 'nrealy' || $identifier == 'nrevent') {
+        } else if ($identifier == 'nprofile' || $identifier == 'naddr' || $identifier == 'nrelay' || $identifier == 'nevent') {
             $decodeType = 'extended';
         }
 

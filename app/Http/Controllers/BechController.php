@@ -10,7 +10,6 @@ class BechController extends Controller
     public static function parseEventContent(Request $request)
     {
         $content_processor = new NewContentProcessor();
-        // dd($request->all());
         $trending_content = $request->input('trendingContent');
 
         $parsed_entities = [];

@@ -1,7 +1,7 @@
 <template>
     <div class="flex h-screen overflow-hidden bg-black">
-        <Sidebar class="sidebar  border-r border-gray-700" @setActiveView="setActiveView" :mq-verified="mqVerified"></Sidebar>
-        <div class="center-feature border-r">
+        <Sidebar class="sidebar border-r border-gray-700" @setActiveView="setActiveView" :mq-verified="mqVerified"></Sidebar>
+        <div class="center-feature border-r border-gray-700">
             <FeedContainer v-if="activeView == 'Home'" :trendingContent="trendingContent"></FeedContainer>
             <Account v-if="activeView == 'account'"></Account>
             <ProfileContainer v-if="activeView == 'profile'"></ProfileContainer>
