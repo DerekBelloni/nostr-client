@@ -28,5 +28,7 @@ class BechController extends Controller
     public static function retrieveEmbeddedEntities(Request $request)
     {
         dd($request->all());
+        // I want to call to somewhere that will be responsible for determining which type each nostr entity is
+        // Then I will want to call the appropriate queue
     }
 }
