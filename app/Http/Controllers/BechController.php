@@ -24,4 +24,9 @@ class BechController extends Controller
 
         return $parsed_entities;
     }
+
+    public static function retrieveEmbeddedEntities(Request $request)
+    {
+        dd($request->all());
+    }
 }

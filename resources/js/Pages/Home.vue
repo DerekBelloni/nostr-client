@@ -98,12 +98,8 @@ const listenForAuthorMetadata = () => {
     echo.channel('author_metadata')
         .listen('.author_metadata_set', (event) => {
             let searchKey = null;
-            console.log("event author: ", event);
-            console.log("user pubkey from event: ", event.user_pubkey);
-            console.log("search key: ", searchStore.searchKey);
             if (nostrStore.userActive && searchStore.searchKey == event.user_pubkey) {
                 searchKey = event.user_pubkey;
-                console.log('search key inside if: ', searchKey);
             } else if (event.uuid === nostrStore.searchUUID) {
                  searchKey = event.uuid;
             }
@@ -232,7 +228,6 @@ const retrieveTrendingContent = () => {
             parsedEntities = parseBechContent(trendingContent.value);
             retrieveEmbeddedEntities(parsedEntities);
             processContent(trendingContent.value);
-            // searchStore.trendingContent = response.data.trending_content;
             trendingHashtags.value = response.data.trending_hashtags.hashtags;
             nostrStore.trendingHashtags = trendingHashtags.value;
         })
@@ -242,8 +237,8 @@ const setEmbeddedEntityIds = () => {
 
 }
 
-const retrieveEmbeddedEntities = () => {
-
+const retrieveEmbeddedEntities = (parsedEntities) => {
+    return axios.get()
 }
 
 const processContent = (trendingContent) => {
