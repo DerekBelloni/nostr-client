@@ -138,4 +138,9 @@ class RedisManager
 
         return $formatted_results;
     }
+
+    public function cacheEmbeddedEntityDirectory($entity)
+    {
+        dd($entity);
+    }
 }
