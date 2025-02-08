@@ -215,8 +215,10 @@ const retrieveUserMetadata = () => {
 const parseBechContent = (trendingContent) => {
     return axios.post('/bech/parse-notes', {trendingContent: trendingContent})
         .then((response) => {
-            console.log('parsed entity response: ', response);
             searchStore.addParsedEntites(response.data);
+        })
+        .finally((response) => {
+            retrieveEmbeddedEntities()
         })
 }
 
@@ -225,8 +227,7 @@ const retrieveTrendingContent = () => {
     return axios.get('/trending-events')
         .then((response) => {
             trendingContent.value = response.data.trending_content;
-            parsedEntities = parseBechContent(trendingContent.value);
-            retrieveEmbeddedEntities(parsedEntities);
+            parseBechContent(trendingContent.value);
             processContent(trendingContent.value);
             trendingHashtags.value = response.data.trending_hashtags.hashtags;
             nostrStore.trendingHashtags = trendingHashtags.value;
@@ -237,8 +238,13 @@ const setEmbeddedEntityIds = () => {
 
 }
 
-const retrieveEmbeddedEntities = (parsedEntities) => {
-    return axios.get()
+const retrieveEmbeddedEntities = () => {
+    const entityUUID = crypto.randomUUID();
+    searchStore.entityUUID = entityUUID;
+    return axios.post('/bech/retrieve-entities', {entityUUID: entityUUID, entities: searchStore.parsedEntities})
+        .then((response) => {
+            console.log('banana')
+        })
 }
 
 const processContent = (trendingContent) => {

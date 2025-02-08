@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import { ref } from 'vue';
 
 export const useSearchStore = defineStore('search', () => {
+    const entityUUID = ref("");
     const parsedEntities = ref([]);
     const searchActive = ref(false);
     const searchKey = ref(null);
@@ -31,5 +32,5 @@ export const useSearchStore = defineStore('search', () => {
         searchActive.value = false;
     }
 
-return {addParsedEntites  ,addSearchResults, clearSearchResults, newContent, parsedEntities, resetStore, searchActive, searchKey, searchResults, trendingContent }
+return { addParsedEntites, addSearchResults, clearSearchResults, entityUUID, newContent, parsedEntities, resetStore, searchActive, searchKey, searchResults, trendingContent }
 });
