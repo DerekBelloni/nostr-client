@@ -139,8 +139,19 @@ class RedisManager
         return $formatted_results;
     }
 
-    public function cacheEmbeddedEntityDirectory($entity)
+    public function cacheEmbeddedEntityDirectory($entity, $uuid)
     {
-        dd($entity);
+        $restructured_entity = [
+            $entity['identifier'] => [
+                'hex' => $entity['hex'],
+                'id' => $entity['id']
+            ]
+        ];
+
+        $redis_nostr_entity_key = "nostr_entity:{$uuid}";
+
+        if (!Redis::exists($redis_nostr_entity_key)) {
+            Redis::set($redis_nostr_entity_key, json_encode($restructured_entity));
+        }
     }
 }

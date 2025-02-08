@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Repositories\ContentFormatter;
 use App\Repositories\ContentProcessor;
 use App\Repositories\NewContentProcessor;
+use App\Repositories\RabbitMQManager;
 use App\Repositories\RedisManager;
 use Illuminate\Http\Request;
 
@@ -46,7 +47,8 @@ class BechController extends Controller
 
         switch($entity["identifier"]) {
             case 'note':
-                $redis_manager->cacheEmbeddedEntityDirectory($entity);
+                $redis_manager->cacheEmbeddedEntityDirectory($entity, $entity_uuid);
+                // RabbitMQManager::getEmbeddedEntities($entity);
                 return 'groovy!';
             default: 
                 return 'biscuits!';

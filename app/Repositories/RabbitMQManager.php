@@ -129,6 +129,7 @@ class RabbitMQManager
 
     public static function getEmbeddedEntities(Request $request)
     {
-        dd($reuuest);
+        dd($request->all());
+        
     }
 }
