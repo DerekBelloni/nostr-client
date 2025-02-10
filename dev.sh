@@ -1,111 +1,116 @@
 #!/bin/bash
 
 # Store all process IDs in a temp file for tracking
-PID_FILE="/tmp/dev-environment-pids.txt"
+PID_FILE="/tmp/php-environment-pids.txt"
 
 GREEN='\033[0;32m'
 RED='\033[0;31m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-# Function to check if VS Code command line tools are installed
-check_vscode_cli() {
-    if ! command -v code &> /dev/null; then
-        echo -e "${YELLOW}VS Code command line tools not found${NC}"
-        echo "To install:"
-        echo "1. Open VS Code"
-        echo "2. Open Command Palette (Cmd+Shift+P)"
-        echo "3. Type 'shell command'"
-        echo "4. Select 'Shell Command: Install 'code' command in PATH'"
-        echo "5. Restart your terminal"
-        return 1
+# Function to create a new tmux window and run commands in split panes
+create_tmux_window() {
+    local window_name="$1"
+    shift  # Remove first argument (window_name) from arguments list
+    local commands=("$@")  # Remaining arguments are commands
+    local num_commands=${#commands[@]}
+
+    # Create new window
+    tmux new-window -n "$window_name"
+
+    # For each command except the last one, create a split and run the command
+    for ((i = 0; i < num_commands - 1; i++)); do
+        if [ $i -eq 0 ]; then
+            # First command goes in the original pane
+            tmux send-keys "${commands[$i]}" C-m
+        else
+            # Split vertically and run command
+            tmux split-window -v
+            tmux send-keys "${commands[$i]}" C-m
+        fi
+    done
+
+    # Run last command in the last pane
+    if [ $num_commands -gt 1 ]; then
+        tmux split-window -v
+        tmux send-keys "${commands[$((num_commands-1))]}" C-m
     fi
-    return 0
-}
 
-# Function to check if VS Code is running with our Go project
-is_vscode_running() {
-    ps aux | grep "code" | grep "go-socket-server" >/dev/null
-    return $?
-}
-
-
-
-# Function to check if VS Code is running with our Go project
-is_vscode_running() {
-    ps aux | grep "code" | grep "go-socket-server" >/dev/null
-    return $?
+    # Arrange panes evenly
+    tmux select-layout even-vertical
 }
 
 case "$1" in
     "start")
         # Clear any existing PID file
         rm -f $PID_FILE
-        
-        echo "Starting development environment..."
-        
-        # Store original directory
-        ORIGINAL_DIR=$(pwd)
 
-        # Check for process using RabbitMQ port and kill it if found
-        RABBIT_PORT_PID=$(lsof -ti:25672)
-        if [ ! -z "$RABBIT_PORT_PID" ]; then
-            echo "Found process using port 25672, killing it..."
-            kill -9 $RABBIT_PORT_PID
-        fi
+        echo "Starting PHP development environment..."
 
-        # Start RabbitMQ server
-        echo "Starting RabbitMQ server..."
-        rabbitmq-server & 
-        RABBIT_PID=$!
-        echo $RABBIT_PID >> $PID_FILE
-        
-        # Give RabbitMQ time to start up
-        sleep 5
-        
-        # Start each service and store its PID
+        # Start the main PHP server
+        echo "Starting PHP server..."
         php artisan serve & echo $! >> $PID_FILE
-        php artisan reverb:start & echo $! >> $PID_FILE
-        php artisan rabbitmq:listen-metadata & echo $! >> $PID_FILE
-        php artisan rabbitmq:user-notes & echo $! >> $PID_FILE
-        php artisan rabbitmq:follow-list & echo $! >> $PID_FILE
-        npm run dev & echo $! >> $PID_FILE
-        
-        # Start Go server
-        echo "Starting GO socket server..."
-        GO_DIR=~/Developer/Personal/GO/go-socket-server
-        cd "$GO_DIR"
-        if [ $? -eq 0 ]; then
-            # First build the Go server and check for errors
-            echo "Building Go server..."
-            go build cmd/server/main.go
-            if [ $? -eq 0 ]; then
-                echo -e "${GREEN}Build successful${NC}"
-                
-                # Launch WezTerm with the Go server command directly
-                "/Applications/WezTerm.app/Contents/MacOS/wezterm" start --cwd "$GO_DIR" -- zsh -c "clear && echo 'Go Server Output:' && go run cmd/server/main.go" &
-                WEZTERM_PID=$!
-                echo $WEZTERM_PID >> $PID_FILE
 
-            else
-                echo -e "${RED}Build failed${NC}"
-                exit 1
-            fi
-            
-            echo -e "${GREEN}Go socket server started${NC}"
-        else 
-            echo -e "${RED}Error: Could not change to Go application directory${NC}"
+        # Start Reverb
+        echo "Starting Reverb..."
+        php artisan reverb:start & echo $! >> $PID_FILE
+
+        # Start npm
+        echo "Starting npm..."
+        npm run dev & echo $! >> $PID_FILE
+
+        # Define all RabbitMQ listener commands
+        declare -a window1_commands=(
+            "php artisan rabbitmq:listen-metadata"
+            "php artisan rabbitmq:user-notes"
+            "php artisan rabbitmq:follow-list"
+        )
+
+        declare -a window2_commands=(
+            "php artisan rabbitmq:follows-metadata"
+            "php artisan rabbitmq:search-results"
+            "php artisan rabbitmq:author-metadata"
+        )
+
+        # Create two tmux windows with the listeners split evenly
+        create_tmux_window "rabbitmq-1" "${window1_commands[@]}"
+        create_tmux_window "rabbitmq-2" "${window2_commands[@]}"
+
+        # Handle Go server and editor
+        echo "Setting up Go development environment..."
+        GO_DIR=~/Developer/Personal/GO/go-socket-server
+        if [ -d "$GO_DIR" ]; then
+            # Create a window for Neovim
+            tmux new-window -n "go-editor"
+            tmux send-keys "cd $GO_DIR" C-m
+            tmux send-keys "nvim ." C-m
+
+            # Create a new window for Go server output
+            tmux new-window -n "go-server"
+            tmux send-keys "cd $GO_DIR" C-m
+
+            # First build the Go server
+            echo "Building Go server..."
+            tmux send-keys "go build cmd/server/main.go" C-m
+
+            # Give it a moment to build
+            sleep 2
+
+            # Run the server
+            tmux send-keys "go run cmd/server/main.go" C-m
+
+            echo -e "${GREEN}Go development environment started${NC}"
+        else
+            echo -e "${RED}Error: Go application directory not found at $GO_DIR${NC}"
             exit 1
         fi
 
-        # Return to original directory
-        cd $ORIGINAL_DIR
         echo -e "${GREEN}All services started!${NC}"
         ;;
-    
+
     "stop")
         echo "Stopping development environment..."
-        
+
         # Read and kill each stored PID
         if [ -f "$PID_FILE" ]; then
             while read -r pid; do
@@ -113,12 +118,17 @@ case "$1" in
                 pkill -P $pid 2>/dev/null || true
             done < "$PID_FILE"
             rm -f "$PID_FILE"
-            echo -e "${GREEN}All services stopped${NC}"
+            echo -e "${GREEN}Main services stopped${NC}"
         else
-            echo -e "${RED}No PID file found. Services may not be running.${NC}"
+            echo -e "${YELLOW}No PID file found. Main services may not be running.${NC}"
         fi
+
+        # Kill any remaining PHP artisan processes
+        echo "Stopping RabbitMQ listeners..."
+        pkill -f "php artisan rabbitmq:" 2>/dev/null || true
+        echo -e "${GREEN}RabbitMQ listeners stopped${NC}"
         ;;
-    
+
     *)
         echo "Usage: $0 {start|stop}"
         exit 1
