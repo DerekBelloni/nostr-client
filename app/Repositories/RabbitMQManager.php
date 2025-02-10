@@ -127,9 +127,19 @@ class RabbitMQManager
         return 'complete';
     }
 
-    public static function getEmbeddedEntities(Request $request)
+    public static function getEmbeddedEntities($entity, $entity_uuid)
     {
-        dd($request->all());
+        // dd($entity);
+        $entity['uuid'] = $entity_uuid;
+        $connection = new AMQPStreamConnection('localhost', 5672, 'guest', 'guest');
+        $channel = $connection->channel();
+        $channel->queue_declare('nostr_entity', false, false, false, false,);
         
+        $message = new AMQPMessage(json_encode($entity));
+        $channel->basic_publish($message, '', 'nostr_entity');
+        echo('banana');
+        $channel->close();
+        $connection->close();
+        return 'complete';
     }
 }

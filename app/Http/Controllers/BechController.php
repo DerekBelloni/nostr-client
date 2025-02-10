@@ -44,20 +44,20 @@ class BechController extends Controller
         // dd($entities);
         // I want to call to somewhere that will be responsible for determining which type each nostr entity is
         $entity = $entities[0];
+        // dd($entity);
 
         switch($entity["identifier"]) {
             case 'note':
                 $redis_manager->cacheEmbeddedEntityDirectory($entity, $entity_uuid);
-                // RabbitMQManager::getEmbeddedEntities($entity);
+                RabbitMQManager::getEmbeddedEntities($entity, $entity_uuid);
                 return 'groovy!';
+            case 'nprofile':
+                $redis_manager->cacheEmbeddedEntityDirectory($entity, $entity_uuid);
+                RabbitMQManager::getEmbeddedEntities($entity, $entity_uuid);
+                return 'cosmic stardust!';
             default: 
                 return 'biscuits!';
         }
         // Then I will want to call the appropriate queue
-    }
-
-    private static function entityParser($entity_uuid, $entity)
-    {
-
     }
 }
