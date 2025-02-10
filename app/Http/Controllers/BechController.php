@@ -36,17 +36,15 @@ class BechController extends Controller
         $old_content_processor = new ContentProcessor();
         $content_formatter = new ContentFormatter($old_content_processor);
         $redis_manager = new RedisManager($content_formatter);
-        // .....this is annoying
 
         $entity_uuid = $request->input('entityUUID');
         $entities = $request->input('entities');
 
-        // dd($entities);
         // I want to call to somewhere that will be responsible for determining which type each nostr entity is
         $entity = $entities[0];
         // dd($entity);
 
-        switch($entity["identifier"]) {
+        switch($entity["type"]) {
             case 'note':
                 $redis_manager->cacheEmbeddedEntityDirectory($entity, $entity_uuid);
                 RabbitMQManager::getEmbeddedEntities($entity, $entity_uuid);

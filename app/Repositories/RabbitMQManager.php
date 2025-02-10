@@ -129,7 +129,6 @@ class RabbitMQManager
 
     public static function getEmbeddedEntities($entity, $entity_uuid)
     {
-        // dd($entity);
         $entity['uuid'] = $entity_uuid;
         $connection = new AMQPStreamConnection('localhost', 5672, 'guest', 'guest');
         $channel = $connection->channel();
@@ -137,7 +136,7 @@ class RabbitMQManager
         
         $message = new AMQPMessage(json_encode($entity));
         $channel->basic_publish($message, '', 'nostr_entity');
-        echo('banana');
+
         $channel->close();
         $connection->close();
         return 'complete';
