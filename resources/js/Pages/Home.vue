@@ -169,10 +169,10 @@ const retrieveSearchCache = (searchKey) => {
 
 const retrieveSearchResults = (search) => {
     let searchUUID = null;
-    
+
     searchUUID = crypto.randomUUID();
     nostrStore.searchUUID = searchUUID;
-   
+
     return axios.post('/rabbit-mq/search-results', {search: search, publicKeyHex: nostrStore.hexPub, searchUUID: searchUUID});
 }
 
@@ -185,7 +185,7 @@ const retrieveFollowsNotes = (followsPubkey) => {
         .then((response) => {
             nostrStore.setActiveProfileNotes(response.data, true);
         });
-}   
+}
 
 const retrieveSetFollowsMetadata = () => {
     return axios.post('/redis/follows-metadata', {publicKeyHex: nostrStore.hexPub})
@@ -241,6 +241,7 @@ const setEmbeddedEntityIds = () => {
 const retrieveEmbeddedEntities = () => {
     const entityUUID = crypto.randomUUID();
     searchStore.entityUUID = entityUUID;
+    console.log("test");
     return axios.post('/bech/retrieve-entities', {entityUUID: entityUUID, entities: searchStore.parsedEntities})
         .then((response) => {
             console.log('banana')

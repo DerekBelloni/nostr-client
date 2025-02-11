@@ -8,7 +8,7 @@ use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 use Illuminate\Support\Str;
 
-class RabbitMQManager 
+class RabbitMQManager
 {
     public static function userMetadataQueue(Request $request)
     {
@@ -20,10 +20,10 @@ class RabbitMQManager
             $uuid = Str::uuid();
             $pub_key_UUID = $pub_hex_key . ':' . $uuid;
             $channel->queue_declare('user_pub_key', false, false, false, false);
-    
+
             $message = new AMQPMessage($pub_key_UUID);
             $channel->basic_publish($message, '', 'user_pub_key');
-            
+
             $channel->close();
             $connection->close();
             Log::info("fired metadata event, pubkey:", [$pub_hex_key]);
@@ -33,7 +33,7 @@ class RabbitMQManager
         }
     }
 
-    public static function followMetadataQueue(Request $request) 
+    public static function followMetadataQueue(Request $request)
     {
         $pub_key_hex = $request->input('publicKeyHex');
         $uuid = Str::uuid();
@@ -45,7 +45,7 @@ class RabbitMQManager
 
         $message = new AMQPMessage($pub_key_UUID);
         $channel->basic_publish($message, '', 'follow_list_metadata');
-     
+
         $channel->close();
         $connection->close();
         return 'complete';
@@ -105,7 +105,7 @@ class RabbitMQManager
        return 'complete';
     }
 
-    public static function searchResults(Request $request) 
+    public static function searchResults(Request $request)
     {
         $search = $request->input('search');
         $pub_hex_key = $request->input('publicKeyHex');
@@ -114,7 +114,7 @@ class RabbitMQManager
         $search_uuid = $search . ':' . $uuid;
 
         if (!is_null($pub_hex_key)) $search_uuid .= ":{$pub_hex_key}";
-   
+
         $connection = new AMQPStreamConnection('localhost', 5672, 'guest', 'guest');
         $channel = $connection->channel();
         $channel->queue_declare('search', false, false, false, false,);
@@ -130,10 +130,11 @@ class RabbitMQManager
     public static function getEmbeddedEntities($entity, $entity_uuid)
     {
         $entity['uuid'] = $entity_uuid;
+        dd($entity_uuid);
         $connection = new AMQPStreamConnection('localhost', 5672, 'guest', 'guest');
         $channel = $connection->channel();
         $channel->queue_declare('nostr_entity', false, false, false, false,);
-        
+
         $message = new AMQPMessage(json_encode($entity));
         $channel->basic_publish($message, '', 'nostr_entity');
 
