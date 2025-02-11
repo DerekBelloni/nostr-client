@@ -61,6 +61,7 @@ onMounted(() => {
 });
 
 watch(metadataContent, async(newValue, oldValue) => {
+    console.log("banana")
     if (newValue && !oldValue) {
         verifyNIP05();
     }
