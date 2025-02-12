@@ -56,7 +56,7 @@ class NewContentProcessor
         switch ($decodeType) {
             case 'bareEncoding':
                 $hex = $key->convertToHex($bech32Key, $key);
-                $entity = [ 'hex' => $hex, 'identifier' => $identifier];
+                $entity = [ 'nostr_entity' => $hex, 'type' => $identifier];
                 return $entity;
             case 'extended':
                 $binary = self::decodeToBase32($bech32Key, $key);

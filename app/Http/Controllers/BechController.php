@@ -41,21 +41,29 @@ class BechController extends Controller
         $entities = $request->input('entities');
 
         // I want to call to somewhere that will be responsible for determining which type each nostr entity is
-        $entity = $entities[0];
+        // dd($entities);
+        $entity = $entities[10];
         // dd($entity);
 
-        switch($entity["type"]) {
-            case 'note':
-                $redis_manager->cacheEmbeddedEntityDirectory($entity, $entity_uuid);
-                RabbitMQManager::getEmbeddedEntities($entity, $entity_uuid);
-                return 'groovy!';
-            case 'nprofile':
-                $redis_manager->cacheEmbeddedEntityDirectory($entity, $entity_uuid);
-                RabbitMQManager::getEmbeddedEntities($entity, $entity_uuid);
-                return 'cosmic stardust!';
-            default: 
-                return 'biscuits!';
-        }
+        $redis_manager->cacheEmbeddedEntityDirectory($entity, $entity_uuid);
+        RabbitMQManager::getEmbeddedEntities($entity, $entity_uuid);
+        return 'groovy!';
+        // switch($entity["type"]) {
+        //     case 'note':
+        //         $redis_manager->cacheEmbeddedEntityDirectory($entity, $entity_uuid);
+        //         RabbitMQManager::getEmbeddedEntities($entity, $entity_uuid);
+        //         return 'groovy!';
+        //     case 'nprofile':
+        //         $redis_manager->cacheEmbeddedEntityDirectory($entity, $entity_uuid);
+        //         RabbitMQManager::getEmbeddedEntities($entity, $entity_uuid);
+        //         return 'cosmic stardust!';
+        //     case 'npub':
+        //         $redis_manager->cacheEmbeddedEntityDirectory($entity, $entity_uuid);
+        //         RabbitMQManager::getEmbeddedEntities($entity, $entity_uuid);
+        //         return 'testament';
+        //     default: 
+        //         return 'biscuits!';
+        // }
         // Then I will want to call the appropriate queue
     }
 }

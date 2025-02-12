@@ -130,7 +130,6 @@ class RabbitMQManager
     public static function getEmbeddedEntities($entity, $entity_uuid)
     {
         $entity['uuid'] = $entity_uuid;
-        dd($entity_uuid);
         $connection = new AMQPStreamConnection('localhost', 5672, 'guest', 'guest');
         $channel = $connection->channel();
         $channel->queue_declare('nostr_entity', false, false, false, false,);

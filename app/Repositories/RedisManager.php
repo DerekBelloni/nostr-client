@@ -143,7 +143,7 @@ class RedisManager
     {
         $restructured_entity = [
             $entity['type'] => [
-                'hex' => $entity['nostr_entity'],
+                'hex' => $entity['nostr_entity'] ,
                 'id' => $entity['id']
             ]
         ];
