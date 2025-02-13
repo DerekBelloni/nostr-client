@@ -34,7 +34,6 @@ class NewContentProcessor
         // foreach ($decoded_entities as $entity) {
         //     $this->decodeBech32($entity);
         // } 
-
         return $decoded_entities;
     }
 
@@ -222,6 +221,7 @@ class NewContentProcessor
             }
             $iteration++;
         }
+
         return $build_arr;
     }
 }
