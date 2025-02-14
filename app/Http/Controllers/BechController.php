@@ -42,7 +42,7 @@ class BechController extends Controller
 
         // I want to call to somewhere that will be responsible for determining which type each nostr entity is
         // dd($entities);
-        $entity = $entities[0];
+        $entity = $entities[7];
         // dd($entity);
 
         $redis_manager->cacheEmbeddedEntityDirectory($entity, $entity_uuid);

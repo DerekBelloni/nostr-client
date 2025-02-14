@@ -41,6 +41,7 @@ class NewContentProcessor
     {
         $key = new Key();
         $parts = explode(':', $content);
+        // dd($parts);
         $identifier = explode('1', $parts[1])[0];
         $decodeType = null;
 
@@ -155,73 +156,144 @@ class NewContentProcessor
         return $kind; 
     }
 
-    private function nprofileHex($binary, $identifier)
-    {
-        $built_arr = [];
-        $iteration = 0;
-        $additional = $binary;
-     
-        $build_arr = function($binary) use (&$additional, &$built_arr, $identifier, &$iteration) {
-            $additional = [];
-            $value = null;
-            $type = bindec((int)$binary[0]);
-            $length = bindec((int)$binary[1]);
-         
-            if (!is_array($binary)) {
-                $binary = $binary->toArray();
-            }
-         
-            $value_arr = array_slice($binary, 2, $length);
+    private function nprofileHex($binary, $identifier) 
+{
+    if (!is_array($binary)) {
+        $binary = $binary->toArray();
+    }
 
-            if ($type == 0) {
-                $value = self::standardTypeZero($value_arr);
-                $structured_entity = [
-                    'nostr_entity' => $value,
-                    'type' => $identifier
-                ];
-                return $structured_entity;
-            }
+    $entities = [];
+    $additional = $binary;
 
-            if ($type == 1) {
-                $value = self::standardTypeOne($value_arr);
-                $structured_entity = [
-                    'nostr_entity' => $value,
-                    'type' => $identifier
-                ];
-                return $structured_entity;
-            }
-
-            if ($type == 2) {
-                $value = self::standardTypeTwo($value_arr, $type);
-                $structured_entity = [
-                    'nostr_entity' => $value,
-                    'type' => $identifier
-                ];
-                return $structured_entity;
-            }
-
-            if ($type == 3) {
-                $value = self::standardTypeThree($value_arr);
-                $structured_entity = [
-                    'nostr_entity' => $value,
-                    'type' => $identifier
-                ];
-                return $structured_entity;
-            }
-          
-            $built_arr[$iteration]['type'] = $type;
-            $built_arr[$iteration]['value'] = $value;
-            $additional = array_slice($binary, $length + 2);
-        };
-
-        while (!empty($additional)) {
-            $entity = $build_arr($additional);
-            if ($entity) {
-                return $entity;
-            }
-            $iteration++;
+    while (!empty($additional)) {
+        $type = bindec((int)$additional[0]);
+        $length = bindec((int)$additional[1]);
+        $value_arr = array_slice($additional, 2, $length);
+        
+        $value = null;
+        switch ($type) {
+            case 0:
+                $value = $this->standardTypeZero($value_arr);
+                break;
+            case 1:
+                $value = $this->standardTypeOne($value_arr);
+                break;
+            case 2:
+                $value = $this->standardTypeTwo($value_arr);
+                break;
+            case 3:
+                $value = $this->standardTypeThree($value_arr);
+                break;
         }
 
-        return $build_arr;
+        $entities[] = [
+            'type' => $type,
+            'value' => $value
+        ];
+
+        $additional = array_slice($additional, $length + 2);
     }
+
+    // After collecting all TLVs, structure the final entity
+    $structured_entity = [
+        'nostr_entity' => null,
+        'type' => $identifier
+    ];
+
+    // Process collected entities in proper order
+    foreach ($entities as $entity) {
+        switch ($entity['type']) {
+            case 0:
+                $structured_entity['nostr_entity'] = $entity['value'];
+                break;
+            case 1:
+                if (!isset($structured_entity['relays'])) {
+                    $structured_entity['relays'] = [];
+                }
+                $structured_entity['relays'][] = $entity['value'];
+                break;
+            case 2:
+                $structured_entity['author'] = $entity['value'];
+                break;
+            case 3:
+                $structured_entity['kind'] = $entity['value'];
+                break;
+        }
+    }
+    // dd($structured_entity);
+    return $structured_entity;
+}
+
+    // private function nprofileHex($binary, $identifier)
+    // {
+    //     $built_arr = [];
+    //     $iteration = 0;
+    //     $additional = $binary;
+     
+    //     $build_arr = function($binary) use (&$additional, &$built_arr, $identifier, &$iteration) {
+    //         $additional = [];
+    //         $value = null;
+    //         $type = bindec((int)$binary[0]);
+    //         // dd($type);
+    //         $length = bindec((int)$binary[1]);
+         
+    //         if (!is_array($binary)) {
+    //             $binary = $binary->toArray();
+    //         }
+         
+    //         $value_arr = array_slice($binary, 2, $length);
+
+    //         if ($type == 0) {
+    //             $value = self::standardTypeZero($value_arr);
+    //             $structured_entity = [
+    //                 'nostr_entity' => $value,
+    //                 'type' => $identifier
+    //             ];
+    //             return $structured_entity;
+    //         }
+
+    //         if ($type == 1) {
+    //             // dd($value_arr);
+    //             $values[] = self::standardTypeOne($value_arr);
+    //             dd($values, $identifier);
+    //             $structured_entity = [
+    //                 'nostr_entity' => $value,
+    //                 'type' => $identifier
+    //             ];
+    //             return $structured_entity;
+    //         }
+
+    //         if ($type == 2) {
+    //             $value = self::standardTypeTwo($value_arr, $type);
+    //             $structured_entity = [
+    //                 'nostr_entity' => $value,
+    //                 'type' => $identifier
+    //             ];
+    //             return $structured_entity;
+    //         }
+
+    //         if ($type == 3) {
+    //             $value = self::standardTypeThree($value_arr);
+    //             $structured_entity = [
+    //                 'nostr_entity' => $value,
+    //                 'type' => $identifier
+    //             ];
+    //             return $structured_entity;
+    //         }
+          
+    //         $built_arr[$iteration]['type'] = $type;
+    //         $built_arr[$iteration]['value'] = $value;
+    //         $additional = array_slice($binary, $length + 2);
+    //     };
+
+    //     while (!empty($additional)) {
+    //         $entity = $build_arr($additional);
+    //         if ($entity) {
+    //             return $entity;
+    //         }
+    //         $iteration++;
+    //     }
+    //     // dd($build_arr);
+    //     return $build_arr;
+    // }
 }

@@ -243,10 +243,10 @@ const retrieveEmbeddedEntities = () => {
     const entityUUID = crypto.randomUUID();
     searchStore.entityUUID = entityUUID;
     console.log("test");
-    return axios.post('/bech/retrieve-entities', {entityUUID: entityUUID, entities: searchStore.parsedEntities})
-        .then((response) => {
-            console.log('banana')
-        })
+    //return axios.post('/bech/retrieve-entities', {entityUUID: entityUUID, entities: searchStore.parsedEntities})
+        // .then((response) => {
+        //     console.log('banana')
+        // })
 }
 
 const processContent = (trendingContent) => {
