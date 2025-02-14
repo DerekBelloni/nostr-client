@@ -157,72 +157,72 @@ class NewContentProcessor
     }
 
     private function nprofileHex($binary, $identifier) 
-{
-    if (!is_array($binary)) {
-        $binary = $binary->toArray();
-    }
-
-    $entities = [];
-    $additional = $binary;
-
-    while (!empty($additional)) {
-        $type = bindec((int)$additional[0]);
-        $length = bindec((int)$additional[1]);
-        $value_arr = array_slice($additional, 2, $length);
-        
-        $value = null;
-        switch ($type) {
-            case 0:
-                $value = $this->standardTypeZero($value_arr);
-                break;
-            case 1:
-                $value = $this->standardTypeOne($value_arr);
-                break;
-            case 2:
-                $value = $this->standardTypeTwo($value_arr);
-                break;
-            case 3:
-                $value = $this->standardTypeThree($value_arr);
-                break;
+    {
+        if (!is_array($binary)) {
+            $binary = $binary->toArray();
         }
 
-        $entities[] = [
-            'type' => $type,
-            'value' => $value
+        $entities = [];
+        $additional = $binary;
+
+        while (!empty($additional)) {
+            $type = bindec((int)$additional[0]);
+            $length = bindec((int)$additional[1]);
+            $value_arr = array_slice($additional, 2, $length);
+            
+            $value = null;
+            switch ($type) {
+                case 0:
+                    $value = $this->standardTypeZero($value_arr);
+                    break;
+                case 1:
+                    $value = $this->standardTypeOne($value_arr);
+                    break;
+                case 2:
+                    $value = $this->standardTypeTwo($value_arr);
+                    break;
+                case 3:
+                    $value = $this->standardTypeThree($value_arr);
+                    break;
+            }
+
+            $entities[] = [
+                'type' => $type,
+                'value' => $value
+            ];
+
+            $additional = array_slice($additional, $length + 2);
+        }
+
+        // After collecting all TLVs, structure the final entity
+        $structured_entity = [
+            'nostr_entity' => null,
+            'type' => $identifier
         ];
 
-        $additional = array_slice($additional, $length + 2);
-    }
-
-    // After collecting all TLVs, structure the final entity
-    $structured_entity = [
-        'nostr_entity' => null,
-        'type' => $identifier
-    ];
-
-    // Process collected entities in proper order
-    foreach ($entities as $entity) {
-        switch ($entity['type']) {
-            case 0:
-                $structured_entity['nostr_entity'] = $entity['value'];
-                break;
-            case 1:
-                if (!isset($structured_entity['relays'])) {
-                    $structured_entity['relays'] = [];
-                }
-                $structured_entity['relays'][] = $entity['value'];
-                break;
-            case 2:
-                $structured_entity['author'] = $entity['value'];
-                break;
-            case 3:
-                $structured_entity['kind'] = $entity['value'];
-                break;
+        // Process collected entities in proper order
+        foreach ($entities as $entity) {
+            switch ($entity['type']) {
+                case 0:
+                    $structured_entity['nostr_entity'] = $entity['value'];
+                    break;
+                case 1:
+                    if (!isset($structured_entity['relays'])) {
+                        $structured_entity['relays'] = [];
+                    }
+                    $structured_entity['relays'][] = $entity['value'];
+                    break;
+                case 2:
+                    $structured_entity['author'] = $entity['value'];
+                    break;
+                case 3:
+                    $structured_entity['kind'] = $entity['value'];
+                    break;
+            }
         }
+        // dd($structured_entity);
+        return $structured_entity;
     }
-    // dd($structured_entity);
-    return $structured_entity;
-}
 
     // private function nprofileHex($binary, $identifier)
     // {
