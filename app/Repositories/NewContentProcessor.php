@@ -34,7 +34,6 @@ class NewContentProcessor
 
     public function decodeBech32(&$content, $event_id)
     {
-        // dd($content);
         $key = new Key();
         $parts = explode(':', $content);
 

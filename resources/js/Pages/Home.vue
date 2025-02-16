@@ -160,10 +160,8 @@ const listenForFollowsMetadata = () => {
 }
 
 const retrieveSearchCache = (searchKey) => {
-    console.log('search key: ', searchKey)
     return axios.post('/redis/search-results', {redisSearchKey: searchKey})
         .then((response) => {
-            console.log('response retrieve search cache: ', response)
             searchStore.addSearchResults(response.data);
         })
 }
@@ -225,6 +223,7 @@ const parseBechContent = (trendingContent) => {
 
 const retrieveTrendingContent = () => {
     let parsedEntities = null;
+    
     return axios.get('/trending-events')
         .then((response) => {
             trendingContent.value = response.data.trending_content;
@@ -235,18 +234,14 @@ const retrieveTrendingContent = () => {
         })
 }
 
-const setEmbeddedEntityIds = () => {
-
-}
-
 const retrieveEmbeddedEntities = () => {
     const entityUUID = crypto.randomUUID();
     searchStore.entityUUID = entityUUID;
-    console.log("test");
-    // return axios.post('/bech/retrieve-entities', {entityUUID: entityUUID, entities: searchStore.parsedEntities})
-    //     .then((response) => {
-    //         console.log('banana')
-    //     })
+
+    return axios.post('/bech/retrieve-entities', {entityUUID: entityUUID, entities: searchStore.parsedEntities})
+        .then((response) => {
+            console.log('banana')
+        })
 }
 
 const processContent = (trendingContent) => {

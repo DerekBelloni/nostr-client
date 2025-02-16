@@ -22,11 +22,10 @@ class BechController extends Controller
                 $event_id = $c["id"];
                 foreach($c['event']['nostr_entities'] as $index => $entity) {
                     $parsed_entities[] = $content_processor->processContent($entity, "callback", $event_id);
-                    $parsed_entities[$index]['id'] = $c['id'];
                 }
             }
         }
-        dd($parsed_entities);
+
         return $parsed_entities;
     }
 
@@ -42,10 +41,10 @@ class BechController extends Controller
 
         // I want to call to somewhere that will be responsible for determining which type each nostr entity is
         // dd($entities);
-        $entity = $entities[7];
+        $entity = $entities[4];
         // dd($entity);
 
-        // $redis_manager->cacheEmbeddedEntityDirectory($entity, $entity_uuid);
+        $redis_manager->cacheEmbeddedEntityDirectory($entity, $entity_uuid);
         // RabbitMQManager::getEmbeddedEntities($entity, $entity_uuid);
         return 'groovy!';
         // switch($entity["type"]) {

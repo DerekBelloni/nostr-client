@@ -142,9 +142,12 @@ class RedisManager
     public function cacheEmbeddedEntityDirectory($entity, $uuid)
     {
         $restructured_entity = [
-            $entity['type'] => [
-                'hex' => $entity['nostr_entity'] ,
-                'id' => $entity['id']
+            $entity['event_id'] => [
+                'nostr_entity' => $entity['nostr_entity'],
+                'type' => $entity['type'],
+                'relays' => $entity['relays'] ?? null,
+                'author' => $entity['author'] ?? null,
+                'kind' => $entity['kind'] ?? null
             ]
         ];
 
