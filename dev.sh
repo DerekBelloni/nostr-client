@@ -42,7 +42,7 @@ create_tmux_window() {
 
 graceful_shutdown() {
     echo "Initiating graceful shutdown..."
-    
+
     # First, stop all RabbitMQ listeners
     echo "Stopping RabbitMQ listeners..."
     pkill -TERM -f "php artisan rabbitmq:" 2>/dev/null || true
@@ -78,7 +78,7 @@ graceful_shutdown() {
     sleep 1
     echo "Stopping RabbitMQ server..."
     pkill -TERM -f "rabbitmq-server" 2>/dev/null || true
-    
+
     # Clean up any remaining tmux windows
     echo "Cleaning up tmux windows..."
     tmux kill-window -t "services" 2>/dev/null || true
@@ -89,16 +89,123 @@ graceful_shutdown() {
 }
 
 case "$1" in
-    "start")
-        # [Previous start code remains the same...]
-        ;;
-        
-    "stop")
-        graceful_shutdown
-        ;;
-        
-    *)
-        echo "Usage: $0 {start|stop}"
-        exit 1
-        ;;
+   "start")
+       # Clear any existing PID file
+       rm -f $PID_FILE
+
+       # Create a new window for background services
+       tmux new-window -n "services"
+
+       # Handle RabbitMQ
+       echo "Managing RabbitMQ server..."
+       pkill -f "rabbitmq-server" 2>/dev/null || true
+       tmux send-keys "rabbitmq-server" C-m
+       # Give it a moment to start
+       sleep 2
+       # Get and store the PID
+       rabbitmq_pid=$(pgrep -f "rabbitmq-server")
+       if [ -n "$rabbitmq_pid" ]; then
+           echo $rabbitmq_pid >> $PID_FILE
+           echo -e "${GREEN}RabbitMQ server started${NC}"
+       else
+           echo -e "${RED}Failed to start RabbitMQ server${NC}"
+           exit 1
+       fi
+
+       # Split the window vertically for Redis
+       tmux split-window -v
+
+       # Handle Redis
+       echo "Managing Redis server..."
+       pkill -f "redis-server" 2>/dev/null || true
+       tmux send-keys "redis-server" C-m
+       # Give it a moment to start
+       sleep 2
+       # Get and store the PID
+       redis_pid=$(pgrep -f "redis-server")
+       if [ -n "$redis_pid" ]; then
+           echo $redis_pid >> $PID_FILE
+           echo -e "${GREEN}Redis server started${NC}"
+       else
+           echo -e "${RED}Failed to start Redis server${NC}"
+           exit 1
+       fi
+
+       # Arrange the panes evenly
+       tmux select-layout even-vertical
+
+       echo "Starting PHP development environment..."
+
+       # Start the main PHP server
+       echo "Starting PHP server..."
+       php artisan serve & echo $! >> $PID_FILE
+
+       # Start Reverb
+       echo "Starting Reverb..."
+       php artisan reverb:start & echo $! >> $PID_FILE
+
+       # Start npm
+       echo "Starting npm..."
+       npm run dev & echo $! >> $PID_FILE
+
+       # Define all RabbitMQ listener commands
+       declare -a window1_commands=(
+           "php artisan rabbitmq:listen-metadata"
+           "php artisan rabbitmq:user-notes"
+           "php artisan rabbitmq:follow-list"
+       )
+
+       declare -a window2_commands=(
+           "php artisan rabbitmq:follows-metadata"
+           "php artisan rabbitmq:search-results"
+           "php artisan rabbitmq:author-metadata"
+       )
+
+       # Create two tmux windows with the listeners split evenly
+       create_tmux_window "rabbitmq-1" "${window1_commands[@]}"
+       create_tmux_window "rabbitmq-2" "${window2_commands[@]}"
+
+       # Handle Go development environment
+       echo "Setting up Go development environment..."
+       GO_DIR=~/Developer/Personal/GO/go-socket-server
+       if [ -d "$GO_DIR" ]; then
+           # Create a new window for Neovim
+           tmux new-window -n "go-editor"
+           tmux send-keys "cd $GO_DIR" C-m
+           tmux send-keys "nvim ." C-m
+
+           # Add delay before starting Go server
+           sleep 3
+           echo "Starting Go server..."
+
+           # Create a new window for the Go application
+           tmux new-window -n "go-server"
+           tmux send-keys "cd $GO_DIR" C-m
+           tmux send-keys "go run cmd/server/main.go" C-m
+
+           # Get the PID of the Go process after it starts
+           sleep 2
+           go_pid=$(pgrep -f "go run cmd/server/main.go")
+           if [ -n "$go_pid" ]; then
+               echo $go_pid >> $PID_FILE
+               echo -e "${GREEN}Go server started${NC}"
+           else
+               echo -e "${YELLOW}Warning: Go server PID not found, but process may still be running${NC}"
+           fi
+       else
+           echo -e "${RED}Error: Go application directory not found at $GO_DIR${NC}"
+           exit 1
+       fi
+       ;;
+
+   "stop")
+       graceful_shutdown
+       ;;
+
+   *)
+       echo "Usage: $0 {start|stop}"
+       exit 1
+       ;;
 esac
+
+

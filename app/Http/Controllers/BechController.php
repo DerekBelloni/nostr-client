@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Http\Controllers;
 
@@ -17,7 +17,7 @@ class BechController extends Controller
         $trending_content = $request->input('trendingContent');
 
         $parsed_entities = [];
-        foreach($trending_content as $c) { 
+        foreach($trending_content as $c) {
             if (!empty($c['event']['nostr_entities'])) {
                 $event_id = $c["id"];
                 foreach($c['event']['nostr_entities'] as $index => $entity) {
@@ -40,29 +40,12 @@ class BechController extends Controller
         $entities = $request->input('entities');
 
         // I want to call to somewhere that will be responsible for determining which type each nostr entity is
-        // dd($entities);
-        $entity = $entities[5];
-        // dd($entity);
+        /*dd($entities);*/
+        $entity = $entities[2];
+        /*dd($entity);*/
 
         $redis_manager->cacheEmbeddedEntityDirectory($entity, $entity_uuid);
         RabbitMQManager::getEmbeddedEntities($entity, $entity_uuid);
         return 'groovy!';
-        // switch($entity["type"]) {
-        //     case 'note':
-        //         $redis_manager->cacheEmbeddedEntityDirectory($entity, $entity_uuid);
-        //         RabbitMQManager::getEmbeddedEntities($entity, $entity_uuid);
-        //         return 'groovy!';
-        //     case 'nprofile':
-        //         $redis_manager->cacheEmbeddedEntityDirectory($entity, $entity_uuid);
-        //         RabbitMQManager::getEmbeddedEntities($entity, $entity_uuid);
-        //         return 'cosmic stardust!';
-        //     case 'npub':
-        //         $redis_manager->cacheEmbeddedEntityDirectory($entity, $entity_uuid);
-        //         RabbitMQManager::getEmbeddedEntities($entity, $entity_uuid);
-        //         return 'testament';
-        //     default: 
-        //         return 'biscuits!';
-        // }
-        // Then I will want to call the appropriate queue
     }
 }
