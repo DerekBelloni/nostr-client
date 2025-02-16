@@ -41,11 +41,11 @@ class BechController extends Controller
 
         // I want to call to somewhere that will be responsible for determining which type each nostr entity is
         // dd($entities);
-        $entity = $entities[4];
+        $entity = $entities[5];
         // dd($entity);
 
         $redis_manager->cacheEmbeddedEntityDirectory($entity, $entity_uuid);
-        // RabbitMQManager::getEmbeddedEntities($entity, $entity_uuid);
+        RabbitMQManager::getEmbeddedEntities($entity, $entity_uuid);
         return 'groovy!';
         // switch($entity["type"]) {
         //     case 'note':

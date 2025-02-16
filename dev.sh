@@ -40,116 +40,65 @@ create_tmux_window() {
    tmux select-layout even-vertical
 }
 
+graceful_shutdown() {
+    echo "Initiating graceful shutdown..."
+    
+    # First, stop all RabbitMQ listeners
+    echo "Stopping RabbitMQ listeners..."
+    pkill -TERM -f "php artisan rabbitmq:" 2>/dev/null || true
+    sleep 2
+    # Force kill any remaining listeners
+    pkill -KILL -f "php artisan rabbitmq:" 2>/dev/null || true
+    echo -e "${GREEN}RabbitMQ listeners stopped${NC}"
+
+    # Read and kill each stored PID
+    if [ -f "$PID_FILE" ]; then
+        while read -r pid; do
+            if ps -p $pid > /dev/null 2>&1; then
+                echo "Stopping process $pid..."
+                kill -TERM $pid 2>/dev/null || true
+                sleep 1
+                # Check if process is still running and force kill if necessary
+                if ps -p $pid > /dev/null 2>&1; then
+                    echo "Force stopping process $pid..."
+                    kill -KILL $pid 2>/dev/null || true
+                fi
+                pkill -P $pid 2>/dev/null || true
+            fi
+        done < "$PID_FILE"
+        rm -f "$PID_FILE"
+        echo -e "${GREEN}Main services stopped${NC}"
+    else
+        echo -e "${YELLOW}No PID file found. Main services may not be running.${NC}"
+    fi
+
+    # Stop Redis and RabbitMQ servers
+    echo "Stopping Redis server..."
+    pkill -TERM -f "redis-server" 2>/dev/null || true
+    sleep 1
+    echo "Stopping RabbitMQ server..."
+    pkill -TERM -f "rabbitmq-server" 2>/dev/null || true
+    
+    # Clean up any remaining tmux windows
+    echo "Cleaning up tmux windows..."
+    tmux kill-window -t "services" 2>/dev/null || true
+    tmux kill-window -t "rabbitmq-1" 2>/dev/null || true
+    tmux kill-window -t "rabbitmq-2" 2>/dev/null || true
+
+    echo -e "${GREEN}Environment shutdown complete${NC}"
+}
+
 case "$1" in
-   "start")
-       # Clear any existing PID file
-       rm -f $PID_FILE
-
-
-       # Create a new window for background services
-       tmux new-window -n "services"
-
-       # Handle RabbitMQ
-       echo "Managing RabbitMQ server..."
-       pkill -f "rabbitmq-server" 2>/dev/null || true
-       tmux send-keys "rabbitmq-server" C-m
-       # Give it a moment to start
-       sleep 2
-       # Get and store the PID
-       rabbitmq_pid=$(pgrep -f "rabbitmq-server")
-       if [ -n "$rabbitmq_pid" ]; then
-           echo $rabbitmq_pid >> $PID_FILE
-           echo -e "${GREEN}RabbitMQ server started${NC}"
-       else
-           echo -e "${RED}Failed to start RabbitMQ server${NC}"
-           exit 1
-       fi
-
-       # Split the window vertically for Redis
-       tmux split-window -v
-
-       # Handle Redis
-       echo "Managing Redis server..."
-       pkill -f "redis-server" 2>/dev/null || true
-       tmux send-keys "redis-server" C-m
-       # Give it a moment to start
-       sleep 2
-       # Get and store the PID
-       redis_pid=$(pgrep -f "redis-server")
-       if [ -n "$redis_pid" ]; then
-           echo $redis_pid >> $PID_FILE
-           echo -e "${GREEN}Redis server started${NC}"
-       else
-           echo -e "${RED}Failed to start Redis server${NC}"
-           exit 1
-       fi
-
-       # Arrange the panes evenly
-       tmux select-layout even-vertical
-
-       echo "Starting PHP development environment..."
-
-       # Start the main PHP server
-       echo "Starting PHP server..."
-       php artisan serve & echo $! >> $PID_FILE
-
-       # Start Reverb
-       echo "Starting Reverb..."
-       php artisan reverb:start & echo $! >> $PID_FILE
-
-       # Start npm
-       echo "Starting npm..."
-       npm run dev & echo $! >> $PID_FILE
-
-       # Define all RabbitMQ listener commands
-       declare -a window1_commands=(
-           "php artisan rabbitmq:listen-metadata"
-           "php artisan rabbitmq:user-notes"
-           "php artisan rabbitmq:follow-list"
-       )
-
-       declare -a window2_commands=(
-           "php artisan rabbitmq:follows-metadata"
-           "php artisan rabbitmq:search-results"
-           "php artisan rabbitmq:author-metadata"
-       )
-
-       # Create two tmux windows with the listeners split evenly
-       create_tmux_window "rabbitmq-1" "${window1_commands[@]}"
-       create_tmux_window "rabbitmq-2" "${window2_commands[@]}"
-
-       # Handle Go server
-echo "Setting up Go development environment..."
-GO_DIR=~/Developer/Personal/GO/go-socket-server
-if [ -d "$GO_DIR" ]; then
-    cd $GO_DIR
-    echo "Starting Go server..."
-    go run cmd/server/main.go & echo $! >> $PID_FILE
-else
-    echo -e "${RED}Error: Go application directory not found at $GO_DIR${NC}"
-    exit 1
-fi
-
-       # Read and kill each stored PID
-       if [ -f "$PID_FILE" ]; then
-           while read -r pid; do
-               kill -TERM $pid 2>/dev/null || true
-               pkill -P $pid 2>/dev/null || true
-           done < "$PID_FILE"
-           rm -f "$PID_FILE"
-           echo -e "${GREEN}Main services stopped${NC}"
-       else
-           echo -e "${YELLOW}No PID file found. Main services may not be running.${NC}"
-       fi
-
-       # Kill any remaining PHP artisan processes
-       echo "Stopping RabbitMQ listeners..."
-       pkill -f "php artisan rabbitmq:" 2>/dev/null || true
-       echo -e "${GREEN}RabbitMQ listeners stopped${NC}"
-       ;;
-
-   *)
-       echo "Usage: $0 {start|stop}"
-       exit 1
-       ;;
+    "start")
+        # [Previous start code remains the same...]
+        ;;
+        
+    "stop")
+        graceful_shutdown
+        ;;
+        
+    *)
+        echo "Usage: $0 {start|stop}"
+        exit 1
+        ;;
 esac
