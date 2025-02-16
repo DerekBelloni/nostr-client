@@ -7,7 +7,7 @@ use function BitWasp\Bech32\decodeRaw;
 
 class NewContentProcessor
 {
-    public function processContent($content, $type = null)
+    public function processContent($content, $type = null, $event_id = null)
     {
 
         if ($type == "initial") {
@@ -15,7 +15,7 @@ class NewContentProcessor
         }
 
         if ($type == "callback") {
-            return $this->decodeBech32($content);
+            return $this->decodeBech32($content, $event_id);
         }
     }
     
@@ -29,19 +29,15 @@ class NewContentProcessor
             $decoded_entities[] = $match;
         }
 
-        // I will want to return to the client and call back to this functionality with a loader inside whatever is embedded
-        // $bech32content = 'nostr:nprofile1qqsrhuxx8l9ex335q7he0f09aej04zpazpl0ne2cgukyawd24mayt8gpp4mhxue69uhhytnc9e3k7mgpz4mhxue69uhkg6nzv9ejuumpv34kytnrdaksjlyr9p';
-        // foreach ($decoded_entities as $entity) {
-        //     $this->decodeBech32($entity);
-        // } 
         return $decoded_entities;
     }
 
-    public function decodeBech32(&$content)
+    public function decodeBech32(&$content, $event_id)
     {
+        // dd($content);
         $key = new Key();
         $parts = explode(':', $content);
-        // dd($parts);
+
         $identifier = explode('1', $parts[1])[0];
         $decodeType = null;
 
@@ -56,11 +52,11 @@ class NewContentProcessor
         switch ($decodeType) {
             case 'bareEncoding':
                 $hex = $key->convertToHex($bech32Key, $key);
-                $entity = [ 'nostr_entity' => $hex, 'type' => $identifier];
+                $entity = [ 'nostr_entity' => $hex, 'type' => $identifier, 'event_id' => $event_id];
                 return $entity;
             case 'extended':
                 $binary = self::decodeToBase32($bech32Key, $key);
-                return self::nprofileHex($binary, $identifier);
+                return self::nprofileHex($binary, $identifier, $event_id);
             default:
                 $hex = null;
         }
@@ -156,7 +152,7 @@ class NewContentProcessor
         return $kind; 
     }
 
-    private function nprofileHex($binary, $identifier) 
+    private function nprofileHex($binary, $identifier, $event_id) 
     {
         if (!is_array($binary)) {
             $binary = $binary->toArray();
@@ -194,13 +190,12 @@ class NewContentProcessor
             $additional = array_slice($additional, $length + 2);
         }
 
-        // After collecting all TLVs, structure the final entity
         $structured_entity = [
             'nostr_entity' => null,
-            'type' => $identifier
+            'type' => $identifier,
+            'event_id' => $event_id
         ];
 
-        // Process collected entities in proper order
         foreach ($entities as $entity) {
             switch ($entity['type']) {
                 case 0:
@@ -220,80 +215,7 @@ class NewContentProcessor
                     break;
             }
         }
-        // dd($structured_entity);
+     
         return $structured_entity;
     }
-
-    // private function nprofileHex($binary, $identifier)
-    // {
-    //     $built_arr = [];
-    //     $iteration = 0;
-    //     $additional = $binary;
-     
-    //     $build_arr = function($binary) use (&$additional, &$built_arr, $identifier, &$iteration) {
-    //         $additional = [];
-    //         $value = null;
-    //         $type = bindec((int)$binary[0]);
-    //         // dd($type);
-    //         $length = bindec((int)$binary[1]);
-         
-    //         if (!is_array($binary)) {
-    //             $binary = $binary->toArray();
-    //         }
-         
-    //         $value_arr = array_slice($binary, 2, $length);
-
-    //         if ($type == 0) {
-    //             $value = self::standardTypeZero($value_arr);
-    //             $structured_entity = [
-    //                 'nostr_entity' => $value,
-    //                 'type' => $identifier
-    //             ];
-    //             return $structured_entity;
-    //         }
-
-    //         if ($type == 1) {
-    //             // dd($value_arr);
-    //             $values[] = self::standardTypeOne($value_arr);
-    //             dd($values, $identifier);
-    //             $structured_entity = [
-    //                 'nostr_entity' => $value,
-    //                 'type' => $identifier
-    //             ];
-    //             return $structured_entity;
-    //         }
-
-    //         if ($type == 2) {
-    //             $value = self::standardTypeTwo($value_arr, $type);
-    //             $structured_entity = [
-    //                 'nostr_entity' => $value,
-    //                 'type' => $identifier
-    //             ];
-    //             return $structured_entity;
-    //         }
-
-    //         if ($type == 3) {
-    //             $value = self::standardTypeThree($value_arr);
-    //             $structured_entity = [
-    //                 'nostr_entity' => $value,
-    //                 'type' => $identifier
-    //             ];
-    //             return $structured_entity;
-    //         }
-          
-    //         $built_arr[$iteration]['type'] = $type;
-    //         $built_arr[$iteration]['value'] = $value;
-    //         $additional = array_slice($binary, $length + 2);
-    //     };
-
-    //     while (!empty($additional)) {
-    //         $entity = $build_arr($additional);
-    //         if ($entity) {
-    //             return $entity;
-    //         }
-    //         $iteration++;
-    //     }
-    //     // dd($build_arr);
-    //     return $build_arr;
-    // }
 }

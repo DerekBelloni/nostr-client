@@ -18,15 +18,15 @@ class BechController extends Controller
 
         $parsed_entities = [];
         foreach($trending_content as $c) { 
-
             if (!empty($c['event']['nostr_entities'])) {
+                $event_id = $c["id"];
                 foreach($c['event']['nostr_entities'] as $index => $entity) {
-                    $parsed_entities[] = $content_processor->processContent($entity, "callback");
+                    $parsed_entities[] = $content_processor->processContent($entity, "callback", $event_id);
                     $parsed_entities[$index]['id'] = $c['id'];
                 }
             }
         }
-
+        dd($parsed_entities);
         return $parsed_entities;
     }
 
@@ -45,8 +45,8 @@ class BechController extends Controller
         $entity = $entities[7];
         // dd($entity);
 
-        $redis_manager->cacheEmbeddedEntityDirectory($entity, $entity_uuid);
-        RabbitMQManager::getEmbeddedEntities($entity, $entity_uuid);
+        // $redis_manager->cacheEmbeddedEntityDirectory($entity, $entity_uuid);
+        // RabbitMQManager::getEmbeddedEntities($entity, $entity_uuid);
         return 'groovy!';
         // switch($entity["type"]) {
         //     case 'note':
