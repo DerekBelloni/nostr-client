@@ -42,7 +42,6 @@ class BechController extends Controller
         // I want to call to somewhere that will be responsible for determining which type each nostr entity is
         /*dd($entities);*/
         $entity = $entities[2];
-        /*dd($entity);*/
 
         $redis_manager->cacheEmbeddedEntityDirectory($entity, $entity_uuid);
         RabbitMQManager::getEmbeddedEntities($entity, $entity_uuid);

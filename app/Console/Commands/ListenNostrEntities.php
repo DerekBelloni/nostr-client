@@ -18,6 +18,10 @@ class ListenNostrEntities extends BaseRabbitMQListener
     public function processMessage(AMQPMessage $msg)
     {
         $decoded = json_decode($msg->getBody(), true);
-        Log::info("embedded nostr entity: ", [$decoded]);
+        $event = $decoded["Event"];
+        $subscription_metadata = $decoded["SubscriptionMetadata"];
+        Log::info("subscription: ", [$subscription_metadata]);
+        // sepearate event from subscription metadata
+        // stash both in redis under the uuid/pubkey as a key
     }
 }
