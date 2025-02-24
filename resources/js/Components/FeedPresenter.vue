@@ -5,7 +5,7 @@
             <li v-for="note in feedNotes" :key="note.pubkey" class="flex flex-col border-b border-gray-700 py-2 px-2 my-1">
                 <div class="grid grid-cols-12">
                     <div class="col-span-1">
-                        <div v-if="note.author?.content.picture">
+                        <div v-if="note.author?.content && note.author?.content?.picture">
                             <img class="rounded-full h-14 w-14 border border-amber-500" :src="note.author?.content.picture" alt="">
                         </div>
                         <div v-else>
@@ -16,8 +16,8 @@
                         <div class="flex justify-between">
                             <div class="mt-2">
                                 <template v-if="!isSearchActive">              
-                                    <span class="text-gray-700 font-semibold text-white">{{note.author?.content.name}}</span>
-                                    <template v-if="note.author?.content.nip05">
+                                    <span class="text-gray-700 font-semibold text-white">{{note.author?.content?.name}}</span>
+                                    <template v-if="note.author?.content?.nip05">
                                         <i class="pi pi-verified pl-1 text-amber-500"></i>
                                         <span class="text-amber-600 pl-1">{{note.author?.content.nip05}}</span>
                                     </template>

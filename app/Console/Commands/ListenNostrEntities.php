@@ -21,6 +21,9 @@ class ListenNostrEntities extends BaseRabbitMQListener
         $event = $decoded["Event"];
         $subscription_metadata = $decoded["SubscriptionMetadata"];
         Log::info("subscription: ", [$subscription_metadata]);
+        $type = $subscription_metadata["UserContext"]["type"];
+        Log::info("type: ", [$type]);
+
         // sepearate event from subscription metadata
         // stash both in redis under the uuid/pubkey as a key
     }
