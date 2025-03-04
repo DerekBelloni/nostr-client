@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use Illuminate\Support\Facades\Log;
 use swentel\nostr\Key\Key;
 use function BitWasp\Bech32\decodeRaw;
 
