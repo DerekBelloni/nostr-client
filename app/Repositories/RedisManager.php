@@ -151,4 +151,16 @@ class RedisManager
             Redis::set($redis_nostr_entity_key, json_encode($restructured_entity));
         }
     }
+
+    public function retrieveNostrEntities(Request $request) 
+    {
+        $entity_key = $request->input('entity_key');
+        $redis_key = "nostr_entity:{$entity_key}";
+        $entities = [Redis::get($redis_key)];
+        $decoded_entities = [];
+        foreach ($entities as $entity) {
+            $decoded_entities[] = json_decode($entity, true);
+        }
+        return $decoded_entities;
+    }
 }

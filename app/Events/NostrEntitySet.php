@@ -3,6 +3,7 @@
 namespace App\Events;
 
 use Illuminate\Broadcasting\Channel;
+use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Bus\Dispatchable;
 
@@ -30,6 +31,6 @@ class NostrEntitySet implements ShouldBroadcastNow
 
     public function broadcastWith()
     {
-        return ['nostr_entity_set' => $this->nostr_entity_set, 'entitiy_key' => $this->entity_key];
+        return ['nostr_entity_set' => $this->nostr_entity_set, 'entity_key' => $this->entity_key];
     }
 }

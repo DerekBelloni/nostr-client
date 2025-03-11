@@ -58,10 +58,10 @@ onMounted(() => {
     listenForFollowsMetadata();
     listenForSearchResults();
     listenForAuthorMetadata();
+    listenForNostrEntity();
 });
 
 watch(metadataContent, async(newValue, oldValue) => {
-    console.log("banana")
     if (newValue && !oldValue) {
         verifyNIP05();
     }
@@ -93,6 +93,20 @@ const getRelayMetadata = () => {
         .then((response) => {
             console.log('relay metadata response: ', response);
         })
+}
+
+const listenForNostrEntity = () => {
+    echo.channel('nostr_entity')
+        .listen('.nostr_entity_set', (event) => {
+            console.log("event: ", event)
+            if (event.entitiy_key == searchStore.entityUUID) {
+                console.log("nostr event: ", event);
+                return axios.post('/redis/nostr-entities', {entity_key: searchStore.entityUUID})
+                    .then((response) => {
+                        console.log("banana");
+                    })
+            }
+        });
 }
 
 const listenForAuthorMetadata = () => {
@@ -236,7 +250,7 @@ const retrieveTrendingContent = () => {
 
 const retrieveEmbeddedEntities = () => {
     const entityUUID = crypto.randomUUID();
-    searchStore.entityUUID.push(entityUUID);
+    searchStore.entityUUID = entityUUID;
 
    return axios.post('/bech/retrieve-entities', {entityUUID: entityUUID, entities: searchStore.parsedEntities})
        .then((response) => {
