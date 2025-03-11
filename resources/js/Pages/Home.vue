@@ -236,7 +236,7 @@ const retrieveTrendingContent = () => {
 
 const retrieveEmbeddedEntities = () => {
     const entityUUID = crypto.randomUUID();
-    searchStore.entityUUID = entityUUID;
+    searchStore.entityUUID.push(entityUUID);
 
    return axios.post('/bech/retrieve-entities', {entityUUID: entityUUID, entities: searchStore.parsedEntities})
        .then((response) => {

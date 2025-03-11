@@ -17,11 +17,11 @@ class BechController extends Controller
         $trending_content = $request->input('trendingContent');
 
         $parsed_entities = [];
-        foreach($trending_content as $c) {
+        foreach($trending_content as $c_index => $c) {
             if (!empty($c['event']['nostr_entities'])) {
                 $event_id = $c["id"];
                 foreach($c['event']['nostr_entities'] as $index => $entity) {
-                    $parsed_entities[] = $content_processor->processContent($entity, "callback", $event_id);
+                    $parsed_entities[] = $content_processor->processContent($entity, "callback", $event_id, $c_index);
                 }
             }
         }

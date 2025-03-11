@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Events\NostrEntitySet;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 use PhpAmqpLib\Message\AMQPMessage;
@@ -35,6 +36,7 @@ class ListenNostrEntities extends BaseRabbitMQListener
             if (isset($existing_event[$event_id])) { // Flat array, direct key access
                 $existing_event[$event_id] = $event;
                 Redis::set($redis_key, json_encode($existing_event));
+                event(new NostrEntitySet(true, $id));
             } else {
                 Log::info("Event not found for ID: " . $event_id);
             }

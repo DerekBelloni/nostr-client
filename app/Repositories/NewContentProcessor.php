@@ -8,7 +8,7 @@ use function BitWasp\Bech32\decodeRaw;
 
 class NewContentProcessor
 {
-    public function processContent($content, $type = null, $event_id = null)
+    public function processContent($content, $type = null, $event_id = null, $idx = null)
     {
 
         if ($type == "initial") {
@@ -16,7 +16,7 @@ class NewContentProcessor
         }
 
         if ($type == "callback") {
-            return $this->decodeBech32($content, $event_id);
+            return $this->decodeBech32($content, $event_id, $idx);
         }
     }
     
@@ -33,7 +33,7 @@ class NewContentProcessor
         return $decoded_entities;
     }
 
-    public function decodeBech32(&$content, $event_id)
+    public function decodeBech32(&$content, $event_id, $idx)
     {
         $key = new Key();
         $parts = explode(':', $content);
@@ -52,11 +52,11 @@ class NewContentProcessor
         switch ($decodeType) {
             case 'bareEncoding':
                 $hex = $key->convertToHex($bech32Key, $key);
-                $entity = [ 'nostr_entity' => $hex, 'type' => $identifier, 'event_id' => $event_id];
+                $entity = [ 'nostr_entity' => $hex, 'type' => $identifier, 'event_id' => $event_id, 'trending_idx' => $idx];
                 return $entity;
             case 'extended':
                 $binary = self::decodeToBase32($bech32Key, $key);
-                return self::nprofileHex($binary, $identifier, $event_id);
+                return self::nprofileHex($binary, $identifier, $event_id, $idx);
             default:
                 $hex = null;
         }
@@ -152,7 +152,7 @@ class NewContentProcessor
         return $kind; 
     }
 
-    private function nprofileHex($binary, $identifier, $event_id) 
+    private function nprofileHex($binary, $identifier, $event_id, $idx) 
     {
         if (!is_array($binary)) {
             $binary = $binary->toArray();
@@ -193,7 +193,8 @@ class NewContentProcessor
         $structured_entity = [
             'nostr_entity' => null,
             'type' => $identifier,
-            'event_id' => $event_id
+            'event_id' => $event_id,
+            'trending_idx' => $idx
         ];
 
         foreach ($entities as $entity) {
