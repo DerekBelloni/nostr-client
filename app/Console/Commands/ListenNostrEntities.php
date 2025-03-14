@@ -21,29 +21,21 @@ class ListenNostrEntities extends BaseRabbitMQListener
     {
         $decoded = json_decode($msg->getBody(), true);
         $event = $decoded["Event"];
+        $event_id = $event[2]["id"];
         $subscription_metadata = $decoded["SubscriptionMetadata"];
-        // $type = $subscription_metadata["UserContext"]["Type"];
         $id = $subscription_metadata["UserContext"]["ID"];
         $redis_key = "nostr_entity:{$id}";
-
+        Log::info("embedded event: ", [$event[2]["id"]]);
         if (Redis::exists($redis_key)) {
-            $existing_event = json_decode(Redis::get($redis_key), true);
+            $existing_data = json_decode(Redis::get($redis_key), true);
 
-            $event_id = $subscription_metadata["EventID"];
-            if (isset($existing_event[$event_id])) { 
-                $existing_event[$event_id] = $event;
-                Redis::set($redis_key, json_encode($existing_event));
+            if (!array_key_exists($event_id, $existing_data)) {
+                $existing_data[$event_id] = $event;
+                Redis::set($redis_key, json_encode($existing_data));
                 event(new NostrEntitySet(true, $id));
             } else {
                 Log::info("Event not found for ID: " . $event_id);
             }
         } 
-
-        
-
-        
-
-        // sepearate event from subscription metadata
-        // stash both in redis under the uuid/pubkey as a key
     }
 }

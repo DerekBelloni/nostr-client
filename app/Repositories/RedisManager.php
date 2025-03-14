@@ -141,15 +141,14 @@ class RedisManager
 
     public function cacheEmbeddedEntityDirectory($entity, $uuid)
     {
-        $restructured_entity = [
-            $entity['event_id'] => []
-        ];
-
         $redis_nostr_entity_key = "nostr_entity:{$uuid}";
+        $existing_data = Redis::exists($redis_nostr_entity_key) ? json_decode(Redis::get($redis_nostr_entity_key), true) : [];
 
-        if (!Redis::exists($redis_nostr_entity_key)) {
-            Redis::set($redis_nostr_entity_key, json_encode($restructured_entity));
-        }
+        $event_id = $entity['event_id'];
+
+        if (!array_key_exists($event_id, $existing_data)) $existing_data[$event_id] = [];
+
+        Redis::set($redis_nostr_entity_key, json_encode($existing_data));
     }
 
     public function retrieveNostrEntities(Request $request) 
@@ -161,6 +160,7 @@ class RedisManager
         foreach ($entities as $entity) {
             $decoded_entities[] = json_decode($entity, true);
         }
+        dd($decoded_entities);
         return $decoded_entities;
     }
 }
