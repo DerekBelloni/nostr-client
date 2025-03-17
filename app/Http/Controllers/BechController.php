@@ -38,11 +38,15 @@ class BechController extends Controller
 
         $entity_uuid = $request->input('entityUUID');
         $entities = $request->input('entities');
-
-        foreach ($entities as $entity) {
-            $redis_manager->cacheEmbeddedEntityDirectory($entity, $entity_uuid);
-            RabbitMQManager::getEmbeddedEntities($entity, $entity_uuid);
-        }
+        $entity = $entities[0];
+        
+        $redis_manager->cacheEmbeddedEntityDirectory($entity, $entity_uuid);
+        RabbitMQManager::getEmbeddedEntities($entity, $entity_uuid);
+        
+        // foreach ($entities as $entity) {
+        //     $redis_manager->cacheEmbeddedEntityDirectory($entity, $entity_uuid);
+        //     RabbitMQManager::getEmbeddedEntities($entity, $entity_uuid);
+        // }
 
         return 'embedded entity request sent';
     }

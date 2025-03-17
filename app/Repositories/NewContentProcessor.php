@@ -33,7 +33,7 @@ class NewContentProcessor
         return $decoded_entities;
     }
 
-    public function decodeBech32(&$content, $event_id, $idx)
+    public function decodeBech32(&$content, $parent_event_id, $idx)
     {
         $key = new Key();
         $parts = explode(':', $content);
@@ -52,11 +52,11 @@ class NewContentProcessor
         switch ($decodeType) {
             case 'bareEncoding':
                 $hex = $key->convertToHex($bech32Key, $key);
-                $entity = [ 'nostr_entity' => $hex, 'type' => $identifier, 'event_id' => $event_id, 'trending_idx' => $idx];
+                $entity = [ 'nostr_entity' => $hex, 'type' => $identifier, 'event_id' => $parent_event_id, 'trending_idx' => $idx];
                 return $entity;
             case 'extended':
                 $binary = self::decodeToBase32($bech32Key, $key);
-                return self::nprofileHex($binary, $identifier, $event_id, $idx);
+                return self::nprofileHex($binary, $identifier, $parent_event_id, $idx);
             default:
                 $hex = null;
         }
@@ -152,7 +152,7 @@ class NewContentProcessor
         return $kind; 
     }
 
-    private function nprofileHex($binary, $identifier, $event_id, $idx) 
+    private function nprofileHex($binary, $identifier, $parent_event_id, $idx) 
     {
         if (!is_array($binary)) {
             $binary = $binary->toArray();
@@ -193,7 +193,8 @@ class NewContentProcessor
         $structured_entity = [
             'nostr_entity' => null,
             'type' => $identifier,
-            'event_id' => $event_id,
+            'event_id' => null,
+            'parent_event_id' => $parent_event_id,
             'trending_idx' => $idx
         ];
 
@@ -216,7 +217,7 @@ class NewContentProcessor
                     break;
             }
         }
-     
+        // dd($structured_entity);
         return $structured_entity;
     }
 }

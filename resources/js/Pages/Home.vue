@@ -101,7 +101,7 @@ const listenForNostrEntity = () => {
             if (event.entity_key == searchStore.entityUUID) {
                 return axios.post('/redis/nostr-entities', {entity_key: searchStore.entityUUID})
                     .then((response) => {
-
+                        console.log("response: ", response);
                     })
             }
         });
