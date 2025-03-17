@@ -30,13 +30,13 @@ class ListenNostrEntities extends BaseRabbitMQListener
             Log::info("UUID key not found: [$redis_lookup_key]");
             return;
         }
-        
+
         $redis_final_key = "nostr_entity:{$id}:{$event_id}";
         
         if (!Redis::exists($redis_final_key)) {
             Redis::set($redis_final_key, json_encode($event[2]));
             Redis::del($redis_lookup_key);
-            event(new NostrEntitySet(true, $id));
+            event(new NostrEntitySet(true, $id, $event_id));
         } else {
             Log::info("Event already exists at: [$redis_final_key]");
         }

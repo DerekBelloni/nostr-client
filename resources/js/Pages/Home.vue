@@ -98,10 +98,12 @@ const getRelayMetadata = () => {
 const listenForNostrEntity = () => {
     echo.channel('nostr_entity')
         .listen('.nostr_entity_set', (event) => {
+            console.log("event entity: ", event);
             if (event.entity_key == searchStore.entityUUID) {
-                return axios.post('/redis/nostr-entities', {entity_key: searchStore.entityUUID})
+                return axios.post('/redis/nostr-entities', {entity_key: searchStore.entityUUID, event_id: event.event_id})
                     .then((response) => {
                         console.log("response: ", response);
+
                     })
             }
         });

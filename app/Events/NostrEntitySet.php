@@ -11,10 +11,11 @@ class NostrEntitySet implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets;
 
-    public function __construct($nostr_entity_set, $entity_key)
+    public function __construct($nostr_entity_set, $entity_key, $event_id)
     {
         $this->nostr_entity_set = $nostr_entity_set;
         $this->entity_key = $entity_key;
+        $this->event_id = $event_id;
     }
 
     public function broadcastOn(): array
@@ -31,6 +32,6 @@ class NostrEntitySet implements ShouldBroadcastNow
 
     public function broadcastWith()
     {
-        return ['nostr_entity_set' => $this->nostr_entity_set, 'entity_key' => $this->entity_key];
+        return ['nostr_entity_set' => $this->nostr_entity_set, 'entity_key' => $this->entity_key, 'event_id' => $this->event_id];
     }
 }
