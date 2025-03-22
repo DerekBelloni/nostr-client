@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Log;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 use Illuminate\Support\Str;
+use swentel\nostr\Key\Key;
 
 class RabbitMQManager
 {
@@ -51,9 +52,12 @@ class RabbitMQManager
         return 'complete';
     }
     
-    public static function npubMetadata(Request $request)
+    public static function getNPubMetadata(Request $request)
     {
-        
+        $npub_bech32 = $request->input('bech32');
+        $key = new Key();
+        $pub_key_hex =  $key->convertToHex($npub_bech32);
+        dd($pub_key_hex);
     }
 
     private static function formatNote($note_content)

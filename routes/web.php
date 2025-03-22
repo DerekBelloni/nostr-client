@@ -27,6 +27,7 @@ Route::post('/npub', [NostrKeyController::class, 'login']);
 Route::post('/rabbit-mq/follows-metadata', [RabbitMQController::class, 'getFollowsMetadata']);
 Route::post('/rabbit-mq/search-results', [RabbitMQController::class, 'getSearchResults']);
 Route::post('/rabbit-mq/follow-notes', [RabbitMQController::class, 'getFollowNotes']);
+Route::post('/rabbit-mq/npub-metadata', [RabbitMQController::class, 'getNPubMetadata']);
 
 // Redis Controller
 Route::post('/redis/follows-list', [RedisController::class, 'followsList']);
@@ -37,6 +38,7 @@ Route::post('/redis/user-metadata', [RedisController::class, 'userMetadata']);
 Route::post('/redis/user-notes', [RedisController::class, 'userNotes']);
 Route::post('/redis/nostr-entities', [RedisController::class, 'nostrEntities']);
 Route::post('/redis/clear-search-cache', [RedisController::class, 'delete']);
+
 
 // Bech32 Controller
 Route::post('/bech/parse-notes', [BechController::class, 'parseEventContent']);

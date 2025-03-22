@@ -24,6 +24,12 @@ class RabbitMQController extends Controller
 
     public function getEmbeddedEntities(Request $request) 
     {
-        return RabbitMQManager::getEmbeddedEntities($request);
+        return RabbitMQManager::getEmbeddedEntities($entity, $entity_uuid);
+        // return RabbitMQManager::getEmbeddedEntities($request);
+    }
+
+    public function getNPubMetadata(Request $request) 
+    {
+        return RabbitMQManager::getNPubMetadata($request);
     }
 }

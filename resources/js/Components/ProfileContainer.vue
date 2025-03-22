@@ -10,7 +10,6 @@ import { computed, provide, ref } from 'vue';
 const activeTab = ref('notes');
 const store = useNostrStore();
 
-
 const profileMetadata = computed(() => store.activeProfile.metadata);
 const userActive = computed(() => store.userActive);
 

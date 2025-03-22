@@ -72,7 +72,7 @@
                                 <span class="text-gray-100">@{{block.content.bech32}}</span>
                             </div>
                             <div v-if="block.content.identifier === 'npub'">
-                                <span class="text-amber-300 cursor-pointer hover:text-amber-500">@{{block.content.bech32}}</span>
+                                <span class="text-amber-300 cursor-pointer hover:text-amber-500" @click="retrieveNpubMetadata(block.content.bech32)">@{{block.content.bech32}}</span>
                             </div>
                         </div>
                     </div>
@@ -98,6 +98,7 @@ const hasNip05 = inject('hasNip05');
 const feedNotes = inject('feedNotes');
 const isSearchActive = inject('isSearchActive');
 const noteDate = inject('noteDate');
+const retrieveNpubMetadata = inject('retrieveNpubMetadata');
 const setDisplayName = inject('setDisplayName');
 </script>
 

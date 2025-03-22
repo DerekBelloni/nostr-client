@@ -38,8 +38,10 @@ const noteDate = (utcDate) => {
 }
 
 const retrieveNpubMetadata = (npub) => {
-    console.log("npub: ", npub);
-    // return axios.post('')
+    return axios.post('/rabbit-mq/npub-metadata', {bech32: npub})
+        .then((response) => {
+            console.log("cant control the past")
+        })
 } 
 
 const setDisplayName = (authorContent) => {
