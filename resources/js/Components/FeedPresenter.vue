@@ -71,6 +71,9 @@
                             <div v-if="block.content.identifier === 'nevent'" class="border border-gray-700 rounded-lg overflow-none px-2 py-1 truncate">
                                 <span class="text-gray-100">@{{block.content.bech32}}</span>
                             </div>
+                            <div v-if="block.content.identifier === 'npub'">
+                                <span class="text-amber-300 cursor-pointer hover:text-amber-500">@{{block.content.bech32}}</span>
+                            </div>
                         </div>
                     </div>
                 </div>

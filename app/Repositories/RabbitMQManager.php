@@ -50,6 +50,11 @@ class RabbitMQManager
         $connection->close();
         return 'complete';
     }
+    
+    public static function npubMetadata(Request $request)
+    {
+        
+    }
 
     private static function formatNote($note_content)
     {

@@ -15,11 +15,6 @@ const searchStore = useSearchStore();
 const feedNotes = computed(() => searchStore.searchResults.length > 0 ? searchStore.searchResults : searchStore.trendingContent);
 const isSearchActive = computed(() => searchStore.searchActive ? true : false);
 
-const noteDate = (utcDate) => {
-    const formattedDate = utcDate.split(' ')
-    return formattedDate[0];
-}
-
 const hasNip05 = (authorContent) => {
     let hasNip = false;
     if (authorContent?.nip05) {
@@ -37,6 +32,16 @@ const hasDisplayName = (authorContent) => {
     return hasDisplay;
 }
 
+const noteDate = (utcDate) => {
+    const formattedDate = utcDate.split(' ')
+    return formattedDate[0];
+}
+
+const retrieveNpubMetadata = (npub) => {
+    console.log("npub: ", npub);
+    // return axios.post('')
+} 
+
 const setDisplayName = (authorContent) => {
     console.log('author content: ', authorContent)
     if (authorContent?.display_name) {
@@ -49,10 +54,11 @@ const setDisplayName = (authorContent) => {
     return authorContent?.name || authorContent?.display_name;
 }
 
+provide('feedNotes', feedNotes);
 provide('hasDisplayName', hasDisplayName);
 provide('hasNip05', hasNip05);
-provide('feedNotes', feedNotes);
 provide('isSearchActive', isSearchActive);
 provide('noteDate', noteDate);
+provide('retrieveNpubMetadata', retrieveNpubMetadata);
 provide('setDisplayName', setDisplayName);
 </script>
