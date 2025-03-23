@@ -24,7 +24,6 @@ export const useSearchStore = defineStore('search', () => {
     const addParsedEntites = (entities) => {
         if (parsedEntities.value.length > 0) parsedEntities.value = [];
         parsedEntities.value.push(...entities);
-        console.log('parsedEntites in store: ', parsedEntities)
     }
 
     const clearSearchResults = () => {

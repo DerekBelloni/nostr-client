@@ -38,14 +38,14 @@ const noteDate = (utcDate) => {
 }
 
 const retrieveNpubMetadata = (npub) => {
-    return axios.post('/rabbit-mq/npub-metadata', {bech32: npub})
+    nostrStore.npubMetadataUUID = crypto.randomUUID();
+    return axios.post('/rabbit-mq/npub-metadata', {bech32: npub, uuid: nostrStore.npubMetadataUUID})
         .then((response) => {
             console.log("cant control the past")
         })
 } 
 
 const setDisplayName = (authorContent) => {
-    console.log('author content: ', authorContent)
     if (authorContent?.display_name) {
         return authorContent?.display_name
     } else if (authorContent?.displayName) {

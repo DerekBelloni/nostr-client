@@ -55,9 +55,25 @@ class RabbitMQManager
     public static function getNPubMetadata(Request $request)
     {
         $npub_bech32 = $request->input('bech32');
+        $uuid = $request->input('uuid');
         $key = new Key();
         $pub_key_hex =  $key->convertToHex($npub_bech32);
-        dd($pub_key_hex);
+
+        $params = [
+            'npubMetadataUUID' => $uuid,
+            'pubHexKey' => $pub_key_hex
+        ];
+
+        $connection = new AMQPStreamConnection('localhost', 5672, 'guest', 'guest');
+        $channel = $connection->channel();
+        $channel->queue_declare('npub_metadata', false, false, false, false,);
+
+        $message = new AMQPMessage(json_encode($params));
+        $channel->basic_publish($message, '', 'npu_metadata');
+
+        $channel->close();
+        $connection->close();
+        return 'complete';
     }
 
     private static function formatNote($note_content)
