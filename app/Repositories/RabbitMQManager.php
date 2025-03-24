@@ -73,6 +73,8 @@ class RabbitMQManager
 
         $channel->close();
         $connection->close();
+
+    
         return 'complete';
     }
 

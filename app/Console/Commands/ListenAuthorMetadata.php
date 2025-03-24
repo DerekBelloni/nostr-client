@@ -22,7 +22,7 @@ class ListenAuthorMetadata extends BaseRabbitMQListener
     {
         $recieved_author_metadata = $msg->getBody();
         $decoded_author_metadata = json_decode($recieved_author_metadata, true);
-        Log::info('author metadata msg', [$decoded_author_metadata]);
+
         $search_key = $decoded_author_metadata["SearchKey"];
         $pubkey = null;
         $uuid = null;
