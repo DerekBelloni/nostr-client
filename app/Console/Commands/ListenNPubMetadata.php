@@ -19,6 +19,7 @@ class ListenNPubMetadata extends BaseRabbitMQListener
     {
         $received_npub_metadata = $msg->getBody();
         $decoded_npub_metadata = json_decode($received_npub_metadata, true);
-        Log::info("decded npub metadata: ", [$decoded_npub_metadata]);
+        Log::info("decoded npub metadata: ", [$decoded_npub_metadata]);
+
     }
 }

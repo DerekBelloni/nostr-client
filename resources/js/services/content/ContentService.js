@@ -113,6 +113,7 @@ export class ContentService {
     }
 
     processNostrEntities(content) {
+        console.log('content service: ', content);
         const nostrRegex = /nostr:(?:npub|note|nprofile|nevent|naddr|nrelay)[a-zA-Z0-9]{20,}(?![a-zA-Z0-9])/g;
         const matches = content.match(nostrRegex);
 

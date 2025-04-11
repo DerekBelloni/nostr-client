@@ -74,6 +74,9 @@
                             <div v-if="block.content.identifier === 'npub'">
                                 <span class="text-amber-300 cursor-pointer hover:text-amber-500" @click="retrieveNpubMetadata(block.content.bech32)">@{{block.content.bech32}}</span>
                             </div>
+                            <div v-if="block.content.identifier === 'nprofile'" class="border border-gray-200 rounded-lg">
+                                <span class="text-amber-300 cursor-pointer hover:text-amber-500">NPROFILE</span>
+                            </div>
                         </div>
                     </div>
                 </div>
