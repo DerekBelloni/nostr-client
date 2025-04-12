@@ -38,7 +38,7 @@ class BechController extends Controller
 
         $entity_uuid = $request->input('entityUUID');
         $entities = $request->input('entities');
-        $entity = $entities[0];
+        $entity = $entities[2];
         
         $redis_manager->cacheEmbeddedEntityDirectory($entity, $entity_uuid);
         
@@ -54,5 +54,12 @@ class BechController extends Controller
         // }
 
         return 'embedded entity request sent';
+    }
+
+    public static function retrieveEventID(Request $request)
+    {
+        $structured_entity = $request->input('structuredEntity');
+        $content_processor = new NewContentProcessor();
+        return $content_processor->processContent($structured_entity, "block id");
     }
 }

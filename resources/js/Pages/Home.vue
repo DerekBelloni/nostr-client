@@ -101,8 +101,7 @@ const listenForNostrEntity = () => {
             if (event.entity_key == searchStore.entityUUID) {
                 return axios.post('/redis/nostr-entities', {entity_key: searchStore.entityUUID, event_id: event.event_id})
                     .then((response) => {
-                        console.log("banana response: ", response);
-
+                        searchStore.addRetrievedEntities(response.data);
                     })
             }
         });

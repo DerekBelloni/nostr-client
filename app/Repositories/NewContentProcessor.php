@@ -15,9 +15,59 @@ class NewContentProcessor
             return $this->parseNostrContent($content);
         }
 
+
         if ($type == "callback") {
-            return $this->decodeBech32($content, $event_id, $idx);
+            return $this->decodeBech32($content, $event_id, $idx, $type);
         }
+
+        if ($type == "block id") {
+            return $this->getEventId($content);
+        }
+    }
+
+    public function getEventID($content)
+    {
+        $key = new Key();
+        
+        switch($content["identifier"]) {
+            case "npub":
+                return $key->convertToHex($content["bech32"], $key);
+            case "nsec":
+                return $key->convertToHex($content["bech32"], $key);
+            case "note":
+                return $key->convertToHex($content["bech32"], $key);
+            case "nprofile":
+                $binary = self::decodeToBase32($content["bech32"])->toArray();
+                return self::extractValue($binary);
+            case "nevent": 
+                $binary = self::decodeToBase32($content["bech32"])->toArray();
+                return self::extractValue($binary);
+        }
+    }
+
+    public function extractValue($binary)
+    {
+        $type = bindec((int)$binary[0]);
+        $length = bindec((int)$binary[1]);
+        $value_arr = array_slice($binary, 2, $length);
+        
+        $value = null;
+        switch ($type) {
+            case 0:
+                $value = $this->standardTypeZero($value_arr);
+                break;
+            case 1:
+                $value = $this->standardTypeOne($value_arr);
+                break;
+            case 2:
+                $value = $this->standardTypeTwo($value_arr);
+                break;
+            case 3:
+                $value = $this->standardTypeThree($value_arr);
+                break;
+        }
+        
+        return $value;
     }
     
     public function parseNostrContent($content)
@@ -33,7 +83,7 @@ class NewContentProcessor
         return $decoded_entities;
     }
 
-    public function decodeBech32(&$content, $parent_event_id, $idx)
+    public function decodeBech32(&$content, $parent_event_id, $idx, $type)
     {
         $key = new Key();
         $parts = explode(':', $content);

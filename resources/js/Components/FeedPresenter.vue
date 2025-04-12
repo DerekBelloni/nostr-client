@@ -69,6 +69,9 @@
                                 <span>@{{block.content.bech32}}</span>
                             </div>
                             <div v-if="block.content.identifier === 'nevent'" class="border border-gray-700 rounded-lg overflow-none px-2 py-1 truncate">
+                                <div v-if="parseRetrievedEntities(block)">
+
+                                </div>
                                 <span class="text-gray-100">@{{block.content.bech32}}</span>
                             </div>
                             <div v-if="block.content.identifier === 'npub'">
@@ -96,12 +99,18 @@
 import { inject } from 'vue';
 import FeedSearch from './FeedSearch.vue';
 
+const parseRetrievedEntities = (block) => {
+    console.log("block", block);
+    return false;
+}
+
 const hasDisplayName = inject('hasDisplayName');
 const hasNip05 = inject('hasNip05');
 const feedNotes = inject('feedNotes');
 const isSearchActive = inject('isSearchActive');
 const noteDate = inject('noteDate');
 const retrieveNpubMetadata = inject('retrieveNpubMetadata');
+const retrievedEntities = inject('retrievedEntities');
 const setDisplayName = inject('setDisplayName');
 </script>
 

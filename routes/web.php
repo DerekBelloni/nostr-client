@@ -43,6 +43,7 @@ Route::post('/redis/clear-search-cache', [RedisController::class, 'delete']);
 // Bech32 Controller
 Route::post('/bech/parse-notes', [BechController::class, 'parseEventContent']);
 Route::post('/bech/retrieve-entities', [BechController::class, 'retrieveEmbeddedEntities']);
+Route::post('/bech/retrieve-id', [BechController::class, 'retrieveEventID']);
 
 // Relay Metadata Controller
 Route::get('/relay-metadata', [RelayMetadataController::class, 'get']);

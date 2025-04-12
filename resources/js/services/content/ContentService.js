@@ -112,8 +112,7 @@ export class ContentService {
         return matches || [];
     }
 
-    processNostrEntities(content) {
-        console.log('content service: ', content);
+    async processNostrEntities(content) {
         const nostrRegex = /nostr:(?:npub|note|nprofile|nevent|naddr|nrelay)[a-zA-Z0-9]{20,}(?![a-zA-Z0-9])/g;
         const matches = content.match(nostrRegex);
 
@@ -122,16 +121,27 @@ export class ContentService {
             identifier: null
         };
 
+        
         matches.forEach((match) => {
             let parts = match.split(':');
             structuredEntity.bech32 = parts[1];
             structuredEntity.identifier = this.parseIdentifier(parts[1]);
+            // structuredEntity.hex
         })
+        structuredEntity.id = await this.retrieveId(structuredEntity);
         return structuredEntity || [];
     }
 
     parseIdentifier(bech32) {
         const match = bech32.match(/^(npub|note|nprofile|nevent|naddr)/);
         return match ? match[1] : null;
+    }
+
+    async retrieveId(structuredEntity) {
+        console.log('struct: ', structuredEntity)
+        return axios.post('/bech/retrieve-id', {structuredEntity: structuredEntity})
+            .then((response) => {
+                console.log('response: ', response);
+            })
     }
 }

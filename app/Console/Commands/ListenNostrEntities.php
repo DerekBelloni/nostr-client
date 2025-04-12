@@ -31,10 +31,10 @@ class ListenNostrEntities extends BaseRabbitMQListener
             return;
         }
 
+        Log::info("nostr entity event: ", $event);
         $redis_final_key = "nostr_entity:{$id}:{$event_id}";
         
         if (!Redis::exists($redis_final_key)) {
-            Log::info('inside if statement, embedded event listener');
             Redis::set($redis_final_key, json_encode($event[2]));
             Redis::del($redis_lookup_key);
             event(new NostrEntitySet(true, $id, $event_id));

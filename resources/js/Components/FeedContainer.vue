@@ -7,13 +7,15 @@ import FeedPresenter from './FeedPresenter.vue';
 import { useNostrStore } from '@/stores/useNostrStore';
 import { useSearchStore } from '@/stores/useSearchStore';
 import { has } from 'lodash';
-import { computed, provide, ref } from 'vue';
+import { computed, provide, ref, watch } from 'vue';
 
 const nostrStore = useNostrStore();
 const searchStore = useSearchStore();
 
 const feedNotes = computed(() => searchStore.searchResults.length > 0 ? searchStore.searchResults : searchStore.trendingContent);
 const isSearchActive = computed(() => searchStore.searchActive ? true : false);
+
+const retrievedEntities = searchStore.retrievedEntities;
 
 const hasNip05 = (authorContent) => {
     let hasNip = false;
@@ -56,6 +58,12 @@ const setDisplayName = (authorContent) => {
     return authorContent?.name || authorContent?.display_name;
 }
 
+watch(retrievedEntities, (newData, oldData) => {
+    console.log('new data', newData)
+    console.log('old data ', oldData)
+})
+
+provide('retrievedEntities', retrievedEntities);
 provide('feedNotes', feedNotes);
 provide('hasDisplayName', hasDisplayName);
 provide('hasNip05', hasNip05);
