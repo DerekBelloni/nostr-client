@@ -99,6 +99,10 @@
 import { inject } from 'vue';
 import FeedSearch from './FeedSearch.vue';
 
+const retrievedEntityMatch = () => {
+    
+}
+
 const parseRetrievedEntities = (block) => {
     console.log("block", block);
     return false;

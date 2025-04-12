@@ -1,6 +1,6 @@
 // Main orchestrator
 export class ContentService {
-    processContent(item) {
+   async processContent(item) {
         const blocks = [];
         const patternGlobal = /(\n+)|(\bhttps?:\/\/[^\s"]+?\.(?:mp4|webm|ogg|mov|jpg|jpeg|png|gif|webp)\b)|<.*?src="(https?:\/\/[^\s"]+?\.(?:mp4|webm|ogg|mov|jpg|jpeg|png|gif|webp))".*?>|(nostr:(?:[a-zA-Z0-9]+))|((?:[^\n])+?)(?=\n|https?:\/\/|$)/gi;
         
@@ -36,7 +36,7 @@ export class ContentService {
                     const content = match[4].trim();
                     blocks.push({
                         type: 'nostr',
-                        content: this.processNostrEntities(content) 
+                        content: await this.processNostrEntities(content) 
                     });
                 }
                 if (match[5]?.trim()) {
@@ -51,7 +51,7 @@ export class ContentService {
                     } else if (type === 'nostr') {
                         blocks.push({
                             type: 'nostr',
-                            content: this.processNostrEntities(content)        
+                            content: await this.processNostrEntities(content)        
                         });
                     } else {
                         blocks.push({
@@ -126,9 +126,9 @@ export class ContentService {
             let parts = match.split(':');
             structuredEntity.bech32 = parts[1];
             structuredEntity.identifier = this.parseIdentifier(parts[1]);
-            // structuredEntity.hex
         })
         structuredEntity.id = await this.retrieveId(structuredEntity);
+        console.log('structuredEntity.id:', structuredEntity.id);
         return structuredEntity || [];
     }
 
@@ -138,10 +138,7 @@ export class ContentService {
     }
 
     async retrieveId(structuredEntity) {
-        console.log('struct: ', structuredEntity)
-        return axios.post('/bech/retrieve-id', {structuredEntity: structuredEntity})
-            .then((response) => {
-                console.log('response: ', response);
-            })
+        const response = await axios.post('/bech/retrieve-id', {structuredEntity: structuredEntity})
+        return response.data;   
     }
 }

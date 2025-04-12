@@ -256,11 +256,15 @@ const retrieveEmbeddedEntities = () => {
        })
 }
 
-const processContent = (trendingContent) => {
-    trendingContent.forEach((c, index) => {
-        c['blocks'] = contentService.processContent(c);
-        searchStore.trendingContent.push({...c});
-    });
+const processContent = async (trendingContent) => {
+    // trendingContent.forEach((c, index) => {
+    //     c['blocks'] = await contentService.processContent(c);
+    //     searchStore.trendingContent.push({...c});
+    // });
+    for (const [index, c] of trendingContent.entries()) {
+        c['blocks'] = await contentService.processContent(c);
+        searchStore.trendingContent.push({ ...c });
+    }
 }
 
 const setUserMetadata = () => {
