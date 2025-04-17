@@ -27,6 +27,7 @@ class NewContentProcessor
 
     public function getEventID($content)
     {
+        Log::debug('Bech32 Input', ['bech32' => $content["bech32"], 'identifier' => $content["identifier"]]);
         $key = new Key();
         
         switch($content["identifier"]) {
@@ -40,8 +41,14 @@ class NewContentProcessor
                 $binary = self::decodeToBase32($content["bech32"])->toArray();
                 return self::extractValue($binary);
             case "nevent": 
+                // $binary = self::decodeToBase32($content["bech32"])->toArray();
+                // return self::extractValue($binary);
+                // NEED TO CHECK WHATS RETURNED, JUST GOT CONTENT THATS NPROFILE
                 $binary = self::decodeToBase32($content["bech32"])->toArray();
-                return self::extractValue($binary);
+                Log::debug('Binary Output', ['binary' => $binary]);
+                $structured_entity = $this->nprofileHex($binary, $content["identifier"], null, null);
+                Log::debug('Structured Entity', ['entity' => $structured_entity]);
+                return $structured_entity['nostr_entity'] ?? null;
         }
     }
 
@@ -124,39 +131,53 @@ class NewContentProcessor
 
     private function decimalTo5Bit($decimal)
     {
-        $decimal = (int)$decimal;
-        $binaryNumber = '';
-        if ($decimal == 0) {
-            $binaryNumber = '0';
-        } else {
-            $binaryNumber = self::decimalTo5Bit((int)($decimal / 2)) . ($decimal % 2);
-        }
+        // $decimal = (int)$decimal;
+        // $binaryNumber = '';
+        // if ($decimal == 0) {
+        //     $binaryNumber = '0';
+        // } else {
+        //     $binaryNumber = self::decimalTo5Bit((int)($decimal / 2)) . ($decimal % 2);
+        // }
        
-        $binaryNumber = ltrim($binaryNumber, '0'); 
-        if ($binaryNumber === '') {
-            $binaryNumber = '0';
-        }
-        return str_pad($binaryNumber, 5, '0', STR_PAD_LEFT);
+        // $binaryNumber = ltrim($binaryNumber, '0'); 
+        // if ($binaryNumber === '') {
+        //     $binaryNumber = '0';
+        // }
+        // return str_pad($binaryNumber, 5, '0', STR_PAD_LEFT);
+        $decimal = (int)$decimal;
+        $binary = decbin($decimal);
+        return str_pad($binary, 5, '0', STR_PAD_LEFT);
     }
 
     private function fiveBitToByte($five_bit_arr) 
     {
+        // $eight_bit_arr = [];
+        // $temp = '';
+        // for($x = 0; $x < count($five_bit_arr); $x++) {
+        //     for ($y = 0; $y < 5; $y++) {
+        //         if (strlen($temp) < 8) {
+        //             $temp .= $five_bit_arr[$x][$y];
+        //             if (strlen($temp) === 8) {
+        //                 $eight_bit_arr[$x] = $temp;
+        //                 $temp = '';
+        //             }
+        //         }
+        //     }
+        // }
+
+        // $structured_byte_arr = collect($eight_bit_arr)->values(); 
+        // return $structured_byte_arr;
+        $bit_string = implode('', $five_bit_arr); // Concatenate all 5-bit strings
         $eight_bit_arr = [];
-        $temp = '';
-        for($x = 0; $x < count($five_bit_arr); $x++) {
-            for ($y = 0; $y < 5; $y++) {
-                if (strlen($temp) < 8) {
-                    $temp .= $five_bit_arr[$x][$y];
-                    if (strlen($temp) === 8) {
-                        $eight_bit_arr[$x] = $temp;
-                        $temp = '';
-                    }
-                }
+        
+        for ($i = 0; $i < strlen($bit_string); $i += 8) {
+            $byte = substr($bit_string, $i, 8);
+            if (strlen($byte) === 8) {
+                $eight_bit_arr[] = $byte;
             }
         }
-
-        $structured_byte_arr = collect($eight_bit_arr)->values(); 
-        return $structured_byte_arr;
+        
+        return collect($eight_bit_arr)->values();
     }
 
 

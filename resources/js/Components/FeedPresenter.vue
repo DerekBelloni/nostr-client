@@ -70,9 +70,13 @@
                             </div>
                             <div v-if="block.content.identifier === 'nevent'" class="border border-gray-700 rounded-lg overflow-none px-2 py-1 truncate">
                                 <div v-if="parseRetrievedEntities(block)">
-
+                                    <div>
+                                        <span class="text-white">{{ retrievedEntityMatch(block) }}</span>
+                                    </div>
                                 </div>
-                                <span class="text-gray-100">@{{block.content.bech32}}</span>
+                                <div v-else>
+                                    <span class="text-gray-100">@{{block.content.bech32}}</span>
+                                </div>
                             </div>
                             <div v-if="block.content.identifier === 'npub'">
                                 <span class="text-amber-300 cursor-pointer hover:text-amber-500" @click="retrieveNpubMetadata(block.content.bech32)">@{{block.content.bech32}}</span>
@@ -99,12 +103,22 @@
 import { inject } from 'vue';
 import FeedSearch from './FeedSearch.vue';
 
-const retrievedEntityMatch = () => {
-    
+const retrievedEntityMatch = (contentBlock) => {
+    if (!contentBlock?.content?.id || !retrievedEntities?.length) {
+        return null;
+    }
+
+    const entityMatch = retrievedEntities.find(entity => 
+        entity?.id === contentBlock.content.id
+    );
+
+    console.log('entity match', entityMatch)
+
+    return entityMatch?.content || null;
 }
 
 const parseRetrievedEntities = (block) => {
-    console.log("block", block);
+    if (retrievedEntities.length > 0) return true;
     return false;
 }
 

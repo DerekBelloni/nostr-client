@@ -120,7 +120,6 @@ export class ContentService {
             bech32: null,
             identifier: null
         };
-
         
         matches.forEach((match) => {
             let parts = match.split(':');
@@ -128,7 +127,7 @@ export class ContentService {
             structuredEntity.identifier = this.parseIdentifier(parts[1]);
         })
         structuredEntity.id = await this.retrieveId(structuredEntity);
-        console.log('structuredEntity.id:', structuredEntity.id);
+
         return structuredEntity || [];
     }
 
@@ -138,6 +137,7 @@ export class ContentService {
     }
 
     async retrieveId(structuredEntity) {
+        console.log('str: ', structuredEntity);
         const response = await axios.post('/bech/retrieve-id', {structuredEntity: structuredEntity})
         return response.data;   
     }
